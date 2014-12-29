@@ -1,0 +1,346 @@
+package lv.coref.io;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Stack;
+
+import lv.coref.mf.MentionFinder;
+import lv.coref.util.StringUtils;
+import lv.coref.util.Triple;
+
+import lv.coref.data.Mention;
+import lv.coref.data.MentionChain;
+import lv.coref.data.Paragraph;
+import lv.coref.data.Sentence;
+import lv.coref.data.Text;
+import lv.coref.data.Token;
+
+public class ConllReaderWriter {
+
+	private static final int CONLL_POSITION = 0;
+	private static final int CONLL_WORD = 1;
+	private static final int CONLL_LEMMA = 2;
+	private static final int CONLL_SPOS = 3;
+	private static final int CONLL_POS = 4;
+	private static final int CONLL_MORPHO = 5;
+	private static final int CONLL_PARENT = 6;
+	private static final int CONLL_DEP = 7;
+	private static final int CONLL_NER = 8;
+	private static final int CONLL_COREF = 9;
+	
+	private static final int CONLL_MAX = 11;
+
+	/**
+	 * Paragraph => Sentence => Tokens
+	 */
+	private List<List<List<List<String>>>> conll;
+	private String conllID;
+
+	public Text getText(BufferedReader in) {
+		Text text = null;
+		try {
+			readCONLL(in);
+			text = getText(conll, conllID);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return text;
+	}
+
+	public Text getText(String filename) {
+		conllID = filename;
+		Text text = null;
+		try {
+			readCONLL(filename);
+			text = getText(conll, conllID);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return text;
+	}
+
+	public Text getText(List<List<List<List<String>>>> conll, String id) {
+		this.conll = conll;
+		this.conllID = id;
+		MentionFinder mf = new MentionFinder();
+		Text text = new Text(id);
+		for (List<List<List<String>>> par : conll) {
+			Paragraph paragraph = new Paragraph();
+			paragraph.setText(text);
+			for (List<List<String>> sent : par) {
+				Sentence sentence = new Sentence();
+				boolean corefColumn = false;
+				for (List<String> tok : sent) {
+					int position = Integer.parseInt(tok.get(CONLL_POSITION));
+					int parentPosition = Integer.parseInt(tok.get(CONLL_PARENT));
+					String word = tok.get(CONLL_WORD);
+					String lemma = tok.get(CONLL_LEMMA);
+					String tag = tok.get(CONLL_POS);
+					String pos = tok.get(CONLL_SPOS);
+					String morphoFeatures = tok.get(CONLL_MORPHO);
+					String ner = tok.get(CONLL_NER);
+					String dep = tok.get(CONLL_DEP);
+					pos = pos.length() > 0 ? pos : tag.substring(0, 1);
+
+					Token token = new Token(word, lemma, tag);
+					token.setMorphoFeatures(morphoFeatures);
+					token.setParent(parentPosition);
+					token.setDependency(dep);
+					token.setPosition(position - 1);
+					sentence.add(token);
+					if (tok.size() > CONLL_COREF) corefColumn = true;
+				}
+				paragraph.add(sentence);
+				sentence.initializeNodeTree();
+				sentence.initializeNamedEntities(getClassSpans(sent, CONLL_NER, "O"));
+				if (corefColumn) sentence.initializeCoreferences(getSpans(sent, CONLL_COREF, "_", true), mf);
+				//sentence.initializeNamedEntities(getSpans(sent, CONLL_NER, "-", false));				
+			}
+			text.add(paragraph);
+		}
+		return text;
+	}
+
+	public List<Triple<Integer, Integer, String>> getSpans(
+			List<List<String>> tokens, int fieldIndex, String defaultMarker,
+			boolean checkEndLabel) {
+		
+		if (fieldIndex < 0)
+			fieldIndex = tokens.get(0).size() - fieldIndex;
+		List<Triple<Integer, Integer, String>> spans = new ArrayList<Triple<Integer, Integer, String>>();
+		Stack<Triple<Integer, Integer, String>> openSpans = new Stack<Triple<Integer, Integer, String>>();
+		for (int wordPos = 0; wordPos < tokens.size(); wordPos++) {
+			String val = tokens.get(wordPos).get(fieldIndex);
+			if (!defaultMarker.equals(val)) {
+				int openParenIndex = -1;
+				int lastDelimiterIndex = -1;
+				for (int j = 0; j < val.length(); j++) {
+					char c = val.charAt(j);
+					boolean isDelimiter = false;
+					if (c == '(' || c == ')' || c == '|') {
+						if (openParenIndex >= 0) {
+							String s = val.substring(openParenIndex + 1, j);
+							// if (removeStar) {
+							// s = starPattern.matcher(s).replaceAll("");
+							// }
+							openSpans
+									.push(new Triple<Integer, Integer, String>(
+											wordPos, -1, s));
+							openParenIndex = -1;
+						}
+						isDelimiter = true;
+					}
+					if (c == '(') {
+						openParenIndex = j;
+					} else if (c == ')') {
+						Triple<Integer, Integer, String> t = openSpans.pop();
+						if (checkEndLabel) {
+							// NOTE: end parents may cross (usually because
+							// mention either start or end on the same token
+							// and it is just an artifact of the ordering
+							String s = val.substring(lastDelimiterIndex + 1, j);
+							if (!s.equals(t.third())) {
+								Stack<Triple<Integer, Integer, String>> saved = new Stack<Triple<Integer, Integer, String>>();
+								while (!s.equals(t.third())) {
+									// find correct match
+									saved.push(t);
+									if (openSpans.isEmpty()) {
+										throw new RuntimeException(
+												"Cannot find matching labelled span for ["
+														+ s + "] : " + tokens);
+									}
+									t = openSpans.pop();
+								}
+								while (!saved.isEmpty()) {
+									openSpans.push(saved.pop());
+								}
+								assert (s.equals(t.third()));
+							}
+						}
+						t.setSecond(wordPos);
+						spans.add(t);
+					}
+					if (isDelimiter) {
+						lastDelimiterIndex = j;
+					}
+				}
+				if (openParenIndex >= 0) {
+					String s = val.substring(openParenIndex + 1, val.length());
+					// if (removeStar) {
+					// s = starPattern.matcher(s).replaceAll("");
+					// }
+					openSpans.push(new Triple<Integer, Integer, String>(
+							wordPos, -1, s));
+				}
+			}
+		}
+		if (openSpans.size() != 0) {
+			throw new RuntimeException(
+					"Error extracting labelled spans for column " + fieldIndex
+							+ ": " + tokens);
+		}
+
+		return spans;
+	}
+	
+	public List<Triple<Integer, Integer, String>> getClassSpans(
+			List<List<String>> tokens, int fieldIndex, String defaultMarker) {
+		
+		if (fieldIndex < 0)
+			fieldIndex = tokens.get(0).size() - fieldIndex;
+		List<Triple<Integer, Integer, String>> spans = new ArrayList<Triple<Integer, Integer, String>>();
+		String prev = defaultMarker;
+		int prevStart = 0;
+		for (int wordPos = 0; wordPos < tokens.size(); wordPos++) {
+			String val = tokens.get(wordPos).get(fieldIndex);
+			if (!prev.equals(val)) {
+				if (!defaultMarker.equals(prev)) {
+					spans.add(Triple.makeTriple(prevStart, wordPos - 1, prev));					
+				}
+				prev = val;
+				prevStart = wordPos;
+			}
+		}
+		if (!defaultMarker.equals(prev)) {
+			spans.add(Triple.makeTriple(prevStart, tokens.size() - 1, prev));
+		}
+		return spans;
+	}			
+
+	public List<List<List<List<String>>>> readCONLL(String filename)
+			throws IOException {
+		BufferedReader in = new BufferedReader(new FileReader(filename));
+		readCONLL(in);
+		conllID = filename;
+		in.close();
+		return conll;
+	}
+
+	public List<List<List<List<String>>>> readCONLL(BufferedReader in)
+			throws IOException {
+		conll = new ArrayList<>();
+		List<List<List<String>>> par = new ArrayList<>();
+		List<List<String>> sent = new ArrayList<>();
+
+		int emptyLines = 0;
+		String line;
+		while ((line = in.readLine()) != null) {
+			line = line.trim();
+			if (line.length() > 0) {
+				if (line.startsWith("#end document")) {
+					break;
+				}
+				if (line.startsWith("#begin document (")) {
+					conllID = line.substring(17, line.length() - 1);
+					continue;
+				}
+
+				String[] bits = line.split("\t");
+				int position = Integer.parseInt(bits[CONLL_POSITION]);
+
+				if (position == 1) {
+					if (sent.size() > 0) {
+						par.add(sent);
+						sent = new ArrayList<>();
+					}
+				}
+				List<String> tok = new ArrayList<>(Arrays.asList(bits));
+				sent.add(tok);
+				emptyLines = 0;
+			} else {
+				emptyLines++;
+				if (emptyLines == 1 && sent.size() > 0) {
+					par.add(sent);
+					sent = new ArrayList<>();
+				}
+				if (emptyLines == 2 && par.size() > 0) {
+					conll.add(par);
+					par = new ArrayList<>();
+				}
+				if (emptyLines > 2)
+					break;
+			}
+		}
+		if (sent.size() > 0)
+			par.add(sent);
+		if (par.size() > 0)
+			conll.add(par);
+		return conll;
+	}
+	
+	public void write(String filename, Text t) {
+		try {
+			PrintStream ps = new PrintStream(new File(filename), "UTF8");
+			write(ps, t);
+			ps.close();
+		} catch (IOException ex) {
+			System.err.println("Problem writing output to " + filename);
+		}
+	}
+	
+	public void write(PrintStream out, Text t) {
+		StringBuilder s = new StringBuilder();
+		s.append("#begin document (" + t.getId() + "); part 000\n");
+		for (int iPar = 0; iPar < conll.size(); iPar++) {
+			List<List<List<String>>> par = conll.get(iPar);
+			Paragraph paragraph = t.get(iPar);
+			for (int iSen = 0; iSen < par.size(); iSen++) {
+				List<List<String>> sen = par.get(iSen);
+				Sentence sentence = paragraph.get(iSen);
+				for (int iTok = 0; iTok < sen.size(); iTok++) {
+					List<String> tok = sen.get(iTok);
+					Token token = sentence.get(iTok);
+					
+					StringBuilder coref = new StringBuilder();
+					boolean first = true;
+					for (Mention m : token.getStartMentions()) {						
+						if (m.getMentionChain() != null) {
+							if (!first) coref.append("|"); else first = false;
+							coref.append("(").append(m.getMentionChain().getID());
+						}
+					}
+					boolean second = true;
+					for (Mention m : token.getEndMentions()) {
+						if (m.getMentionChain() != null) {
+							if (second) {
+								if (first) coref.append(m.getMentionChain().getID());
+								coref.append(")");
+								second = false;
+							} else coref.append("|").append(m.getMentionChain().getID()).append(")");
+						}
+					}		
+					if (coref.length() == 0) coref.append("-");
+					
+					for (int i = tok.size(); i <= CONLL_MAX; i++) tok.add("-");
+					
+					tok.set(CONLL_COREF, coref.toString());
+					s.append(StringUtils.join(tok, "\t"));
+					s.append("\n");
+				}
+				s.append("\n");
+			}
+			s.append("\n");			
+		}
+		s.append("#end document\n");
+		out.print(s.toString());
+		out.flush();
+	}
+
+	public static void main(String[] args) throws IOException {
+		ConllReaderWriter rw = new ConllReaderWriter();
+		Text t = rw.getText("news_63_gold.conll");
+		System.out.println(t);
+		for (MentionChain mc : t.getMentionChains()) {
+			if (mc.size() > 1) System.out.println(mc);
+		}
+	}
+
+}
