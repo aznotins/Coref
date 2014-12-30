@@ -193,6 +193,34 @@ public class Sentence extends ArrayList<Token> {
 		}
 	}
 
+	/**
+	 * Used after initializeCoreferences() to explicitly set some attributes
+	 * (category, type) Inefficient, used for gold mention initialization
+	 */
+	public void initializeMentionAttributes(
+			List<Triple<Integer, Integer, String>> spans, String attribute) {
+		for (Triple<Integer, Integer, String> span : spans) {
+			try {
+				Token first = this.get(span.first);
+				Token last = this.get(span.second);
+				Set<Mention> spanMentions = first.getStartMentions();
+				spanMentions.retainAll(last.getEndMentions());
+				if (spanMentions.size() == 0)
+					throw new Exception("No such mention");
+				for (Mention m : spanMentions) {
+					if (attribute.equals("category")) {
+						m.setCategory(span.third);
+					}
+				}
+			} catch (Exception e) {
+				System.err.println(e.getMessage()
+						+ " : Unable to initilize attribute " + "\""
+						+ attribute + "\" in sentence position="
+						+ getPosition() + ": " + span);
+			}
+		}
+	}
+
 	public Text getText() {
 		return getParagraph().getText();
 	}

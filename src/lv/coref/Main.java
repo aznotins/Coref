@@ -12,9 +12,10 @@ public class Main {
 	public static void main(String[] args) throws IOException {
 		ConllReaderWriter rw = new ConllReaderWriter();
 //		Text t = rw.getText("sankcijas.conll");
-		Text t = rw.getText("news_63.conll");	
+//		Text t = rw.getText("news_63.conll");	
+		Text t = rw.getText("data/test.conll");	
 		
-		Text gold = new ConllReaderWriter().getText("news_63_gold.conll");
+		Text gold = new ConllReaderWriter().getText("data/test.corefconll");
 		t.setPairedText(gold);
 		gold.setPairedText(t);
 		

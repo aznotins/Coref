@@ -17,7 +17,7 @@ public class IOTest {
 	@Test
 	public void conllReaderWriterTest() throws IOException {
 		ConllReaderWriter rw = new ConllReaderWriter();
-		Text text = rw.getText("news_63.conll");
+		Text text = rw.getText("data/test.conll");
 		int parCount = text.size();
 		int sentCount = 0;
 		int tokCount = 0;
@@ -32,8 +32,8 @@ public class IOTest {
 			}
 		}
 		assertTrue("Paragraph total count=" + parCount, parCount == 1);
-		assertTrue("Sentence total count=" + sentCount, sentCount == 15);
-		assertTrue("Token total count=" + tokCount, tokCount == 284);		
+		assertTrue("Sentence total count=" + sentCount, sentCount == 130);
+		assertTrue("Token total count=" + tokCount, tokCount == 2391);		
 	}
 	
 	

@@ -34,8 +34,9 @@ public class ConllReaderWriter {
 	private static final int CONLL_PARENT = 6;
 	private static final int CONLL_DEP = 7;
 	private static final int CONLL_NER = 8;
-	private static final int CONLL_COREF = 9;
-	
+	private static final int CONLL_COREF_CAT = 9;
+	private static final int CONLL_COREF = 10;
+
 	private static final int CONLL_MAX = 11;
 
 	/**
@@ -80,7 +81,8 @@ public class ConllReaderWriter {
 				boolean corefColumn = false;
 				for (List<String> tok : sent) {
 					int position = Integer.parseInt(tok.get(CONLL_POSITION));
-					int parentPosition = Integer.parseInt(tok.get(CONLL_PARENT));
+					int parentPosition = Integer
+							.parseInt(tok.get(CONLL_PARENT));
 					String word = tok.get(CONLL_WORD);
 					String lemma = tok.get(CONLL_LEMMA);
 					String tag = tok.get(CONLL_POS);
@@ -96,23 +98,42 @@ public class ConllReaderWriter {
 					token.setDependency(dep);
 					token.setPosition(position - 1);
 					sentence.add(token);
-					if (tok.size() > CONLL_COREF) corefColumn = true;
+					if (tok.size() > CONLL_COREF)
+						corefColumn = true;
 				}
 				paragraph.add(sentence);
 				sentence.initializeNodeTree();
-				sentence.initializeNamedEntities(getClassSpans(sent, CONLL_NER, "O"));
-				if (corefColumn) sentence.initializeCoreferences(getSpans(sent, CONLL_COREF, "_", true), mf);
-				//sentence.initializeNamedEntities(getSpans(sent, CONLL_NER, "-", false));				
+				sentence.initializeNamedEntities(getClassSpans(sent, CONLL_NER,
+						"O"));
+				// sentence.initializeNamedEntities(getSpans(sent, CONLL_NER,
+				// "-", false));
+				if (corefColumn) {
+					sentence.initializeCoreferences(
+							getSpans(sent, CONLL_COREF, "_", true), mf);
+					sentence.initializeMentionAttributes(
+							getSpans(sent, CONLL_COREF_CAT, "_", true),
+							"category");
+				}
+
 			}
 			text.add(paragraph);
 		}
 		return text;
 	}
 
+	/**
+	 * Enclosed using bracket notation (x|(y) )
+	 * 
+	 * @param tokens
+	 * @param fieldIndex
+	 * @param defaultMarker
+	 * @param checkEndLabel
+	 * @return
+	 */
 	public List<Triple<Integer, Integer, String>> getSpans(
 			List<List<String>> tokens, int fieldIndex, String defaultMarker,
 			boolean checkEndLabel) {
-		
+
 		if (fieldIndex < 0)
 			fieldIndex = tokens.get(0).size() - fieldIndex;
 		List<Triple<Integer, Integer, String>> spans = new ArrayList<Triple<Integer, Integer, String>>();
@@ -190,10 +211,18 @@ public class ConllReaderWriter {
 
 		return spans;
 	}
-	
+
+	/**
+	 * Enclosed using simple categories ( o x x o y y )
+	 * 
+	 * @param tokens
+	 * @param fieldIndex
+	 * @param defaultMarker
+	 * @return
+	 */
 	public List<Triple<Integer, Integer, String>> getClassSpans(
 			List<List<String>> tokens, int fieldIndex, String defaultMarker) {
-		
+
 		if (fieldIndex < 0)
 			fieldIndex = tokens.get(0).size() - fieldIndex;
 		List<Triple<Integer, Integer, String>> spans = new ArrayList<Triple<Integer, Integer, String>>();
@@ -203,7 +232,7 @@ public class ConllReaderWriter {
 			String val = tokens.get(wordPos).get(fieldIndex);
 			if (!prev.equals(val)) {
 				if (!defaultMarker.equals(prev)) {
-					spans.add(Triple.makeTriple(prevStart, wordPos - 1, prev));					
+					spans.add(Triple.makeTriple(prevStart, wordPos - 1, prev));
 				}
 				prev = val;
 				prevStart = wordPos;
@@ -213,7 +242,7 @@ public class ConllReaderWriter {
 			spans.add(Triple.makeTriple(prevStart, tokens.size() - 1, prev));
 		}
 		return spans;
-	}			
+	}
 
 	public List<List<List<List<String>>>> readCONLL(String filename)
 			throws IOException {
@@ -275,7 +304,7 @@ public class ConllReaderWriter {
 			conll.add(par);
 		return conll;
 	}
-	
+
 	public void write(String filename, Text t) {
 		try {
 			PrintStream ps = new PrintStream(new File(filename), "UTF8");
@@ -285,7 +314,7 @@ public class ConllReaderWriter {
 			System.err.println("Problem writing output to " + filename);
 		}
 	}
-	
+
 	public void write(PrintStream out, Text t) {
 		StringBuilder s = new StringBuilder();
 		s.append("#begin document (" + t.getId() + "); part 000\n");
@@ -298,36 +327,59 @@ public class ConllReaderWriter {
 				for (int iTok = 0; iTok < sen.size(); iTok++) {
 					List<String> tok = sen.get(iTok);
 					Token token = sentence.get(iTok);
-					
+
 					StringBuilder coref = new StringBuilder();
+					StringBuilder corefCat = new StringBuilder();
+
 					boolean first = true;
-					for (Mention m : token.getStartMentions()) {						
+					for (Mention m : token.getStartMentions()) {
 						if (m.getMentionChain() != null) {
-							if (!first) coref.append("|"); else first = false;
-							coref.append("(").append(m.getMentionChain().getID());
+							if (!first) {
+								coref.append("|");
+								corefCat.append("|");
+							} else {
+								first = false;
+							}
+							coref.append("(").append(
+									m.getMentionChain().getID());
+							corefCat.append("(").append(m.getCategory());
 						}
 					}
 					boolean second = true;
 					for (Mention m : token.getEndMentions()) {
 						if (m.getMentionChain() != null) {
 							if (second) {
-								if (first) coref.append(m.getMentionChain().getID());
+								if (first) {
+									coref.append(m.getMentionChain().getID());
+									corefCat.append(m.getCategory());
+								}
 								coref.append(")");
+								corefCat.append(")");
 								second = false;
-							} else coref.append("|").append(m.getMentionChain().getID()).append(")");
+							} else {
+								coref.append("|")
+										.append(m.getMentionChain().getID())
+										.append(")");
+								corefCat.append("|").append(m.getCategory())
+										.append(")");
+							}
 						}
-					}		
-					if (coref.length() == 0) coref.append("-");
-					
-					for (int i = tok.size(); i <= CONLL_MAX; i++) tok.add("-");
-					
+					}
+					if (coref.length() == 0) {
+						coref.append("-");
+						corefCat.append("-");
+					}
+
+					for (int i = tok.size(); i <= CONLL_MAX; i++)
+						tok.add("-");
+
 					tok.set(CONLL_COREF, coref.toString());
 					s.append(StringUtils.join(tok, "\t"));
 					s.append("\n");
 				}
 				s.append("\n");
 			}
-			s.append("\n");			
+			s.append("\n");
 		}
 		s.append("#end document\n");
 		out.print(s.toString());
@@ -336,10 +388,11 @@ public class ConllReaderWriter {
 
 	public static void main(String[] args) throws IOException {
 		ConllReaderWriter rw = new ConllReaderWriter();
-		Text t = rw.getText("news_63_gold.conll");
+		Text t = rw.getText("data/test.corefconll");
 		System.out.println(t);
 		for (MentionChain mc : t.getMentionChains()) {
-			if (mc.size() > 1) System.out.println(mc);
+			if (mc.size() > 1)
+				System.out.println(mc);
 		}
 	}
 

@@ -15,6 +15,7 @@ public class Mention implements Comparable<Mention> {
 	private List<Token> heads = new ArrayList<>();
 	private String id;
 	private Type type = Type.UNKNOWN;
+	private MentionCategory category = new MentionCategory();
 
 	public Mention() {
 		//TODO null id for mention chain
@@ -39,6 +40,14 @@ public class Mention implements Comparable<Mention> {
 		this.heads.add(token);
 		MentionChain mc = new MentionChain(this);
 		setMentionChain(mc);
+	}
+	
+	public String getCategory() {
+		return category.get();
+	}
+
+	public void setCategory(String category) {
+		this.category.set(category);
 	}
 
 	public List<Token> getTokens() {
@@ -271,6 +280,7 @@ public class Mention implements Comparable<Mention> {
 			sb.append(seg.toString() + " ");
 		}
 		sb.append("|").append(getID());
+		sb.append("|").append(getCategory());
 		sb.append("|").append(getType());
 		// sb.append(toParamString());
 		sb.append("]");

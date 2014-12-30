@@ -36,36 +36,26 @@ import lv.coref.rules.Ruler;
 
 public class Viewer implements Runnable, ActionListener {
 
+	Text text;
 	TextMapping textMapping = new TextMapping();
 
-	private static final int WIDTH = 400;
+	private static final int WIDTH = 500;
 	private static final int HEIGHT = 800;
 	private Random random = new Random();
 	private JFrame frame = new JFrame("LVCoref");
 	private JPanel textPanel;
 	private JPanel corefPanel;
 
+	Viewer(Text text) {
+		this.text = text;
+	}
+	
 	@Override
 	public void run() {
-		
-		ConllReaderWriter rw = new ConllReaderWriter();
-		Text text = rw.getText("news_63.conll");
-		MentionFinder mf = new MentionFinder();
-		mf.findMentions(text);
-		Ruler r = new Ruler();
-		r.resolve(text);
-
-		text.finalizeMentionChains();
-		
-		Text gold = new ConllReaderWriter().getText("news_63_gold.conll");
-		text.setPairedText(gold);
-		gold.setPairedText(text);
-		
-		
 		textPanel = new JPanel();
 		
 		textPanel.setLayout(new BoxLayout(textPanel, BoxLayout.PAGE_AXIS));
-		textPanel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+		//textPanel.setPreferredSize(new Dimension(WIDTH, HEIGHT));
 		setText(text);		
 		JScrollPane scrollFrame = new JScrollPane(textPanel);
 		frame.add(scrollFrame, BorderLayout.CENTER);
@@ -157,7 +147,19 @@ public class Viewer implements Runnable, ActionListener {
 	}
 
 	public static void main(final String[] args) {
-		SwingUtilities.invokeLater(new Viewer());
+		ConllReaderWriter rw = new ConllReaderWriter();
+		Text text = rw.getText("data/test.conll");
+		MentionFinder mf = new MentionFinder();
+		mf.findMentions(text);
+		Ruler r = new Ruler();
+		r.resolve(text);
+
+		text.finalizeMentionChains();
+		
+//		Text gold = new ConllReaderWriter().getText("news_63_gold.conll");
+//		text.setPairedText(gold);
+//		gold.setPairedText(text);		
+		SwingUtilities.invokeLater(new Viewer(text));
 	}
 
 }
