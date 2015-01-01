@@ -6,7 +6,10 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import lv.coref.data.Mention;
+import lv.coref.data.Sentence;
 import lv.coref.data.Text;
+import lv.coref.data.Token;
 import lv.coref.io.ConllReaderWriter;
 import lv.coref.util.StringOutputStream;
 import lv.coref.util.SystemUtils;
@@ -31,9 +34,49 @@ public class ConllEvalScorer {
 	public ConllEvalScorer(boolean scoreHeads) {
 		this.scoreHeads = scoreHeads;
 	}
-
+	
+	private Text createHeadMockup(Text t) {
+		String textFile = "tmp/" + UUID.randomUUID() + ".conll";
+		new ConllReaderWriter().write(textFile, t);
+		String goldTextFile = "tmp/" + UUID.randomUUID() + ".conll";
+		new ConllReaderWriter().write(goldTextFile, t.getPairedText());
+		
+		Text copyText = new ConllReaderWriter().getText(textFile);
+		Text copyGoldText = new ConllReaderWriter().getText(goldTextFile);
+		convertToHeadMentions(copyText);
+		convertToHeadMentions(copyGoldText);
+		copyText.setPairedText(copyGoldText);	
+		copyGoldText.setPairedText(copyText);
+		//System.out.println(copyText);
+		return copyText;
+	}
+	
+	private void convertToHeadMentions(Text text) {
+		for (Mention m : text.getMentions()) {
+			for (Token t : m.getTokens()) {
+				t.removeMention(m);
+			}
+			if (m.getHeads().size() > 0) {
+				m.setTokens(Arrays.asList(m.getHeads().get(0)));
+				m.getHeads().get(0).addMention(m);
+			} else {
+				System.err.println("No heads for mention : " + m);
+			}			
+		}
+		for (Sentence s : text.getSentences()) {
+			for (Token t : s) {
+				if (t.getMentions().size() > 1) {
+					System.err.println("convertToHeadMentions multiple mentions on token (keep first) " + t + " : " + t.getMentions());
+					//t.getMentions().iterator().next();
+				}
+			}
+		}
+	}
+	
 	public String add(Text text) {
 		try {
+			if (scoreHeads) text = createHeadMockup(text);
+			
 			ConllReaderWriter rw = new ConllReaderWriter();
 
 			String textFile = "tmp/" + UUID.randomUUID() + ".conll";
@@ -180,7 +223,7 @@ public class ConllEvalScorer {
 		t.setPairedText(gold);
 		gold.setPairedText(t);
 
-		ConllEvalScorer s = new ConllEvalScorer();
+		ConllEvalScorer s = new ConllEvalScorer(true);
 		s.add(t);
 		System.err.println(s);
 

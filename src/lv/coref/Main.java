@@ -57,10 +57,12 @@ public class Main {
 		mentionScorer.add(t);
 		System.err.println(mentionScorer);
 		
-		ConllEvalScorer conllScorer = new ConllEvalScorer();
+		ConllEvalScorer conllScorer = new ConllEvalScorer(false);
 		conllScorer.add(t);
 		System.err.println(conllScorer);
-		System.err.println(conllScorer.getSummary());
+		ConllEvalScorer headConllScorer = new ConllEvalScorer(true);
+		headConllScorer.add(t);
+		System.err.println(headConllScorer);
 		
 //		SwingUtilities.invokeLater(new Viewer(t));
 //		SwingUtilities.invokeLater(new Viewer(gold));

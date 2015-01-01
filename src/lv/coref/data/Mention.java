@@ -18,7 +18,7 @@ public class Mention implements Comparable<Mention> {
 	private MentionCategory category = new MentionCategory();
 
 	public Mention() {
-		//TODO null id for mention chain
+		// TODO null id for mention chain
 		MentionChain mc = new MentionChain(this);
 		setMentionChain(mc);
 	}
@@ -41,7 +41,14 @@ public class Mention implements Comparable<Mention> {
 		MentionChain mc = new MentionChain(this);
 		setMentionChain(mc);
 	}
-	
+
+	public void setTokens(List<Token> tokens) {
+		for (Token t : this.tokens) {
+			t.removeMention(this);
+		}
+		this.tokens = tokens;
+	}
+
 	public String getCategory() {
 		return category.get();
 	}
@@ -322,7 +329,8 @@ public class Mention implements Comparable<Mention> {
 			return null;
 		Sentence pairedSentence = paired.get(getParagraph().getPosition()).get(
 				getSentence().getPosition());
-		//System.out.println(getSentence().getPosition() + " " + pairedSentence.getPosition());
+		// System.out.println(getSentence().getPosition() + " " +
+		// pairedSentence.getPosition());
 		for (Mention m : pairedSentence.getMentions()) {
 			boolean equal = true;
 			if (exact) {
@@ -334,7 +342,8 @@ public class Mention implements Comparable<Mention> {
 							break;
 						}
 					}
-				} else equal = false;
+				} else
+					equal = false;
 			} else {
 				if (heads.size() == m.getHeads().size()) {
 					for (int i = 0; i < heads.size(); i++) {
@@ -344,7 +353,8 @@ public class Mention implements Comparable<Mention> {
 							break;
 						}
 					}
-				} else equal = false;
+				} else
+					equal = false;
 			}
 			if (equal)
 				return m;
