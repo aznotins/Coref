@@ -1,4 +1,4 @@
-package lv.coref;
+package tmp;
 
 import java.awt.Color;
 

@@ -4,7 +4,7 @@ public class MentionCategory {
 
 	public final static String UNKNOWN = "null";
 
-	static private enum Category {
+	public static enum Category {
 		unknown, person, location, organization, profession, media, product, event;
 
 		public String toString() {

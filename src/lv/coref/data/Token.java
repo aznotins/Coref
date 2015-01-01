@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import lv.coref.data.Constants.Case;
-import lv.coref.data.Constants.Gender;
-import lv.coref.data.Constants.Number;
-import lv.coref.data.Constants.Person;
-import lv.coref.data.Constants.PosTag;
+import lv.coref.lv.MorphoUtils;
+import lv.coref.lv.Constants.Case;
+import lv.coref.lv.Constants.Gender;
+import lv.coref.lv.Constants.Number;
+import lv.coref.lv.Constants.Person;
+import lv.coref.lv.Constants.PosTag;
 
 public class Token implements Comparable<Token> {
 	private String word;

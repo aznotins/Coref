@@ -24,12 +24,11 @@ public class MentionMarker extends Marker {
 		
 		setForeground(ViewerUtils.getMentionClusterColor(mention));
 	
-		if (mention.getMention(false) != null) {
-			if (mention.getMention(true) != null) {
-				setForeground(Color.RED);
-			} else {
-				setForeground(Color.MAGENTA);
-			}
+		if (mention.getMention(true) == null) {
+			setForeground(Color.RED);
+		}
+		if (mention.getMention(false) == null) {
+			setForeground(Color.MAGENTA);
 		}
 		
 		addMouseListener(new MouseInputAdapter() {
@@ -88,8 +87,6 @@ public class MentionMarker extends Marker {
 
 	public void paint(Graphics g) {
 		super.paint(g);
-		g.setColor(Color.BLUE);
-		g.drawOval(100, 100, 200, 300);
 	}
 
 	public void showCoreferences(boolean showCoref) {

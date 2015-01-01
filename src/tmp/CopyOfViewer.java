@@ -1,4 +1,4 @@
-package lv.coref.visual;
+package tmp;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -31,6 +31,7 @@ import lv.coref.data.Token;
 import lv.coref.io.ConllReaderWriter;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
+import lv.coref.visual.WrapLayout;
 
 public class CopyOfViewer implements Runnable, ActionListener {
 

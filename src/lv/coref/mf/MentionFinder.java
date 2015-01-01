@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import lv.coref.data.Constants.PosTag;
-import lv.coref.data.Constants.Type;
 import lv.coref.data.Mention;
 import lv.coref.data.NamedEntity;
 import lv.coref.data.Node;
@@ -17,6 +15,9 @@ import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.data.Token;
 import lv.coref.io.ConllReaderWriter;
+import lv.coref.lv.Dictionaries;
+import lv.coref.lv.Constants.PosTag;
+import lv.coref.lv.Constants.Type;
 
 public class MentionFinder {
 
@@ -41,7 +42,7 @@ public class MentionFinder {
 		addNounPhraseMentions2(sentence);
 		
 		addCoordinations(sentence);
-		
+		addPronounMentions(sentence);
 		MentionCleaner.cleanSentenceMentions(sentence);
 		
 		updateMentionHeads(sentence);
@@ -62,6 +63,7 @@ public class MentionFinder {
 			Mention m = new Mention(tokens, heads, getnextID());
 			sent.addMention(m);
 			m.setType(Type.NE);
+			m.setCategory(n.getLabel());
 		}
 	}
 	
@@ -103,6 +105,18 @@ public class MentionFinder {
 			}
 		}
 		
+	}
+	
+	private void addPronounMentions(Sentence sent) {
+		for (Node n : sent.getNodes(false)) {
+			if (n.getHeads().get(0).getPosTag() == PosTag.P) {
+				Mention m = new Mention(n.getTokens(), n.getHeads(), getnextID());
+				sent.addMention(m);
+				String text = n.getHeads().get(0).getLemma();
+				m.setCategory(Dictionaries.getCategory(text));
+				m.setType(Type.PRON);
+			}
+		}
 	}
 	
 	private void addNounPhraseMentions(Sentence sent) {

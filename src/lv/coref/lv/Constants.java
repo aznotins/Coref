@@ -1,4 +1,4 @@
-package lv.coref.data;
+package lv.coref.lv;
 
 public class Constants { 
 	public static enum PosTag {

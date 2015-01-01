@@ -1,4 +1,4 @@
-package lv.coref;
+package tmp;
 
 /*
  Core SWING Advanced Programming 

@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import lv.coref.data.Constants.Type;
 import lv.coref.data.Mention;
 import lv.coref.data.Sentence;
 import lv.coref.data.Token;
+import lv.coref.lv.Constants.Type;
 
 public class MentionCleaner {
 

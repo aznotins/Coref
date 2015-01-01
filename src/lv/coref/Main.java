@@ -2,10 +2,15 @@ package lv.coref;
 
 import java.io.IOException;
 
-import lv.coref.data.*;
+import lv.coref.data.Mention;
+import lv.coref.data.Paragraph;
+import lv.coref.data.Sentence;
+import lv.coref.data.Text;
 import lv.coref.io.ConllReaderWriter;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
+import lv.coref.score.ConllEvalScorer;
+import lv.coref.score.MentionScorer;
 
 public class Main {
 
@@ -41,11 +46,24 @@ public class Main {
 		t.finalizeMentionChains();
 		
 		System.out.println(t);
-		rw.write("test.out", t);
+		//rw.write("test.out", t);
+		//new ConllReaderWriter().write("tmp/test.out", t);
 		
-		for (MentionChain mc : t.getMentionChains()) {
-			if (mc.size() > 1) System.out.println(mc);
-		}
+//		for (MentionChain mc : t.getMentionChains()) {
+//			if (mc.size() > 1) System.out.println(mc);
+//		}
+		
+		MentionScorer mentionScorer = new MentionScorer();
+		mentionScorer.add(t);
+		System.err.println(mentionScorer);
+		
+		ConllEvalScorer conllScorer = new ConllEvalScorer();
+		conllScorer.add(t);
+		System.err.println(conllScorer);
+		System.err.println(conllScorer.getSummary());
+		
+//		SwingUtilities.invokeLater(new Viewer(t));
+//		SwingUtilities.invokeLater(new Viewer(gold));
 		
 	}
 

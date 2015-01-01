@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import lv.coref.data.Constants.Case;
-import lv.coref.data.Constants.Gender;
-import lv.coref.data.Constants.Number;
-import lv.coref.data.Constants.Type;
+import lv.coref.lv.Constants.Case;
+import lv.coref.lv.Constants.Gender;
+import lv.coref.lv.Constants.Number;
+import lv.coref.lv.Constants.Type;
 
 public class Mention implements Comparable<Mention> {
 	private MentionChain mentionChain;

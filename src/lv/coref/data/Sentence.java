@@ -243,18 +243,18 @@ public class Sentence extends ArrayList<Token> {
 			}
 			sb.append(" ");
 		}
-		for (Mention m : getMentions()) {
-			sb.append("\n\t");
-			if (m.getMention(false) != null)
-				sb.append("+");
-			else
-				sb.append("-");
-			if (m.getMention(true) != null)
-				sb.append("+");
-			else
-				sb.append("-");
-			sb.append(m);
-		}
+//		for (Mention m : getMentions()) {
+//			sb.append("\n\t");
+//			if (m.getMention(false) != null)
+//				sb.append("+");
+//			else
+//				sb.append("-");
+//			if (m.getMention(true) != null)
+//				sb.append("+");
+//			else
+//				sb.append("-");
+//			sb.append(m);
+//		}
 		return sb.toString();
 	}
 

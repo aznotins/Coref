@@ -41,12 +41,11 @@ public class Viewer implements Runnable, ActionListener {
 
 	private static final int WIDTH = 500;
 	private static final int HEIGHT = 800;
-	private Random random = new Random();
 	private JFrame frame = new JFrame("LVCoref");
 	private JPanel textPanel;
 	private JPanel corefPanel;
 
-	Viewer(Text text) {
+	public Viewer(Text text) {
 		this.text = text;
 	}
 	
@@ -77,9 +76,6 @@ public class Viewer implements Runnable, ActionListener {
 		frame.setSize(WIDTH, HEIGHT);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-		
-		
-		
 		
 		//textPanel.repaint();
 	}
@@ -156,9 +152,9 @@ public class Viewer implements Runnable, ActionListener {
 
 		text.finalizeMentionChains();
 		
-//		Text gold = new ConllReaderWriter().getText("news_63_gold.conll");
-//		text.setPairedText(gold);
-//		gold.setPairedText(text);		
+		Text gold = new ConllReaderWriter().getText("data/test.corefconll");
+		text.setPairedText(gold);
+		gold.setPairedText(text);		
 		SwingUtilities.invokeLater(new Viewer(text));
 	}
 
