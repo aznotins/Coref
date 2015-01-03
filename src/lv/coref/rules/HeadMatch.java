@@ -14,7 +14,7 @@ public class HeadMatch extends Rule {
 	
 	public double score(Mention m, Mention a) {
 		//if (m.getLemma().equals(a.getLemma())) return 1.0;
-		if (m.getHeadLemma().equals(a.getHeadLemma())) return 1.0;
+		if (m.getHeadLemmaString().equals(a.getHeadLemmaString())) return 1.0;
 		return 0.0;
 	}
 	

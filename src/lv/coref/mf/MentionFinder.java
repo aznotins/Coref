@@ -21,6 +21,7 @@ import lv.coref.data.Text;
 import lv.coref.data.Token;
 import lv.coref.io.ConllReaderWriter;
 import lv.coref.io.Pipe;
+import lv.coref.lv.Constants.PronType;
 import lv.coref.lv.Dictionaries;
 import lv.coref.lv.Constants.PosTag;
 import lv.coref.lv.Constants.Type;
@@ -28,6 +29,7 @@ import lv.coref.rules.Ruler;
 import lv.coref.score.SummaryScorer;
 import lv.coref.util.FileUtils;
 import lv.coref.util.StringUtils;
+import lv.coref.lv.MorphoUtils;
 
 public class MentionFinder {
 
@@ -55,6 +57,7 @@ public class MentionFinder {
 		addCoordinations(sentence);
 		//addCoordinationsFlat(sentence);
 		addPronounMentions(sentence);
+		
 		
 		MentionCleaner.cleanSentenceMentions(sentence);
 		updateMentionHeads(sentence);
@@ -159,6 +162,8 @@ public class MentionFinder {
 				String text = n.getHeads().get(0).getLemma();
 				m.setCategory(Dictionaries.getCategory(text));
 				m.setType(Type.PRON);
+				m.getLastHeadToken().setPronounType(MorphoUtils.getPronounType(m.getLastHeadToken().getTag()));
+				m.getLastHeadToken().setPerson(MorphoUtils.getPerson(m.getLastHeadToken().getTag()));
 			}
 		}
 	}
@@ -198,10 +203,17 @@ public class MentionFinder {
 					} else
 						break;
 				}
+				for (int i = start; i < end; i++) {
+					Token t = tokens.get(i);
+					if (t.getPosTag() == PosTag.V) start = i + 1;
+				}
+				
+				if (start > end) continue;
 				tokens = tokens.subList(start, end);
 
 				Mention m = new Mention(tokens, n.getHeads(), getnextID());
 				m.setType(Type.NP);
+				if (m.getFirstToken().isProper()) m.setType(Type.NE);
 				sent.addMention(m);
 			}
 		}
@@ -310,8 +322,8 @@ public class MentionFinder {
 				"Profesors Jānis Kalniņš devās mājup.");
 
 		stringTest("Latvija, Rīga un Liepāja iestājās par.",
-			"Jānis un Pēteris devās mājup.",
-			"Uzņēmuma vadītājs un valdes priekšēdētājs Jānis Krūmiņš izteica sašutumu.");
+				"Jānis un Pēteris devās mājup.",
+				"Uzņēmuma vadītājs un valdes priekšēdētājs Jānis Krūmiņš izteica sašutumu.");
 
 		stringTest("SIA \"Cirvis\". ");
 	}

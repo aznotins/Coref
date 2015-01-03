@@ -17,7 +17,7 @@ public abstract class Rule {
 		return 0.0;
 	}
 	
-	public List<Mention> getPotentialAntecedents(Mention m) {
+	public List<Mention> getPotentialAntecedents(Mention m) { 
 		return new ArrayList<Mention>();
 	}
 	

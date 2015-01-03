@@ -14,15 +14,15 @@ public class Appositive extends Rule {
 	public boolean filter(Mention m, Mention a) {
 		if (m.getType() == Type.PRON || a.getType() == Type.PRON)
 			return false;
-
-		if (m.getType() != Type.NE && a.getType() != Type.NE)
+		
+		if (!m.isProperMention() && !a.isProperMention())
 			return false;
 
 		if (m.getSentence().getPosition() != a.getSentence().getPosition())
 			return false;
 		int d = m.getFirstToken().getPosition()
 				- a.getLastToken().getPosition();
-		if (d <= 0 || d > 2)
+		if (d <= 0 || d > 1)
 			return false;
 		return true;
 	}
@@ -33,6 +33,7 @@ public class Appositive extends Rule {
 		if (!m.getCase().equals(a.getCase())) prob = 0;
 		if (!m.getGender().equals(a.getGender())) prob *= 0.5;
 		if (!m.getNumber().equals(a.getNumber())) prob *= 0.5;
+		if (!m.getCategory().weakEquals(a.getCategory())) prob *= 0.5;
 		
 		
 		return prob;

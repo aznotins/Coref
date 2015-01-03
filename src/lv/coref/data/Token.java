@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import lv.coref.lv.Constants.PronType;
 import lv.coref.lv.MorphoUtils;
 import lv.coref.lv.Constants.Case;
 import lv.coref.lv.Constants.Gender;
@@ -24,6 +25,8 @@ public class Token implements Comparable<Token> {
 	private int position;
 	private int parent;
 	private String dep;
+	private Node node;
+
 	//private Set<NamedEntity> namedEntities = new TreeSet<>();
 	private Set<Mention> mentions = new HashSet<>();
 
@@ -32,6 +35,7 @@ public class Token implements Comparable<Token> {
 	private Case tokenCase = Case.UNKNOWN;
 	private Gender gender = Gender.UNKNOWN;
 	private Person person = Person.UNKNOWN;
+	private PronType pronounType = PronType.UNKNOWN;
 
 	public Token() {
 	}
@@ -45,6 +49,14 @@ public class Token implements Comparable<Token> {
 		this.tokenCase = MorphoUtils.getCase(tag);
 		this.gender = MorphoUtils.getGender(tag);
 		this.person = MorphoUtils.getPerson(tag);
+	}
+	
+	public Node getNode() {
+		return node;
+	}
+
+	public void setNode(Node node) {
+		this.node = node;
 	}
 
 	public String getWord() {
@@ -145,6 +157,18 @@ public class Token implements Comparable<Token> {
 	public Person getPerson() {
 		return person;
 	}
+	
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+
+	public PronType getPronounType() {
+		return pronounType;
+	}
+
+	public void setPronounType(PronType pronounType) {
+		this.pronounType = pronounType;
+	}
 
 	public Set<Mention> getMentions() {
 		return mentions;
@@ -197,6 +221,11 @@ public class Token implements Comparable<Token> {
 		return mentions;
 	}
 
+	public boolean isProper() {
+		if (getLemma().length() > 0 && Character.isUpperCase(getLemma().charAt(0))) return true;
+		return false;
+	}
+	
 	public int compareTo(Token o) {
 		return getPosition().compareTo(o.getPosition());
 	}
@@ -217,7 +246,9 @@ public class Token implements Comparable<Token> {
 	}
 
 	public static void main(String[] args) {
-
+		Token t = new Token("mašīnu", "mašīna", "n_____");
+		System.out.println(t);
+		System.err.println(t.getClass().getMethods()[2].toString());
 	}
 
 }

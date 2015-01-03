@@ -48,6 +48,24 @@ public class MentionCategory {
 		}
 		return true;
 	}
+	
+	public boolean weakEquals(Object obj) {
+		if (obj == null)
+			return false;
+		if (this.category == Category.unknown) return true;
+		if (obj instanceof Category) {
+			Category oCategory = (Category) obj;
+			if (oCategory == Category.unknown) return true;
+			return category == oCategory;
+		} else	if (obj instanceof MentionCategory) {
+			MentionCategory otherMention = (MentionCategory) obj;
+			if (otherMention.category == Category.unknown) return true;
+			if (category != otherMention.category) return false;
+		} else {
+			return false;
+		}
+		return true;
+	}
 
 	public String toString() {
 		return category.toString();

@@ -1,5 +1,6 @@
 package lv.coref.data;
 
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -8,6 +9,7 @@ import lv.coref.lv.Constants.Case;
 import lv.coref.lv.Constants.Gender;
 import lv.coref.lv.Constants.Number;
 import lv.coref.lv.Constants.PosTag;
+import lv.coref.lv.Constants.PronType;
 import lv.coref.lv.Constants.Type;
 
 public class Mention implements Comparable<Mention> {
@@ -20,7 +22,12 @@ public class Mention implements Comparable<Mention> {
 	private Node parent;
 
 	public Node getParent() {
-		return parent;
+		if (parent != null)
+			return parent;
+		else {
+			return getLastHeadToken().getNode();
+		}
+		
 	}
 
 	public void setParent(Node parent) {
@@ -129,6 +136,12 @@ public class Mention implements Comparable<Mention> {
 		if (type == Type.PRON || getLastHeadToken().getPosTag() == PosTag.P) return true;
 		return false;
 	}
+	
+	public PronType getPronounType() {
+		Token t = getLastHeadToken();
+		if (isPronoun()) return getLastHeadToken().getPronounType();
+		return PronType.UNKNOWN;
+	}
 
 	public Gender getGender() {
 		return getLastHeadToken().getGender();
@@ -142,19 +155,19 @@ public class Mention implements Comparable<Mention> {
 		return getLastHeadToken().getTokenCase();
 	}
 
-	public String getLemma() {
-		StringBuffer sb = new StringBuffer();
-		for (Token t : tokens)
-			sb.append(" " + t.getLemma());
-		return sb.toString().trim();
-	}
-
-	public String getHeadLemma() {
-		StringBuffer sb = new StringBuffer();
-		for (Token t : heads)
-			sb.append(" " + t.getLemma());
-		return sb.toString().trim();
-	}
+//	public String getLemma() {
+//		StringBuffer sb = new StringBuffer();
+//		for (Token t : tokens)
+//			sb.append(" " + t.getLemma());
+//		return sb.toString().trim();
+//	}
+//
+//	public String getHeadLemma() {
+//		StringBuffer sb = new StringBuffer();
+//		for (Token t : heads)
+//			sb.append(" " + t.getLemma());
+//		return sb.toString().trim();
+//	}
 	
 
 	public Type getType() {
@@ -351,7 +364,8 @@ public class Mention implements Comparable<Mention> {
 		for (Token seg : tokens) {
 			sb.append(seg.toString() + " ");
 		}
-		sb.append("|").append(getID());
+		sb.append("|").append(getMentionChain().getID());
+//		sb.append("|").append(getID());
 		sb.append("|").append(getCategory());
 		sb.append("|").append(getType());
 		// sb.append(toParamString());
@@ -363,8 +377,8 @@ public class Mention implements Comparable<Mention> {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		// sb.append("#").append(getID());
-		sb.append("*").append(getHeadLemma());
-		sb.append("*").append(getLemma());
+		sb.append("*").append(getHeadLemmaString());
+		sb.append("*").append(getLemmaString());
 		sb.append("*").append(getNumber());
 		sb.append("*").append(getGender());
 		sb.append(String.format("*(%d,%d,%d)", getParagraph().getPosition(),

@@ -13,12 +13,12 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
-import de.ims.icarus.plugins.core.IcarusFrame.PerspectiveContainer;
-import de.ims.icarus.plugins.core.Perspective;
-import de.ims.icarus.plugins.coref.CoreferencePerspective;
-import de.ims.icarus.plugins.coref.view.CoreferenceDocumentDataPresenter;
-import de.ims.icarus.plugins.coref.view.CoreferenceDocumentView;
-import de.ims.icarus.plugins.coref.view.CoreferenceExplorerView;
+//import de.ims.icarus.plugins.core.IcarusFrame.PerspectiveContainer;
+//import de.ims.icarus.plugins.core.Perspective;
+//import de.ims.icarus.plugins.coref.CoreferencePerspective;
+//import de.ims.icarus.plugins.coref.view.CoreferenceDocumentDataPresenter;
+//import de.ims.icarus.plugins.coref.view.CoreferenceDocumentView;
+//import de.ims.icarus.plugins.coref.view.CoreferenceExplorerView;
 
 
 
@@ -84,8 +84,8 @@ public class Visual {
 //		pers.init(container);
         
         
-		CoreferencePerspective p = new CoreferencePerspective();
-		p.init(container);
+//		CoreferencePerspective p = new CoreferencePerspective();
+//		p.init(container);
 		//c.init(container);
 
 		

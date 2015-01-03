@@ -10,9 +10,10 @@ public class ExactMatch extends Rule {
 	public String getName() {
 		return "EXACTMATCH";
 	}
-
+	
 	public boolean filter(Mention m, Mention a) {
-		if (m.isProperMention() || a.isProperMention()) return false;
+		if (m.isPronoun() || a.isPronoun()) return false;
+		if (!m.isProperMention() && !a.isProperMention()) return false;
 		return true;
 	}
 

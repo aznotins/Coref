@@ -69,10 +69,16 @@ public class Node {
 	public void setHead(Token head) {
 		this.heads.clear();
 		this.heads.add(head);
+		head.setNode(this);
 	}
 
 	public List<Token> getHeads() {
 		return heads;
+	}
+	
+	public Token getHead() {
+		if (heads.size() > 0) return heads.get(0);
+		else return null;
 	}
 
 	public void setParent(Node parent) {
