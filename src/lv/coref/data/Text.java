@@ -46,6 +46,20 @@ public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
 		return mc;
 	}
 	
+	public void  removeSingletons() {
+		for (Mention m : getMentions()) {
+			if (m.getMentionChain().size() < 2) {
+				for (Mention mm : m.getMentionChain()) {
+					for (Token t : mm.getTokens()) {
+						t.removeMention(mm);
+					}
+					mm.getSentence().removeMention(mm);
+				}
+				removeMentionChain(m.getMentionChain());
+			}
+		}
+	}
+	
 	public MentionChain getMentionChain(String id) {
 		return mentionChains.get(id);
 	}

@@ -24,7 +24,7 @@ public abstract class Rule {
 	public Mention getFirst(Mention m) {
 		Mention first = null;
 		for (Mention a : getPotentialAntecedents(m)) {
-			if (filter(m, a) && score(m, a) > 0.5) {
+			if (filter(m, a) && score(m, a) > 0.49) {
 				//System.out.println(getName()+ "FILTER" + m + "\n" + a);
 				first = a;
 				break;

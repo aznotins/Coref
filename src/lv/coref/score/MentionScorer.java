@@ -1,5 +1,7 @@
 package lv.coref.score;
 
+import java.util.List;
+
 import lv.coref.data.Mention;
 import lv.coref.data.Sentence;
 import lv.coref.data.Text;
@@ -9,6 +11,12 @@ public class MentionScorer {
 	private Scorer boundaryScorer = new Scorer();
 	private Scorer headScorer = new Scorer();
 
+	public void add(List<Text> texts) {
+		for (Text t : texts) {
+			add(t);
+		}
+	}
+	
 	public void add(Text text) {
 		Text pairedText = text.getPairedText();
 		if (pairedText == null)

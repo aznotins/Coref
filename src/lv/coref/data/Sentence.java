@@ -1,6 +1,7 @@
 package lv.coref.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,7 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import lv.coref.mf.MentionFinder;
+import lv.coref.util.StringUtils;
 import lv.coref.util.Triple;
 
 public class Sentence extends ArrayList<Token> {
@@ -40,6 +44,18 @@ public class Sentence extends ArrayList<Token> {
 	public void setParagraph(Paragraph paragraph) {
 		this.paragraph = paragraph;
 	}
+	
+	public Sentence getPairedSentence() {
+		Sentence s = null;
+		Text pairedText = getParagraph().getText().getPairedText();
+		if (pairedText != null) {
+			Paragraph pairedParagraph = pairedText.get(getParagraph().getPosition());
+			if (pairedParagraph != null) {
+				s = pairedParagraph.get(getPosition());
+			}
+		}
+		return s;
+	}
 
 	public Integer getPosition() {
 		return position;
@@ -51,6 +67,13 @@ public class Sentence extends ArrayList<Token> {
 
 	public List<Mention> getMentions() {
 		return new ArrayList<>(mentions);
+	}
+	
+	public List<Mention> getOrderedMentions() {
+		List<Mention> mentions = new ArrayList<>();
+		mentions.addAll(getMentions());
+		Collections.sort(mentions);
+		return mentions;
 	}
 
 	public void addMention(Mention mention) {
@@ -226,15 +249,16 @@ public class Sentence extends ArrayList<Token> {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (Token t : this) {
 			for (@SuppressWarnings("unused")
 			Mention m : t.getStartMentions()) {
 				sb.append("[");
-			}
+			}	
 			sb.append(t.toString());
 			for (Mention m : t.getEndMentions()) {
-				sb.append(" |").append(m.getType());
+				sb.append(" |").append(m.getCategory());
+				sb.append("|").append(m.getType());
 				if (m.getMentionChain() != null)
 					sb.append("|").append(m.getMentionChain().getID());
 				sb.append("|").append(m.getID());
@@ -243,6 +267,10 @@ public class Sentence extends ArrayList<Token> {
 			}
 			sb.append(" ");
 		}
+		String tmpText = sb.toString();
+		tmpText = WordUtils.wrap(tmpText, 100, "\n\t", true);
+		sb = new StringBuilder(tmpText);
+		
 //		for (Mention m : getMentions()) {
 //			sb.append("\n\t");
 //			if (m.getMention(false) != null)

@@ -1,20 +1,15 @@
 package lv.coref.io;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
-import lv.coref.mf.MentionFinder;
-import lv.coref.util.StringUtils;
-import lv.coref.util.Triple;
 import lv.coref.data.Mention;
 import lv.coref.data.MentionChain;
 import lv.coref.data.NamedEntity;
@@ -22,6 +17,9 @@ import lv.coref.data.Paragraph;
 import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.data.Token;
+import lv.coref.mf.MentionFinder;
+import lv.coref.util.StringUtils;
+import lv.coref.util.Triple;
 
 public class ConllReaderWriter {
 
@@ -347,9 +345,16 @@ public class ConllReaderWriter {
 	}
 
 	public void write(String filename, Text t) {
+		write(filename, Arrays.asList(t));
+	}
+	
+	public void write(String filename, List<Text> texts) {
 		try {
 			PrintStream ps = new PrintStream(new File(filename), "UTF8");
-			write(ps, t);
+			for (Text t : texts) {
+				initialize(t);
+				write(ps, t);
+			}
 			ps.close();
 		} catch (IOException ex) {
 			System.err.println("Problem writing output to " + filename);
@@ -368,8 +373,7 @@ public class ConllReaderWriter {
 				Sentence sentence = paragraph.get(iSen);
 				for (int iTok = 0; iTok < sen.size(); iTok++) {
 					List<String> tok = sen.get(iTok);
-					Token token = sentence.get(iTok);					
-
+					Token token = sentence.get(iTok);
 					StringBuilder coref = new StringBuilder();
 					StringBuilder corefCat = new StringBuilder();
 
@@ -432,11 +436,17 @@ public class ConllReaderWriter {
 	public static void main(String[] args) throws IOException {
 		ConllReaderWriter rw = new ConllReaderWriter();
 		Text t = rw.getText("data/test.corefconll");
+		
+		
 		System.out.println(t);
 		for (MentionChain mc : t.getMentionChains()) {
 			if (mc.size() > 1)
 				System.out.println(mc);
 		}
+		
+		Text t2 = rw.getText("data/test.corefconll");
+		rw.write("tmp/twofiles.out", Arrays.asList(t,t2));
+		
 	}
 
 }

@@ -106,12 +106,12 @@ public class Scorer {
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		NumberFormat nf = new DecimalFormat("0.0000");
-		NumberFormat nfsimple = new DecimalFormat("0.0");
+		NumberFormat nf = new DecimalFormat("0.00");
+		NumberFormat nfsimple = new DecimalFormat("0");
 
-		sb.append(nf.format(getF1()));
-		sb.append("\t").append(nf.format(getPrecision()));
-		sb.append("\t").append(nf.format(getRecall()));
+		sb.append(nf.format(getF1() * 100));
+		sb.append("\t").append(nf.format(getPrecision() * 100));
+		sb.append("\t").append(nf.format(getRecall() * 100));
 		sb.append("\t").append(nfsimple.format(getTP()));
 		sb.append("\t").append(nfsimple.format(getFP()));
 		sb.append("\t").append(nfsimple.format(getFN()));

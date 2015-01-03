@@ -12,6 +12,8 @@ import lv.coref.lv.Constants.Type;
 
 public class MentionCleaner {
 
+	public static final boolean VERBOSE = false;
+
 	public static void cleanSentenceMentions(Sentence sentence) {
 		List<Mention> mentions = sentence.getMentions();
 		Collection<Mention> unnecessaryMentions = new HashSet<Mention>();
@@ -25,15 +27,16 @@ public class MentionCleaner {
 				Mention moreImportantMention = m1 == lessImportantMention ? m2
 						: m1;
 				if (true || m2.getType() == Type.NE) {
-					//System.err.println(m1 + " " + m2);
+					// System.err.println(m1 + " " + m2);
 				}
 
 				// same mention borders
 				if (m1.getTokens().equals(m2.getTokens())) {
 					unnecessaryMentions.add(lessImportantMention);
-					System.err.println("CLEAN Same borders: " + m1 + ", " + m2
-							+ ":    " + getLessImportantMention(m1, m2)
-							+ " removed");
+					if (VERBOSE)
+						System.err.println("CLEAN Same borders: " + m1 + ", "
+								+ m2 + ":    "
+								+ getLessImportantMention(m1, m2) + " removed");
 					continue;
 				}
 
@@ -53,9 +56,10 @@ public class MentionCleaner {
 						// }
 						// if (!isConj) {}
 						unnecessaryMentions.add(lessImportantMention);
-						System.err.println("CLEAN Same heads: " + m1 + ", "
-								+ m2 + ":    " + lessImportantMention
-								+ " removed");
+						if (VERBOSE)
+							System.err.println("CLEAN Same heads: " + m1 + ", "
+									+ m2 + ":    " + lessImportantMention
+									+ " removed");
 						continue;
 					}
 				}
@@ -64,9 +68,10 @@ public class MentionCleaner {
 				if (m1.getHeads().isEmpty() && !m2.getHeads().isEmpty()) {
 					if (m2.getHeads().equals(m1.getHeads())) {
 						unnecessaryMentions.add(lessImportantMention);
-						System.err.println("CLEAN head is other mention: " + m1
-								+ ", " + m2 + " : " + lessImportantMention
-								+ " removed");
+						if (VERBOSE)
+							System.err.println("CLEAN head is other mention: "
+									+ m1 + ", " + m2 + " : "
+									+ lessImportantMention + " removed");
 						continue;
 					}
 				}
@@ -75,9 +80,10 @@ public class MentionCleaner {
 				if (!m2.getHeads().isEmpty() && !m1.getHeads().isEmpty()) {
 					if (m1.getHeads().equals(m2.getHeads())) {
 						unnecessaryMentions.add(lessImportantMention);
-						System.err.println("CLEAN head is other mention: " + m1
-								+ ", " + m2 + " : " + lessImportantMention
-								+ " removed");
+						if (VERBOSE)
+							System.err.println("CLEAN head is other mention: "
+									+ m1 + ", " + m2 + " : "
+									+ lessImportantMention + " removed");
 						continue;
 
 					}
@@ -101,26 +107,27 @@ public class MentionCleaner {
 
 				if (intersect && !notInM1.isEmpty() && !notInM2.isEmpty()) {
 					unnecessaryMentions.add(lessImportantMention);
-					System.err.println("CLEAN intersection!" + m1 + ", " + m2
-							+ ":    " + getLessImportantMention(m1, m2)
-							+ " removed");
+					if (VERBOSE)
+						System.err.println("CLEAN intersection!" + m1 + ", "
+								+ m2 + ":    "
+								+ getLessImportantMention(m1, m2) + " removed");
 					continue;
 				}
-				
-				
+
 				// Nested in Named Enitity
 				if (intersect && notInM1.isEmpty() && m1.getType() == Type.NE) {
 					unnecessaryMentions.add(m2);
-					System.err.println("CLEAN Nested in NE!" + m1 + ", " + m2
-							+ ":    " + m2
-							+ " removed");
+					if (VERBOSE)
+						System.err.println("CLEAN Nested in NE!" + m1 + ", "
+								+ m2 + ":    " + m2 + " removed");
 				}
-//				if (intersect && notInM2.isEmpty() && m2.getType() == Type.NE) {
-//					unnecessaryMentions.add(m1);
-//					System.err.println("CLEAN Nested in NE!" + m1 + ", " + m2
-//							+ ":    " + m1
-//							+ " removed");
-//				}
+				// if (intersect && notInM2.isEmpty() && m2.getType() ==
+				// Type.NE) {
+				// unnecessaryMentions.add(m1);
+				// System.err.println("CLEAN Nested in NE!" + m1 + ", " + m2
+				// + ":    " + m1
+				// + " removed");
+				// }
 			}
 		}
 		for (Mention m : unnecessaryMentions) {

@@ -1,7 +1,9 @@
 package lv.coref.score;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,23 +36,23 @@ public class ConllEvalScorer {
 	public ConllEvalScorer(boolean scoreHeads) {
 		this.scoreHeads = scoreHeads;
 	}
-	
+
 	private Text createHeadMockup(Text t) {
 		String textFile = "tmp/" + UUID.randomUUID() + ".conll";
 		new ConllReaderWriter().write(textFile, t);
 		String goldTextFile = "tmp/" + UUID.randomUUID() + ".conll";
 		new ConllReaderWriter().write(goldTextFile, t.getPairedText());
-		
+
 		Text copyText = new ConllReaderWriter().getText(textFile);
 		Text copyGoldText = new ConllReaderWriter().getText(goldTextFile);
 		convertToHeadMentions(copyText);
 		convertToHeadMentions(copyGoldText);
-		copyText.setPairedText(copyGoldText);	
+		copyText.setPairedText(copyGoldText);
 		copyGoldText.setPairedText(copyText);
-		//System.out.println(copyText);
+		// System.out.println(copyText);
 		return copyText;
 	}
-	
+
 	private void convertToHeadMentions(Text text) {
 		for (Mention m : text.getMentions()) {
 			for (Token t : m.getTokens()) {
@@ -61,62 +63,133 @@ public class ConllEvalScorer {
 				m.getHeads().get(0).addMention(m);
 			} else {
 				System.err.println("No heads for mention : " + m);
-			}			
+			}
 		}
 		for (Sentence s : text.getSentences()) {
 			for (Token t : s) {
 				if (t.getMentions().size() > 1) {
-					System.err.println("convertToHeadMentions multiple mentions on token (keep first) " + t + " : " + t.getMentions());
-					//t.getMentions().iterator().next();
+					System.err
+							.println("convertToHeadMentions multiple mentions on token (keep first) "
+									+ t + " : " + t.getMentions());
+					// t.getMentions().iterator().next();
 				}
 			}
 		}
 	}
-	
-	public String add(Text text) {
+
+	public void add(Text text) {
+		add(Arrays.asList(text));
+	}
+
+	public void add(List<Text> scoreTexts) {
 		try {
-			if (scoreHeads) text = createHeadMockup(text);
+			List<Text> texts = new ArrayList<>(scoreTexts.size());
+			List<Text> goldTexts = new ArrayList<>(scoreTexts.size());
+			for (Text t : scoreTexts) {
+				if (scoreHeads)
+					t = createHeadMockup(t);				
+				texts.add(t);
+				if (t.getPairedText() == null) {
+					System.err.println("No paired text set for " + t.getId());
+					return;
+				}
+				t.getPairedText().setId(t.getId());
+				goldTexts.add(t.getPairedText());				
+//				System.err.println(t);
+//				System.err.println(t.getPairedText());
+			}
 			
+			String textFile = "tmp/" + scoreTexts.size() + "_" + UUID.randomUUID() + ".conll";
+			String goldTextFile = "tmp/" + scoreTexts.size() + "_" + UUID.randomUUID() + ".corefconll";
 			ConllReaderWriter rw = new ConllReaderWriter();
-
-			String textFile = "tmp/" + UUID.randomUUID() + ".conll";
-			rw.write(textFile, text);
-
-			Text goldText = text.getPairedText();
-			if (goldText == null) {
-				System.err.println("No paired text set for " + text.getId());
-				return "";
-			}
-			String goldTextFile = "tmp/" + UUID.randomUUID() + ".corefconll";
-			goldText.setId(text.getId());
-			rw.write(goldTextFile, goldText);
-
-			ProcessBuilder process = new ProcessBuilder("perl", EVAL_SCRIPT,
-					"all", goldTextFile, textFile, "none"); // "none"
-			StringOutputStream errSos = new StringOutputStream();
-			StringOutputStream outSos = new StringOutputStream();
-			PrintWriter out = new PrintWriter(outSos);
-			PrintWriter err = new PrintWriter(errSos);
-			SystemUtils.run(process, out, err);
-			out.close();
-			err.close();
-			resultSummary = outSos.toString();
-			String errStr = errSos.toString();
-			if (errStr.length() > 0) {
-				resultSummary += "\nERROR: " + errStr;
-			}
-			// System.err.println(resultSummary);
-			parseResultSummary(resultSummary);
+			rw.write(textFile, texts);
+			rw.write(goldTextFile, goldTexts);
+			
+			runMetricScorer("muc", goldTextFile, textFile);
+			runMetricScorer("bcub", goldTextFile, textFile);
+//			runMetricScorer("ceafe", goldTextFile, textFile);
+			
+			averagedScorer.setPrecision((mucScorer.getPrecision() + bCubedScorer.getPrecision()) / 2.0);
+			averagedScorer.setRecall((mucScorer.getRecall()	+ bCubedScorer.getRecall()) / 2.0);
+			averagedScorer.setF1((mucScorer.getF1() + bCubedScorer.getF1()) / 2.0);
+			
+//			averagedScorer.setPrecision((mucScorer.getPrecision() + bCubedScorer.getPrecision() + ceafEScorer.getPrecision()) / 3.0);
+//			averagedScorer.setRecall((mucScorer.getRecall()	+ bCubedScorer.getRecall() + ceafEScorer.getRecall()) / 3.0);
+//			averagedScorer.setF1((mucScorer.getF1() + bCubedScorer.getF1() + ceafEScorer.getF1()) / 3.0);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		return resultSummary;
+	}
+	
+	public void runMetricScorer(String metric, String refFile, String hypFile) {
+		ProcessBuilder process = new ProcessBuilder("perl", EVAL_SCRIPT,
+				metric, refFile, hypFile, "none"); // "none"
+		StringOutputStream errSos = new StringOutputStream();
+		StringOutputStream outSos = new StringOutputStream();
+		PrintWriter out = new PrintWriter(outSos);
+		PrintWriter err = new PrintWriter(errSos);
+		SystemUtils.run(process, out, err);
+		out.close();
+		err.close();
+		String resultSummary = outSos.toString();
+		String errStr = errSos.toString();
+		if (errStr.length() > 0) {
+			resultSummary += "\nERROR: " + errStr;
+		}
+		this.resultSummary += resultSummary;
+		parseResultSummary(resultSummary, metric);
 	}
 
 	public String getSummary() {
 		return resultSummary;
 	}
+	
+	public void parseResultSummary(String summary, String metric) {
+		Pattern f1 = Pattern
+				.compile("(?:Coreference|BLANC):.*Recall: \\((\\d+\\.?\\d*) / (\\d+\\.?\\d*)\\) (.*)%\tPrecision: \\((\\d+\\.?\\d*) / (\\d+\\.?\\d*)\\) (.*)%\tF1: (.*)%");
+		Matcher f1Matcher = f1.matcher(summary);
+		int count = 5;
+		Double[] F1s = new Double[count];
+		Double[] Ps = new Double[count];
+		Double[] Rs = new Double[count];
+		Double[] tp = new Double[count];
+		Double[] tpfn = new Double[count];
+		Double[] tpfp = new Double[count];
+		String[] names = new String[count];
+		int i = 0;
+		while (f1Matcher.find()) {
+			names[i] = f1Matcher.group(1);
+			tp[i] = Double.parseDouble(f1Matcher.group(1));
+			tpfn[i] = Double.parseDouble(f1Matcher.group(2));
+			Rs[i] = Double.parseDouble(f1Matcher.group(3));
+			tpfp[i] = Double.parseDouble(f1Matcher.group(5));
+			Ps[i] = Double.parseDouble(f1Matcher.group(6));
+			F1s[i] = Double.parseDouble(f1Matcher.group(7));
+			i++;
+		}
+		
+		if (!metric.equals("all")) {
+		
+			Scorer s = new Scorer();
+			if (metric.equals("muc")) s = mucScorer;
+			else if (metric.equals("bcub")) s = bCubedScorer;
+			else if (metric.equals("ceafe")) s = ceafEScorer;
+			else if (metric.equals("ceafm")) s = ceafMScorer;
+			else if (metric.equals("blanc")) s = blancScorer;
+			
+			s.setPrecision(Ps[0] / 100.0);
+			s.setRecall(Rs[0] / 100.0);
+			s.setF1(F1s[0] / 100.0);
+			s.setTP(tp[0]);
+			s.setFP(tpfp[0] - tp[0]);
+			s.setFN(tpfn[0] - tp[0]);
+		} else {
+			parseResultSummary(summary);
+		}
+	
+	}
+	
 
 	/** Average F1 of MUC, B^3, CEAF_E */
 	public void parseResultSummary(String summary) {
@@ -192,17 +265,6 @@ public class ConllEvalScorer {
 		blancScorer.setTP(tp[4]);
 		blancScorer.setFP(tpfp[4] - tp[4]);
 		blancScorer.setFN(tpfn[4] - tp[4]);
-
-		averagedScorer
-				.setPrecision((mucScorer.getPrecision()
-						+ bCubedScorer.getPrecision() + ceafEScorer
-						.getPrecision()) / 3.0);
-		averagedScorer.setRecall((mucScorer.getRecall()
-				+ bCubedScorer.getRecall() + ceafEScorer.getRecall()) / 3.0);
-		averagedScorer
-				.setF1((mucScorer.getF1() + bCubedScorer.getF1() + ceafEScorer
-						.getF1()) / 3.0);
-
 	}
 
 	@Override
@@ -210,9 +272,9 @@ public class ConllEvalScorer {
 		StringBuilder sb = new StringBuilder();
 		sb.append("muc: \t").append(mucScorer.toString());
 		sb.append("\nbcub: \t").append(bCubedScorer.toString());
-		sb.append("\nceafm: \t").append(ceafMScorer.toString());
-		sb.append("\nceafe: \t").append(ceafEScorer.toString());
-		sb.append("\nblanc: \t").append(blancScorer.toString());
+//		sb.append("\nceafm: \t").append(ceafMScorer.toString());
+//		sb.append("\nceafe: \t").append(ceafEScorer.toString());
+//		sb.append("\nblanc: \t").append(blancScorer.toString());
 		sb.append("\naveraged: \t").append(averagedScorer.toString());
 		return sb.toString();
 	}
@@ -226,6 +288,7 @@ public class ConllEvalScorer {
 		ConllEvalScorer s = new ConllEvalScorer(true);
 		s.add(t);
 		System.err.println(s);
+		System.err.println(s.getSummary());
 
 		// ProcessBuilder process1 = new ProcessBuilder("resource/test.bat");
 		// ProcessBuilder process = new ProcessBuilder("perl",
