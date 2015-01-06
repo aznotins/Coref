@@ -5,7 +5,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import lv.coref.lv.Constants.Category;
+
+/**
+ * Adding mention, changes mention (sets mentionChain to current)
+ * 
+ * @author Artūrs
+ *
+ */
 public class MentionChain extends HashSet<Mention> {
 
 	private static final long serialVersionUID = 6267185173283516621L;
@@ -16,38 +25,75 @@ public class MentionChain extends HashSet<Mention> {
 	public MentionChain(String id) {
 		this.id = id;
 	}
+	
+	public MentionChain(String id, Mention m) {
+		this(id);
+		add(m);
+		this.id = id;
+	}
 
 	public MentionChain(Mention m) {
-		add(m);
+		this(m.getID(), m);
+	}
+
+//	public Text getText() {
+//		return text;
+//	}
+//
+//	public void setText(Text text) {
+//		this.text = text;
+//	}
+
+	public Category getCategory() {
+		for (Mention m : this) {
+			if (!m.getCategory().equals(Category.unknown))
+				return m.getCategory();
+		}
+		return Category.unknown;
+	}
+
+	public Set<String> getProperTokens() {
+		Set<String> attr = new HashSet<>();
+		for (Mention m : this) {
+			attr.addAll(m.getProperTokens());
+		}
+		return attr;
+	}
+
+	public boolean weakAgreement(MentionChain o) {
+		boolean ok = true;
+		Category mcat = getCategory();
+		if (!mcat.weakEquals(o.getCategory()))
+			return false;
+		Set<String> properTokens = getProperTokens();
+		for (String oProperToken : o.getProperTokens()) {
+			if (!properTokens.contains(oProperToken))
+				return false;
+		}
+		return ok;
+	}
+
+	public boolean isProper() {
+		for (Mention m : this) {
+			if (m.isProperMention())
+				return true;
+		}
+		return false;
 	}
 
 	public boolean add(Mention m) {
 		m.setMentionChain(this);
-		if (isLaterMention(first, m)) {
+		if (first == null || m.isBefore(first)) {
 			first = m;
-			this.id = m.getID();
+		}
+		if (representative == null || m.isMoreRepresentativeThan(representative)) {
+			representative = m;
 		}
 		return super.add(m);
 	}
 
-	public boolean isLaterMention(Mention m, Mention t) {
-		if (m == null)
-			return true;
-		if (t == null)
-			return false;
-		if (m.getParagraph().getPosition() > t.getParagraph().getPosition())
-			return true;
-		if (m.getParagraph().getPosition() < t.getParagraph().getPosition())
-			return false;
-		if (m.getSentence().getPosition() > t.getSentence().getPosition())
-			return true;
-		if (m.getSentence().getPosition() < t.getSentence().getPosition())
-			return false;
-		if (m.getLastToken().getPosition() > t.getLastToken().getPosition())
-			return true;
-		if (m.getLastToken().getPosition() < t.getLastToken().getPosition())
-			return false;
-		return false;
+	public boolean remove(Object o) {
+		return super.remove(o);
 	}
 
 	public boolean add(MentionChain mc) {
@@ -61,6 +107,7 @@ public class MentionChain extends HashSet<Mention> {
 
 	public String getID() {
 		return id;
+		
 	}
 
 	public void setID(String id) {

@@ -12,12 +12,12 @@ import java.util.Stack;
 
 import lv.coref.data.Mention;
 import lv.coref.data.MentionChain;
-import lv.coref.data.NamedEntity;
 import lv.coref.data.Paragraph;
 import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.data.Token;
 import lv.coref.mf.MentionFinder;
+import lv.coref.rules.Ruler;
 import lv.coref.util.StringUtils;
 import lv.coref.util.Triple;
 
@@ -36,7 +36,7 @@ public class ConllReaderWriter {
 	private static final int CONLL_COREF = 10;
 
 	private static final int CONLL_MAX = 10;
-	
+
 	private static final String CONLL_DEFAULT = "_";
 
 	/**
@@ -72,16 +72,18 @@ public class ConllReaderWriter {
 	public Text getText(List<List<List<List<String>>>> conll, String id) {
 		this.conll = conll;
 		this.conllID = id;
-		MentionFinder mf = new MentionFinder();
 		Text text = new Text(id);
-		for (List<List<List<String>>> par : conll) {
-			Paragraph paragraph = new Paragraph();
+		for (int iPar = 0; iPar < conll.size(); iPar++) {
+			List<List<List<String>>> par = conll.get(iPar);
+			Paragraph paragraph = new Paragraph(iPar);
 			paragraph.setText(text);
-			for (List<List<String>> sent : par) {
-				Sentence sentence = new Sentence();
+			for (int iSent = 0; iSent < par.size(); iSent++) {
+				List<List<String>> sent = par.get(iSent);
+				Sentence sentence = new Sentence(iSent);
 				boolean corefColumn = false;
-				for (List<String> tok : sent) {
-					int position = Integer.parseInt(tok.get(CONLL_POSITION));
+				for (int iTok = 0; iTok < sent.size(); iTok++) {
+					List<String> tok = sent.get(iTok);
+					// int position = Integer.parseInt(tok.get(CONLL_POSITION));
 					int parentPosition = Integer
 							.parseInt(tok.get(CONLL_PARENT));
 					String word = tok.get(CONLL_WORD);
@@ -89,15 +91,15 @@ public class ConllReaderWriter {
 					String tag = tok.get(CONLL_POS);
 					String pos = tok.get(CONLL_SPOS);
 					String morphoFeatures = tok.get(CONLL_MORPHO);
-					String ner = tok.get(CONLL_NER);
+					// String ner = tok.get(CONLL_NER);
 					String dep = tok.get(CONLL_DEP);
 					pos = (pos.length() > 0) ? pos : tag.substring(0, 1);
 
 					Token token = new Token(word, lemma, tag);
+					token.setPosition(iTok);
 					token.setMorphoFeatures(morphoFeatures);
 					token.setParent(parentPosition);
 					token.setDependency(dep);
-					token.setPosition(position - 1);
 					token.setPos(pos);
 					sentence.add(token);
 					if (tok.size() > CONLL_COREF)
@@ -110,8 +112,8 @@ public class ConllReaderWriter {
 				// sentence.initializeNamedEntities(getSpans(sent, CONLL_NER,
 				// "-", false));
 				if (corefColumn) {
-					sentence.initializeCoreferences(
-							getSpans(sent, CONLL_COREF, CONLL_DEFAULT, true), mf);
+					sentence.initializeCoreferences(getSpans(sent, CONLL_COREF,
+							CONLL_DEFAULT, true));
 					sentence.initializeMentionAttributes(
 							getSpans(sent, CONLL_COREF_CAT, CONLL_DEFAULT, true),
 							"category");
@@ -306,22 +308,25 @@ public class ConllReaderWriter {
 			conll.add(par);
 		return conll;
 	}
-	
+
 	private void initialize(Text text) {
 		conll = new ArrayList<>();
 		for (Paragraph p : text) {
 			List<List<List<String>>> sList = new ArrayList<>();
-			if (p.size() > 0) conll.add(sList);
+			if (p.size() > 0)
+				conll.add(sList);
 			for (Sentence s : p) {
 				List<List<String>> tList = new ArrayList<>();
-				if (s.size() > 0) sList.add(tList);
+				if (s.size() > 0)
+					sList.add(tList);
 				int tCounter = 0;
 				for (Token t : s) {
 					List<String> bits = new ArrayList<>(CONLL_MAX);
 					tList.add(bits);
-					
-					for (int i = 0; i <= CONLL_MAX; i++) bits.add(CONLL_DEFAULT);
-					
+
+					for (int i = 0; i <= CONLL_MAX; i++)
+						bits.add(CONLL_DEFAULT);
+
 					bits.set(CONLL_POSITION, Integer.toString(++tCounter));
 					bits.set(CONLL_WORD, t.getWord());
 					bits.set(CONLL_LEMMA, t.getLemma());
@@ -331,15 +336,17 @@ public class ConllReaderWriter {
 					bits.set(CONLL_MORPHO, t.getMorphoFeatures());
 					bits.set(CONLL_PARENT, t.getParent().toString());
 					bits.set(CONLL_DEP, t.getDependency());
+					bits.set(CONLL_NER, t.getNamedEntity() != null ? t
+							.getNamedEntity().getLabel() : "O");
 				}
-				
-				for (NamedEntity ne : s.getNamedEntities()) {
-					for (Token t : ne.getTokens()) {
-						tList.get(t.getPosition()).set(CONLL_NER, ne.getLabel());
-					}
-				}
-//				System.err.println(s);
-//				System.err.println(tList);
+
+				// for (NamedEntity ne : s.getNamedEntities()) {
+				// for (Token t : ne.getTokens()) {
+				// tList.get(t.getPosition()).set(CONLL_NER, ne.getLabel());
+				// }
+				// }
+				// System.err.println(s);
+				// System.err.println(tList);
 			}
 		}
 	}
@@ -347,7 +354,7 @@ public class ConllReaderWriter {
 	public void write(String filename, Text t) {
 		write(filename, Arrays.asList(t));
 	}
-	
+
 	public void write(String filename, List<Text> texts) {
 		try {
 			PrintStream ps = new PrintStream(new File(filename), "UTF8");
@@ -362,7 +369,8 @@ public class ConllReaderWriter {
 	}
 
 	public void write(PrintStream out, Text t) {
-		if (conll == null) initialize(t);		
+		if (conll == null)
+			initialize(t);
 		StringBuilder s = new StringBuilder();
 		s.append("#begin document (" + t.getId() + "); part 000\n");
 		for (int iPar = 0; iPar < conll.size(); iPar++) {
@@ -434,19 +442,24 @@ public class ConllReaderWriter {
 	}
 
 	public static void main(String[] args) throws IOException {
+		Text t;
 		ConllReaderWriter rw = new ConllReaderWriter();
-		Text t = rw.getText("data/test.corefconll");
+		//t = rw.getText("data/test.corefconll");
+		t = rw.getText("data/test.conll");
 		
-		
+		new MentionFinder().findMentions(t);
+		new Ruler().resolve(t);
+
 		System.out.println(t);
 		for (MentionChain mc : t.getMentionChains()) {
 			if (mc.size() > 1)
 				System.out.println(mc);
 		}
 		
-		Text t2 = rw.getText("data/test.corefconll");
-		rw.write("tmp/twofiles.out", Arrays.asList(t,t2));
 		
+//		Text t2 = rw.getText("data/test.corefconll");
+//		rw.write("tmp/twofiles.out", Arrays.asList(t, t2));
+
 	}
 
 }

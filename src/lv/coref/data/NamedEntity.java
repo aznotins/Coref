@@ -12,6 +12,7 @@ public class NamedEntity implements Comparable<NamedEntity> {
 	public NamedEntity(String label, List<Token> tokens) {
 		this.label = label;
 		this.tokens = tokens;
+		for (Token t : tokens) t.setNamedEntity(this);
 	}
 	
 	public void setLabel(String label) { this.label = label; }

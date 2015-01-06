@@ -8,6 +8,7 @@ import java.util.Set;
 import lv.coref.data.Mention;
 import lv.coref.data.Sentence;
 import lv.coref.data.Token;
+import lv.coref.lv.Constants.Category;
 import lv.coref.lv.Constants.Type;
 
 public class MentionCleaner {
@@ -115,12 +116,12 @@ public class MentionCleaner {
 				}
 
 				// Nested in Named Enitity
-				if (intersect && notInM1.isEmpty() && m1.getType() == Type.NE) {
-					unnecessaryMentions.add(m2);
-					if (VERBOSE)
-						System.err.println("CLEAN Nested in NE!" + m1 + ", "
-								+ m2 + ":    " + m2 + " removed");
-				}
+//				if (intersect && notInM1.isEmpty() && m1.getType() == Type.NE) {
+//					unnecessaryMentions.add(m2);
+//					if (VERBOSE)
+//						System.err.println("CLEAN Nested in NE!" + m1 + ", "
+//								+ m2 + ":    " + m2 + " removed");
+//				}
 				// if (intersect && notInM2.isEmpty() && m2.getType() ==
 				// Type.NE) {
 				// unnecessaryMentions.add(m1);
@@ -136,9 +137,23 @@ public class MentionCleaner {
 	}
 
 	private static Mention getLessImportantMention(Mention m1, Mention m2) {
-		if (m1.getTokens().size() > m2.getTokens().size())
+		if (m1.getTokens().size() > m2.getTokens().size()) {
 			return m2;
-		else
+		} else if (m1.getTokens().size() < m2.getTokens().size()) {
 			return m1;
+		} else {
+			if (m2.isProperMention() && !m1.isProperMention()) {
+				return m1;
+			} else if (!m2.isProperMention() && m1.isProperMention()) {
+				return m2;
+			} else {
+				if (!m2.getCategory().equals(Category.unknown) && m1.getCategory().equals(Category.unknown)) {
+					return m1;
+				} else if (!m2.getCategory().equals(Category.unknown) && m1.getCategory().equals(Category.unknown)) {
+					return m2;
+				}
+			}
+		}
+		return m2;
 	}
 }

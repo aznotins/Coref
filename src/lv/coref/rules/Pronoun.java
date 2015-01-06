@@ -1,11 +1,11 @@
 package lv.coref.rules;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import lv.coref.data.Mention;
+import lv.coref.lv.Constants.Category;
 import lv.coref.lv.Constants.Person;
 import lv.coref.lv.Constants.PronType;
 
@@ -53,19 +53,23 @@ public class Pronoun extends Rule {
 			return false;
 			
 			int d = ms - ae;
+			
 		}
-
-
-
+		if (m.getPronounType().equals(PronType.POSSESIVE) && !a.getMentionChain().isProper()) return false;
 		return true;
 	}
 
 	public double score(Mention m, Mention a) {
 		double prob = 1.0;
-		if (m.getPronounType() != PronType.POSSESIVE && !m.getGender().equals(a.getGender()))
+		if (!(m.getPronounType().equals(PronType.POSSESIVE) || m.getGender().strictEquals(a.getGender()))) //TODO weakEquals?
 			prob *= 0.05;
-		if (m.getPronounType() != PronType.POSSESIVE && !m.getNumber().equals(a.getNumber()))
+		if (!(m.getPronounType().equals(PronType.POSSESIVE) || m.getNumber().strictEquals(a.getNumber()))) //TODO weakEquals?
 			prob *= 0.05;
+		if (m.getPronounType().equals(PronType.PERSONAL) && !m.getCategory().strictEquals(a.getMentionChain().getCategory()))
+			prob *= 0.05;
+		if ((m.getLemmaString().equals("savs") || m.getLemmaString().equals("sava")) 
+				&& !(a.getMentionChain().getCategory().strictEquals(Category.organization) 
+						|| a.getMentionChain().getCategory().strictEquals(Category.person))) prob *= 0.05;
 		if (!m.getCategory().weakEquals(a.getCategory()))
 			prob *= 0.05;
 

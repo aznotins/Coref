@@ -1,11 +1,14 @@
 package lv.coref.data;
 
-import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
 import lv.coref.lv.Constants.Case;
+import lv.coref.lv.Constants.Category;
 import lv.coref.lv.Constants.Gender;
 import lv.coref.lv.Constants.Number;
 import lv.coref.lv.Constants.PosTag;
@@ -18,7 +21,7 @@ public class Mention implements Comparable<Mention> {
 	private List<Token> heads = new ArrayList<>();
 	private String id;
 	private Type type = Type.UNKNOWN;
-	private MentionCategory category = new MentionCategory();
+	private Category category = Category.unknown;
 	private Node parent;
 
 	public Node getParent() {
@@ -27,40 +30,111 @@ public class Mention implements Comparable<Mention> {
 		else {
 			return getLastHeadToken().getNode();
 		}
-		
 	}
 
 	public void setParent(Node parent) {
 		this.parent = parent;
 	}
 
-	public Mention() {
-		// TODO null id for mention chain
-		MentionChain mc = new MentionChain(this);
-		setMentionChain(mc);
-	}
+	// public Mention() {
+	// // TODO null id for mention chain
+	// MentionChain mc = new MentionChain(this);
+	// setMentionChain(mc);
+	// }
 
-	public Mention(List<Token> tokens, List<Token> heads, String id) {
+	public Mention(String id, List<Token> tokens, List<Token> heads) {
 		for (Token t : tokens) {
 			t.addMention(this);
 			this.tokens.add(t);
 		}
 		this.heads = heads;
 		this.id = id;
-		MentionChain mc = new MentionChain(this);
-		setMentionChain(mc);
 	}
 
-	public Mention(Token token) {
+	public Mention(List<Token> tokens, List<Token> heads) {
+		this(null, tokens, heads);
+	}
+
+	public Mention(String id, Token token) {
+		this.id = id;
 		this.tokens.add(token);
 		token.addMention(this);
 		this.heads.add(token);
-		MentionChain mc = new MentionChain(this);
-		setMentionChain(mc);
+	}
+
+	public boolean isProperMention() {
+		if (type == Type.NE)
+			return true;
+		return false;
+	}
+
+	public boolean isAcronym() {
+		if (tokens.size() > 1)
+			return false;
+		Token t = getFirstToken();
+		return t.isAcronym();
+	}
+
+	public boolean isAcronymOf(String acronym) {
+		if (!isProperMention())
+			return false;
+		Set<String> exclude = new HashSet<String>(Arrays.asList("un", ",",
+				"\"", "'"));
+		String s = "";
+		for (Token t : getTokens()) {
+			if (!exclude.contains(t.getLemma()))
+				s += t.getWord().charAt(0);
+		}
+		return s.toUpperCase().equals(acronym.toUpperCase());
 	}
 	
-	public boolean isProperMention() {
-		if (type == Type.NE) return true;
+	public boolean isBefore(Mention o) {
+		if (o == null)
+			return false;
+		if (getParagraph().getPosition() > o.getParagraph().getPosition())
+			return true;
+		if (getParagraph().getPosition() < o.getParagraph().getPosition())
+			return false;
+		if (getSentence().getPosition() > o.getSentence().getPosition())
+			return true;
+		if (getSentence().getPosition() < o.getSentence().getPosition())
+			return false;
+		if (getLastToken().getPosition() > o.getLastToken().getPosition())
+			return true;
+		if (getLastToken().getPosition() < o.getLastToken().getPosition())
+			return false;
+		return false;
+	}
+
+	public boolean isMoreRepresentativeThan(Mention o) {
+		if (o == null)
+			return true;
+		// System.err.println(nerString +
+		// "("+(category!=null?category:"null")+")"+ " : " + p.nerString +
+		// "("+(p.category!=null?p.category:"null")+")");
+		if (getType().equals(Type.PRON))
+			return false; // PP - lai nav vietniekvārdi kā reprezentatīvākie
+		if (o.getType().equals(Type.PRON))
+			return true;
+		if (!o.getCategory().isUnkown() && !getCategory().isUnkown()
+				&& o.getCategory().equals(Category.profession)
+				&& getCategory().equals(Category.person)
+				&& getType().equals(Type.NE))
+			return true;
+		if (!o.getCategory().isUnkown() && !getCategory().isUnkown()
+				&& o.getCategory().equals(Category.person)
+				&& getCategory().equals(Category.profession)
+				&& o.getType().equals(Type.NE))
+			return false;
+		if (!o.getType().equals(Type.NE) && getType().equals(Type.NE))
+			return true;
+		else if (o.getType().equals(Type.NE) && !getType().equals(Type.NE))
+			return false;
+		if (getString().length() > o.getString().length())
+			return true;
+		else if (getString().length() < o.getString().length())
+			return false;
+		if (isBefore(o)) return true; //TODO what is better indicator: length or position
 		return false;
 	}
 
@@ -71,12 +145,16 @@ public class Mention implements Comparable<Mention> {
 		this.tokens = tokens;
 	}
 
-	public MentionCategory getCategory() {
+	public Category getCategory() {
 		return category;
 	}
 
 	public void setCategory(String category) {
-		this.category.set(category);
+		this.category = Category.get(category);
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 
 	public List<Token> getTokens() {
@@ -123,6 +201,10 @@ public class Mention implements Comparable<Mention> {
 		return getSentence().getParagraph();
 	}
 
+	public Text getText() {
+		return getFirstToken().getSentence().getText();
+	}
+
 	public MentionChain getMentionChain() {
 		return mentionChain;
 	}
@@ -133,13 +215,15 @@ public class Mention implements Comparable<Mention> {
 
 	// TODO how to tell if is a pronoun
 	public boolean isPronoun() {
-		if (type == Type.PRON || getLastHeadToken().getPosTag() == PosTag.P) return true;
+		if (type == Type.PRON || getLastHeadToken().getPosTag() == PosTag.P)
+			return true;
 		return false;
 	}
-	
+
 	public PronType getPronounType() {
 		Token t = getLastHeadToken();
-		if (isPronoun()) return getLastHeadToken().getPronounType();
+		if (isPronoun())
+			return getLastHeadToken().getPronounType();
 		return PronType.UNKNOWN;
 	}
 
@@ -155,20 +239,19 @@ public class Mention implements Comparable<Mention> {
 		return getLastHeadToken().getTokenCase();
 	}
 
-//	public String getLemma() {
-//		StringBuffer sb = new StringBuffer();
-//		for (Token t : tokens)
-//			sb.append(" " + t.getLemma());
-//		return sb.toString().trim();
-//	}
-//
-//	public String getHeadLemma() {
-//		StringBuffer sb = new StringBuffer();
-//		for (Token t : heads)
-//			sb.append(" " + t.getLemma());
-//		return sb.toString().trim();
-//	}
-	
+	// public String getLemma() {
+	// StringBuffer sb = new StringBuffer();
+	// for (Token t : tokens)
+	// sb.append(" " + t.getLemma());
+	// return sb.toString().trim();
+	// }
+	//
+	// public String getHeadLemma() {
+	// StringBuffer sb = new StringBuffer();
+	// for (Token t : heads)
+	// sb.append(" " + t.getLemma());
+	// return sb.toString().trim();
+	// }
 
 	public Type getType() {
 		return type;
@@ -177,45 +260,68 @@ public class Mention implements Comparable<Mention> {
 	public void setType(Type type) {
 		this.type = type;
 	}
-	
+
 	public String getString() {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
 		for (Token t : getTokens()) {
-			if (!first) sb.append(" "); else first = false;
+			if (!first)
+				sb.append(" ");
+			else
+				first = false;
 			sb.append(t.getWord());
 		}
 		return sb.toString();
 	}
-	
+
 	public String getLemmaString() {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
 		for (Token t : getTokens()) {
-			if (!first) sb.append(" "); else first = false;
+			if (!first)
+				sb.append(" ");
+			else
+				first = false;
 			sb.append(t.getLemma());
 		}
 		return sb.toString();
 	}
-	
+
 	public String getHeadString() {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
 		for (Token t : getHeads()) {
-			if (!first) sb.append(" "); else first = false;
+			if (!first)
+				sb.append(" ");
+			else
+				first = false;
 			sb.append(t.getWord());
 		}
 		return sb.toString();
 	}
-	
+
 	public String getHeadLemmaString() {
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
 		for (Token t : getHeads()) {
-			if (!first) sb.append(" "); else first = false;
+			if (!first)
+				sb.append(" ");
+			else
+				first = false;
 			sb.append(t.getLemma());
 		}
 		return sb.toString();
+	}
+
+	public Set<String> getProperTokens() {
+		Set<String> properTokens = new HashSet<>();
+		if (isProperMention()) {
+			for (Token t : getTokens()) {
+				if (t.isProper())
+					properTokens.add(t.getLemma().toLowerCase());
+			}
+		}
+		return properTokens;
 	}
 
 	public List<Mention> getPotentialAntecedents(int par, int sent, int ment) {
@@ -245,13 +351,13 @@ public class Mention implements Comparable<Mention> {
 							&& pos <= m.getLastToken().getPosition())
 						continue;
 					r.add(m);
-					if (mentC++ >= ment && ment > 0)
+					if (mentC++ >= ment && ment >= 0)
 						break main;
 				}
-				if (sentC++ >= sent && sent > 0)
+				if (sentC++ >= sent && sent >= 0)
 					break main;
 			}
-			if (parC++ >= par && par > 0)
+			if (parC++ >= par && par >= 0)
 				break main;
 		}
 		return r;
@@ -365,9 +471,11 @@ public class Mention implements Comparable<Mention> {
 			sb.append(seg.toString() + " ");
 		}
 		sb.append("|").append(getMentionChain().getID());
-//		sb.append("|").append(getID());
+		// sb.append("|").append(getID());
 		sb.append("|").append(getCategory());
 		sb.append("|").append(getType());
+		if (isPronoun())
+			sb.append("-" + getPronounType());
 		// sb.append(toParamString());
 		sb.append("]");
 		return sb.toString();
@@ -377,10 +485,13 @@ public class Mention implements Comparable<Mention> {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		// sb.append("#").append(getID());
+		sb.append("*MCne=").append(getMentionChain().isProper());
+		sb.append("*MCprop=").append(getMentionChain().getProperTokens());
 		sb.append("*").append(getHeadLemmaString());
 		sb.append("*").append(getLemmaString());
 		sb.append("*").append(getNumber());
 		sb.append("*").append(getGender());
+		sb.append("*").append(getCase());
 		sb.append(String.format("*(%d,%d,%d)", getParagraph().getPosition(),
 				getSentence().getPosition(), getLastHeadToken().getPosition()));
 		sb.append("*").append(getLastHeadToken().getDependency());

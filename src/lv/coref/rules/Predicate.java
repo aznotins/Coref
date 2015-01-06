@@ -3,7 +3,6 @@ package lv.coref.rules;
 import java.util.List;
 
 import lv.coref.data.Mention;
-import lv.coref.lv.Constants.Type;
 
 public class Predicate extends Rule {
 

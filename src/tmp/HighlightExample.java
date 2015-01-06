@@ -15,7 +15,6 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileReader;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;

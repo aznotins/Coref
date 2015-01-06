@@ -4,24 +4,21 @@ import java.util.List;
 
 import lv.coref.data.Mention;
 
-public class ExactMatch extends Rule {
+public class Acronym extends Rule {
 
 	public String getName() {
-		return "EXACTMATCH";
+		return "ACRONYM";
 	}
 	
 	public boolean filter(Mention m, Mention a) {
-		if (m.isPronoun() || a.isPronoun()) return false;
-		if (!m.isProperMention() && !a.isProperMention()) return false;
-		if (m.isAcronym() || a.isAcronym()) return false;
+		if(!m.isAcronym()) return false;
+		if (m.getFirstToken().getWord().equals("SIA")) return false;
+		if (m.getFirstToken().getWord().equals("AS")) return false;
 		return true;
 	}
 
 	public double score(Mention m, Mention a) {
-		// if (m.getLemma().equals(a.getLemma())) return 1.0;
-
-		if (m.getLemmaString().equals(a.getLemmaString()))
-			return 1.0;
+		if (a.isAcronymOf(m.getFirstToken().getWord())) return 1.0;
 		return 0.0;
 	}
 

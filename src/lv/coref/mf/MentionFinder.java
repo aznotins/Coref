@@ -1,9 +1,7 @@
 package lv.coref.mf;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import lv.coref.data.Mention;
-import lv.coref.data.MentionCategory;
+import lv.coref.data.MentionChain;
 import lv.coref.data.NamedEntity;
 import lv.coref.data.Node;
 import lv.coref.data.Paragraph;
@@ -21,25 +19,18 @@ import lv.coref.data.Text;
 import lv.coref.data.Token;
 import lv.coref.io.ConllReaderWriter;
 import lv.coref.io.Pipe;
-import lv.coref.lv.Constants.PronType;
-import lv.coref.lv.Dictionaries;
+import lv.coref.lv.Constants.Category;
 import lv.coref.lv.Constants.PosTag;
 import lv.coref.lv.Constants.Type;
-import lv.coref.rules.Ruler;
+import lv.coref.lv.Dictionaries;
+import lv.coref.lv.MorphoUtils;
 import lv.coref.score.SummaryScorer;
 import lv.coref.util.FileUtils;
 import lv.coref.util.StringUtils;
-import lv.coref.lv.MorphoUtils;
 
 public class MentionFinder {
 
 	public static final boolean VERBOSE = false;
-
-	private int nextID = 1;
-
-	public String getnextID() {
-		return Integer.toString(nextID++);
-	}
 
 	public void findMentions(Text text) {
 		for (Paragraph p : text) {
@@ -53,12 +44,12 @@ public class MentionFinder {
 		// addNounMentions(sentence);
 		// addNounPhraseMentions(sentence);
 		addNamedEntityMentions(sentence);
+		addAcronymMentions(sentence);
 		addNounPhraseMentions2(sentence);
 		addCoordinations(sentence);
-		//addCoordinationsFlat(sentence);
+		// addCoordinationsFlat(sentence);
 		addPronounMentions(sentence);
-		
-		
+
 		MentionCleaner.cleanSentenceMentions(sentence);
 		updateMentionHeads(sentence);
 		updateMentionBoundaries(sentence);
@@ -82,31 +73,44 @@ public class MentionFinder {
 			List<Token> tokens = n.getTokens();
 			List<Token> heads = new ArrayList<>();
 			heads.add(tokens.get(tokens.size() - 1));
-			Mention m = new Mention(tokens, heads, getnextID());
+			Mention m = new Mention(sent.getText().getNextMentionID(), tokens,
+					heads);
 			sent.addMention(m);
+			sent.getText().addMentionChain(new MentionChain(m));
 
 			m.setCategory(n.getLabel());
 
-			if (!m.getCategory().equals(MentionCategory.Category.unknown)
-					&& !m.getCategory().equals(
-							MentionCategory.Category.profession)
-					&& !m.getCategory().equals(MentionCategory.Category.time)
-					&& !m.getCategory().equals(MentionCategory.Category.sum)) {
+			if (!m.getCategory().equals(Category.unknown)
+					&& !m.getCategory().equals(Category.profession)
+					&& !m.getCategory().equals(Category.time)
+					&& !m.getCategory().equals(Category.sum)) {
 				m.setType(Type.NE);
 			} else {
 				m.setType(Type.NP);
-				if (VERBOSE)
-					System.err.println("NER not named entity " + m);
 			}
+			if (VERBOSE)
+				System.err.println("NER named entity " + m);
 		}
 	}
 
 	private void addNounMentions(Sentence sent) {
 		for (Token t : sent) {
 			if (t.getTag().startsWith("n")) {
-				Mention m = new Mention(t);
-				m.setID(getnextID());
+				Mention m = new Mention(sent.getText().getNextMentionID(), t);
 				sent.addMention(m);
+				sent.getText().addMentionChain(new MentionChain(m));
+			}
+		}
+	}
+	private void addAcronymMentions(Sentence sent) {
+		for (Token t : sent) {
+			if (t.isAcronym()) {
+				Mention m = new Mention(sent.getText().getNextMentionID(), t);
+				sent.addMention(m);
+				sent.getText().addMentionChain(new MentionChain(m));
+				m.setType(Type.NE);
+				if (VERBOSE)
+					System.err.println("ACRONYM mention " + m);
 			}
 		}
 	}
@@ -115,7 +119,7 @@ public class MentionFinder {
 		Node n = sent.getRootNode();
 		addCoordinations(sent, n);
 	}
-	
+
 	private void addCoordinationsFlat(Sentence sent) {
 		int start = -1;
 		int end = -1;
@@ -123,7 +127,7 @@ public class MentionFinder {
 		for (int i = 0; i < sent.size(); i++) {
 			Token t = sent.get(i);
 			if (t.getStartMentions().size() > 0) {
-				//TODO
+				// TODO
 			}
 		}
 	}
@@ -140,8 +144,10 @@ public class MentionFinder {
 					}
 				}
 				if (heads.size() > 1) {
-					Mention m = new Mention(tokens, heads, getnextID());
+					Mention m = new Mention(sent.getText().getNextMentionID(),
+							tokens, heads);
 					sent.addMention(m);
+					sent.getText().addMentionChain(new MentionChain(m));
 					m.setType(Type.CONJ);
 					// if (VERBOSE)
 					System.err.println("MENTION COORDINATION: " + m);
@@ -156,14 +162,18 @@ public class MentionFinder {
 	private void addPronounMentions(Sentence sent) {
 		for (Node n : sent.getNodes(false)) {
 			if (n.getHeads().get(0).getPosTag() == PosTag.P) {
-				Mention m = new Mention(n.getTokens(), n.getHeads(),
-						getnextID());
+				Mention m = new Mention(sent.getText().getNextMentionID(),
+						n.getTokens(), n.getHeads());
 				sent.addMention(m);
+				sent.getText().addMentionChain(new MentionChain(m));
 				String text = n.getHeads().get(0).getLemma();
 				m.setCategory(Dictionaries.getCategory(text));
 				m.setType(Type.PRON);
-				m.getLastHeadToken().setPronounType(MorphoUtils.getPronounType(m.getLastHeadToken().getTag()));
-				m.getLastHeadToken().setPerson(MorphoUtils.getPerson(m.getLastHeadToken().getTag()));
+				m.getLastHeadToken().setPronounType(
+						MorphoUtils.getPronounType(m.getLastHeadToken()
+								.getTag()));
+				m.getLastHeadToken().setPerson(
+						MorphoUtils.getPerson(m.getLastHeadToken().getTag()));
 			}
 		}
 	}
@@ -171,9 +181,10 @@ public class MentionFinder {
 	private void addNounPhraseMentions(Sentence sent) {
 		for (Node n : sent.getNodes(false)) {
 			if (n.getHeads().get(0).getPosTag() == PosTag.N) {
-				Mention m = new Mention(n.getTokens(), n.getHeads(),
-						getnextID());
+				Mention m = new Mention(sent.getText().getNextMentionID(),
+						n.getTokens(), n.getHeads());
 				sent.addMention(m);
+				sent.getText().addMentionChain(new MentionChain(m));
 			}
 		}
 	}
@@ -205,16 +216,22 @@ public class MentionFinder {
 				}
 				for (int i = start; i < end; i++) {
 					Token t = tokens.get(i);
-					if (t.getPosTag() == PosTag.V) start = i + 1;
+					if (t.getPosTag() == PosTag.V)
+						start = i + 1;
 				}
-				
-				if (start > end) continue;
+
+				if (start > end)
+					continue;
 				tokens = tokens.subList(start, end);
 
-				Mention m = new Mention(tokens, n.getHeads(), getnextID());
-				m.setType(Type.NP);
-				if (m.getFirstToken().isProper()) m.setType(Type.NE);
+				Mention m = new Mention(sent.getText().getNextMentionID(),
+						tokens, n.getHeads());
 				sent.addMention(m);
+				sent.getText().addMentionChain(new MentionChain(m));
+
+				m.setType(Type.NP);
+				if (m.getFirstToken().isProper())
+					m.setType(Type.NE);
 			}
 		}
 	}
@@ -283,25 +300,28 @@ public class MentionFinder {
 		}
 		return sb.toString();
 	}
-	
-	public static void fileTests(BufferedWriter bw, List<String> files) throws IOException {
-		
+
+	public static void fileTests(BufferedWriter bw, List<String> files)
+			throws IOException {
+
 		for (String file : files) {
-			bw.write("\n\n\n==== " +  file + " ===== \n");
-			
+			bw.write("\n\n\n==== " + file + " ===== \n");
+
 			String fileText = FileUtils.readFile(file, StandardCharsets.UTF_8);
-			//System.err.println(stringText);
-			
+			// System.err.println(stringText);
+
 			String[] parText = fileText.split("\n");
 			for (String stringText : parText) {
 				stringText = stringText.trim();
-				if (stringText.length() == 0 ) continue;
+				if (stringText.length() == 0)
+					continue;
 				Text t = new Pipe().getText(stringText);
 				MentionFinder mf = new MentionFinder();
 				mf.findMentions(t);
-				
+
 				for (Sentence s : t.getSentences()) {
-					bw.write(s.toString()); bw.write("\n");
+					bw.write(s.toString());
+					bw.write("\n");
 					for (Mention m : s.getOrderedMentions()) {
 						bw.write(" - " + m + "\t\t" + m.toParamString());
 						bw.write("\n");
@@ -314,12 +334,14 @@ public class MentionFinder {
 	}
 
 	public static void main(String[] args) throws IOException {
-		
-		//fileTests(new BufferedWriter(new FileWriter("mentionFinder.out")), FileUtils.getFiles("data/mentionTest", -1, -1, ""));
-		
+
+		// fileTests(new BufferedWriter(new FileWriter("mentionFinder.out")),
+		// FileUtils.getFiles("data/mentionTest", -1, -1, ""));
+
 		stringTest("Jānis Kalniņš devās mājup.", "Šodien J.K. devās mājup.",
 				"J. Kalniņš devās mājup.",
-				"Profesors Jānis Kalniņš devās mājup.");
+				"Profesors Jānis Kalniņš devās mājup.",
+				"Šodien skolotājs Jānis Kalniņš mācīja ausgtāko matemātiku.");
 
 		stringTest("Latvija, Rīga un Liepāja iestājās par.",
 				"Jānis un Pēteris devās mājup.",

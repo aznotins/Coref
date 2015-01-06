@@ -8,13 +8,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import lv.coref.data.MentionCategory;
+import lv.coref.lv.Constants.Category;
 
 public class Dictionaries {
 
 	public static final Set<String> personPronouns = new HashSet<>(
 			Arrays.asList("kurš", "kura", "es", "tu", "viņš", "viņa", "mēs",
-					"jūs", "savs", "sava"));
+					"jūs", "mans", "mana", "tavs", "tava", "mūsu", "jūsu"));
 
 	public static final Set<String> excludeWords = new HashSet<>();
 
@@ -29,6 +29,8 @@ public class Dictionaries {
 	static {
 		
 	}
+	
+
 	
 	public static Set<String> getRelativeClauseIntroducers() {
 		return relativeClauseIntroducers;
@@ -51,9 +53,9 @@ public class Dictionaries {
 		}
 	}
 
-	public static String getCategory(String s) {
-		if (personPronouns.contains(s)) return MentionCategory.Category.person.toString();
-		return MentionCategory.UNKNOWN;
+	public static Category getCategory(String s) {
+		if (personPronouns.contains(s)) return Category.person;
+		return Category.unknown;
 	}
 
 }

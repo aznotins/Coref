@@ -5,29 +5,28 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
-import lv.coref.lv.Constants.PronType;
-import lv.coref.lv.MorphoUtils;
 import lv.coref.lv.Constants.Case;
 import lv.coref.lv.Constants.Gender;
 import lv.coref.lv.Constants.Number;
 import lv.coref.lv.Constants.Person;
 import lv.coref.lv.Constants.PosTag;
+import lv.coref.lv.Constants.PronType;
+import lv.coref.lv.MorphoUtils;
 
 public class Token implements Comparable<Token> {
 	private String word;
-	private String lemma;
-	private String morphoFeatures;
 	private String tag;
 	private String pos;
-	private Sentence sentence;
+	private String lemma;
+	private String morphoFeatures;	
 	private int position;
 	private int parent;
 	private String dep;
+	
 	private Node node;
-
-	//private Set<NamedEntity> namedEntities = new TreeSet<>();
+	private Sentence sentence;
+	private NamedEntity namedEntity = null;
 	private Set<Mention> mentions = new HashSet<>();
 
 	private PosTag posTag = PosTag.UNKNOWN;
@@ -50,6 +49,22 @@ public class Token implements Comparable<Token> {
 		this.gender = MorphoUtils.getGender(tag);
 		this.person = MorphoUtils.getPerson(tag);
 	}
+	
+	public boolean isProper() {
+		if (getLemma().length() > 0 && Character.isUpperCase(getLemma().charAt(0))) return true;
+		return false;
+	}
+	
+	public boolean isAcronym(){
+    	if (getTag().charAt(0) == 'z') return false;
+    	if (getWord().length() < 2) return false;
+    	for (int i = 0; i < getWord().length(); i++) {
+    		char c = getWord().charAt(i);
+            if (!Character.isLetter(c)) return false;
+            if (!Character.isUpperCase(c)) return false;
+        }
+    	return true;
+    }
 	
 	public Node getNode() {
 		return node;
@@ -81,6 +96,14 @@ public class Token implements Comparable<Token> {
 
 	public void setMorphoFeatures(String morphoFeatures) {
 		this.morphoFeatures = morphoFeatures;
+	}
+	
+	public void setNamedEntity(NamedEntity namedEntity) {
+		this.namedEntity = namedEntity;
+	}
+
+	public NamedEntity getNamedEntity() {
+		return namedEntity;
 	}
 
 	public String getPos() {
@@ -220,10 +243,31 @@ public class Token implements Comparable<Token> {
 		Collections.sort(mentions);		
 		return mentions;
 	}
-
-	public boolean isProper() {
-		if (getLemma().length() > 0 && Character.isUpperCase(getLemma().charAt(0))) return true;
-		return false;
+	
+	/**
+	 * Get mentions with this token as the last head token
+	 * @return
+	 */
+	public Set<Mention> getHeadMentions() {
+		Set<Mention> result = new HashSet<>();
+		if (getMentions() != null) {
+			for (Mention m : getMentions()) {
+				if (m.getHeads() == null) continue;
+				Token head = m.getHeads().get(m.getHeads().size()-1);
+				if (head == this) result.add(m);
+			}
+		}
+		return result;
+	}
+	
+	public Mention getHeadMention() {
+		Set<Mention> result = getHeadMentions();
+		if (result.size() > 0) {
+			if (result.size() > 1)
+				System.err.println("Multiple mentions for same head " + this + " " + getHeadMentions());
+			return result.iterator().next();
+		}
+		return null;
 	}
 	
 	public int compareTo(Token o) {

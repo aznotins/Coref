@@ -62,11 +62,11 @@ public class Corpus {
 //		c.add("data/corpus/corefconll/anotation_43.corefconll","data/corpus/conll/anotation_43.conll");
 //		c.add("data/corpus/corefconll/anotation_44.corefconll","data/corpus/conll/anotation_44.conll");
 		c.add("data/corpus/corefconll/interview_16.corefconll","data/corpus/conll/interview_16.conll");
-//		c.add("data/corpus/corefconll/interview_23.corefconll","data/corpus/conll/interview_23.conll");
+		c.add("data/corpus/corefconll/interview_23.corefconll","data/corpus/conll/interview_23.conll");
 		c.add("data/corpus/corefconll/interview_27.corefconll","data/corpus/conll/interview_27.conll");
 		c.add("data/corpus/corefconll/interview_38.corefconll","data/corpus/conll/interview_38.conll");
-//		c.add("data/corpus/corefconll/interview_43.corefconll","data/corpus/conll/interview_43.conll");
-//		c.add("data/corpus/corefconll/interview_46.corefconll","data/corpus/conll/interview_46.conll");
+		c.add("data/corpus/corefconll/interview_43.corefconll","data/corpus/conll/interview_43.conll");
+		c.add("data/corpus/corefconll/interview_46.corefconll","data/corpus/conll/interview_46.conll");
 //		c.add("data/corpus/corefconll/lvvest_40.corefconll","data/corpus/conll/lvvest_40.conll");
 //		c.add("data/corpus/corefconll/lvvest_41.corefconll","data/corpus/conll/lvvest_41.conll");
 //		c.add("data/corpus/corefconll/lvvest_42.corefconll","data/corpus/conll/lvvest_42.conll");

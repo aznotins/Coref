@@ -1,7 +1,11 @@
 package lv.coref.lv;
 
-import lv.coref.lv.Constants.*;
+import lv.coref.lv.Constants.Case;
+import lv.coref.lv.Constants.Gender;
 import lv.coref.lv.Constants.Number;
+import lv.coref.lv.Constants.Person;
+import lv.coref.lv.Constants.PosTag;
+import lv.coref.lv.Constants.PronType;
 
 public class MorphoUtils {
 

@@ -26,7 +26,7 @@ public class SummaryScorer {
 		sb.append("\n").append(conllScorer);
 		sb.append("\n").append(headConllScorer);
 		
-		//sb.append("\n").append(conllScorer.getSummary());
+//		sb.append("\n").append(conllScorer.getSummary());
 		
 		return sb.toString();
 	}

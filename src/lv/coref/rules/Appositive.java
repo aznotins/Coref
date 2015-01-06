@@ -3,6 +3,8 @@ package lv.coref.rules;
 import java.util.List;
 
 import lv.coref.data.Mention;
+import lv.coref.lv.Constants.Category;
+import lv.coref.lv.Constants.Number;
 import lv.coref.lv.Constants.Type;
 
 public class Appositive extends Rule {
@@ -15,11 +17,11 @@ public class Appositive extends Rule {
 		if (m.getType() == Type.PRON || a.getType() == Type.PRON)
 			return false;
 		
-		if (!m.isProperMention() && !a.isProperMention())
+		if (!m.isProperMention())
 			return false;
-
-		if (m.getSentence().getPosition() != a.getSentence().getPosition())
-			return false;
+		if (m.getCategory().equals(Category.location) || a.getCategory().equals(Category.location)) return false;
+//		if (m.getSentence().getPosition() != a.getSentence().getPosition())
+//			return false;
 		int d = m.getFirstToken().getPosition()
 				- a.getLastToken().getPosition();
 		if (d <= 0 || d > 1)
@@ -30,10 +32,11 @@ public class Appositive extends Rule {
 	public double score(Mention m, Mention a) {
 		double prob = 1.0;
 		// if (m.getLemma().equals(a.getLemma())) return 1.0;
-		if (!m.getCase().equals(a.getCase())) prob = 0;
+		if (!m.getCase().weakEquals(a.getCase())) prob = 0;
 		if (!m.getGender().equals(a.getGender())) prob *= 0.5;
-		if (!m.getNumber().equals(a.getNumber())) prob *= 0.5;
-		if (!m.getCategory().weakEquals(a.getCategory())) prob *= 0.5;
+//		if (!m.getNumber().weakEquals(a.getNumber())) prob *= 0.5;
+		if (m.getNumber().equals(Number.PL) || a.getNumber().equals(Number.PL)) prob *= 0.05;
+		if (!m.getCategory().compatible(a.getCategory())) prob *= 0.05;
 		
 		
 		return prob;

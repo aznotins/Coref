@@ -4,9 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.util.List;
-import java.util.Random;
 
-import javax.swing.JLabel;
 import javax.swing.event.MouseInputAdapter;
 
 import lv.coref.data.Mention;
@@ -23,12 +21,13 @@ public class MentionMarker extends Marker {
 		this.mention = mention;
 		
 		setForeground(ViewerUtils.getMentionClusterColor(mention));
-	
-		if (mention.getMention(true) == null) {
-			setForeground(Color.RED);
-		}
-		if (mention.getMention(false) == null) {
-			setForeground(Color.MAGENTA);
+		if (mention.getSentence().getPairedSentence() != null) {
+			if (mention.getMention(true) == null) {
+				setForeground(Color.RED);
+			}
+			if (mention.getMention(false) == null) {
+				setForeground(Color.MAGENTA);
+			}
 		}
 		
 		addMouseListener(new MouseInputAdapter() {
@@ -37,6 +36,9 @@ public class MentionMarker extends Marker {
 			public void mouseEntered(final MouseEvent e) {
 				highlight(true);
 				// showCoreferences(true);
+				
+				System.err.println(" @ " + MentionMarker.this.mention);
+				System.err.println("   " + MentionMarker.this.mention.toParamString());
 
 			}
 
@@ -47,6 +49,7 @@ public class MentionMarker extends Marker {
 			
 			@Override
 			public void mouseClicked(final MouseEvent e) {
+				System.err.println(MentionMarker.this.mention.getSentence());
 				clicked = !clicked;
 				highlight(clicked);
 			}

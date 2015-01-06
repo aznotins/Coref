@@ -9,10 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.lang3.text.WordUtils;
-
-import lv.coref.mf.MentionFinder;
-import lv.coref.util.StringUtils;
 import lv.coref.util.Triple;
 
 public class Sentence extends ArrayList<Token> {
@@ -31,6 +27,10 @@ public class Sentence extends ArrayList<Token> {
 	public Sentence() {
 	}
 
+	public Sentence(int position) {
+		this.position = position;
+	}
+
 	public boolean add(Token token) {
 		token.setPosition(this.size());
 		token.setSentence(this);
@@ -44,12 +44,13 @@ public class Sentence extends ArrayList<Token> {
 	public void setParagraph(Paragraph paragraph) {
 		this.paragraph = paragraph;
 	}
-	
+
 	public Sentence getPairedSentence() {
 		Sentence s = null;
 		Text pairedText = getParagraph().getText().getPairedText();
 		if (pairedText != null) {
-			Paragraph pairedParagraph = pairedText.get(getParagraph().getPosition());
+			Paragraph pairedParagraph = pairedText.get(getParagraph()
+					.getPosition());
 			if (pairedParagraph != null) {
 				s = pairedParagraph.get(getPosition());
 			}
@@ -68,7 +69,7 @@ public class Sentence extends ArrayList<Token> {
 	public List<Mention> getMentions() {
 		return new ArrayList<>(mentions);
 	}
-	
+
 	public List<Mention> getOrderedMentions() {
 		List<Mention> mentions = new ArrayList<>();
 		mentions.addAll(getMentions());
@@ -77,8 +78,10 @@ public class Sentence extends ArrayList<Token> {
 	}
 
 	public void addMention(Mention mention) {
-		if (!this.mentions.add(mention))
-			this.removeMention(mention);
+		mentions.add(mention);
+		// TODO what is this
+		// if (!this.mentions.add(mention))
+		// this.removeMention(mention);
 	}
 
 	public void removeMention(Mention mention) {
@@ -200,25 +203,65 @@ public class Sentence extends ArrayList<Token> {
 	 * @param mf
 	 */
 	public void initializeCoreferences(
-			List<Triple<Integer, Integer, String>> spans, MentionFinder mf) {
+			List<Triple<Integer, Integer, String>> spans) {
 		Text text = getText();
 		for (Triple<Integer, Integer, String> span : spans) {
 			String id = span.third;
 			List<Token> tokens = this.subList(span.first, span.second + 1);
 			List<Token> heads = this.subList(span.second, span.second + 1);
-			Mention m = new Mention(tokens, heads, mf.getnextID());
-			if (text.getMentionChain(id) == null) {
-				text.addMentionChain(new MentionChain(id));
-			}
-			MentionChain mc = text.getMentionChain(id);
-			mc.add(m);
+			Mention m = new Mention(text.getNextMentionID(), tokens, heads);
+
 			addMention(m);
+			if (text.getMentionChain(id) == null) {
+				// MentionChain mc = new MentionChain(id);
+				// mc.add(m);
+				// m.setMentionChain(mc);
+				text.addMentionChain(new MentionChain(id, m));
+			} else {
+				text.getMentionChain(id).add(m);
+			}
+			// System.err.println("Initialize coreference mention " + span +
+			// " to " + m.getMentionChain().getID() + " " + m);
 		}
 	}
 
 	/**
-	 * Used after initializeCoreferences() to explicitly set some attributes
-	 * (category, type) Inefficient, used for gold mention initialization
+	 * Initialize coreferences using only mention heads and categories
+	 * 
+	 * @param headMentions
+	 *            : Triple(position, id, category)
+	 */
+	public void initalizeCoreferencesFromHeads(
+			List<Triple<Integer, String, String>> headMentions) {
+		Text text = getText();
+		for (Triple<Integer, String, String> headMention : headMentions) {
+			Token head = get(headMention.first());
+			String id = headMention.second();
+			List<Token> heads = new ArrayList<>();
+			heads.add(head);
+			List<Token> tokens = head.getNode().getTokens();
+			// TODO filter wrong tokens in head subtree
+
+			Mention m = new Mention(getText().getNextMentionID(), tokens, heads);
+			m.setCategory(headMention.third());
+			addMention(m);
+			if (text.getMentionChain(id) == null) {
+				text.addMentionChain(new MentionChain(id, m));
+			} else {
+				text.getMentionChain(id).add(m);
+			}
+		}
+	}
+
+	// TODO make mention category indetification faster
+	public void initializeMentionCategories(
+			List<Triple<Integer, Integer, String>> spans) {
+		initializeMentionAttributes(spans, "category");
+	}
+
+	/**
+	 * For testing only. Used after initializeCoreferences() to explicitly set
+	 * some attributes (category, type)
 	 */
 	public void initializeMentionAttributes(
 			List<Triple<Integer, Integer, String>> spans, String attribute) {
@@ -247,6 +290,18 @@ public class Sentence extends ArrayList<Token> {
 	public Text getText() {
 		return getParagraph().getText();
 	}
+	
+	public String getTextString() {
+		StringBuilder sb = new StringBuilder();
+//		Set<String> noGapBefore = new HashSet<String>(Arrays.asList(".", ",", ":", ";", "!", "?", ")", "]", "}", "%"));
+//		Set<String> noGapAfter =  new HashSet<String>(Arrays.asList("(", "[", "{"));
+//		Set<String> quoteSymbols =  new HashSet<String>(Arrays.asList("'", "\""));
+		for (Token t : this) {
+			sb.append(" "); sb.append(t.getWord());
+			// TODO uzlabot teksta veidošanu no sadalītiem tokeniem
+		}
+		return sb.toString();
+	}  
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -254,35 +309,35 @@ public class Sentence extends ArrayList<Token> {
 			for (@SuppressWarnings("unused")
 			Mention m : t.getStartMentions()) {
 				sb.append("[");
-			}	
+			}
 			sb.append(t.toString());
 			for (Mention m : t.getEndMentions()) {
 				sb.append(" |").append(m.getCategory());
 				sb.append("|").append(m.getType());
 				if (m.getMentionChain() != null)
 					sb.append("|").append(m.getMentionChain().getID());
-//				sb.append("|").append(m.getID());
+				// sb.append("|").append(m.getID());
 				// sb.append(" ").append(m.toParamString());
 				sb.append("]");
 			}
 			sb.append(" ");
 		}
 		String tmpText = sb.toString();
-		tmpText = WordUtils.wrap(tmpText, 100, "\n\t", true);
+//		tmpText = WordUtils.wrap(tmpText, 150, "\n\t", true);
 		sb = new StringBuilder(tmpText);
-		
-//		for (Mention m : getMentions()) {
-//			sb.append("\n\t");
-//			if (m.getMention(false) != null)
-//				sb.append("+");
-//			else
-//				sb.append("-");
-//			if (m.getMention(true) != null)
-//				sb.append("+");
-//			else
-//				sb.append("-");
-//			sb.append(m);
-//		}
+
+		// for (Mention m : getOrderedMentions()) {
+		// sb.append("\n\t").append(m.getMentionChain().getID());
+		// if (m.getMention(false) != null)
+		// sb.append("+");
+		// else
+		// sb.append("-");
+		// if (m.getMention(true) != null)
+		// sb.append("+");
+		// else
+		// sb.append("-");
+		// sb.append(m);
+		// }
 		return sb.toString();
 	}
 

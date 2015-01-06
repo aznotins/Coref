@@ -1,10 +1,8 @@
 package lv.coref.visual;
 
 import java.awt.Color;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JLabel;
-import javax.swing.event.MouseInputAdapter;
 
 class Marker extends JLabel {
 	private static final long serialVersionUID = -4247350154185131551L;

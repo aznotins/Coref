@@ -2,9 +2,6 @@ package lv.coref.io;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 
 import lv.coref.data.Text;
 

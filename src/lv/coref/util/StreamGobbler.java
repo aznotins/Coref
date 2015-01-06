@@ -11,7 +11,10 @@ package lv.coref.util;
  *
  */
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Writer;
 
 public class StreamGobbler extends Thread {
 
