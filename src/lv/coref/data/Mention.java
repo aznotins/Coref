@@ -14,7 +14,6 @@ import lv.coref.lv.Constants.Number;
 import lv.coref.lv.Constants.PosTag;
 import lv.coref.lv.Constants.PronType;
 import lv.coref.lv.Constants.Type;
-import lv.coref.util.StringUtils;
 
 public class Mention implements Comparable<Mention> {
 	private MentionChain mentionChain;

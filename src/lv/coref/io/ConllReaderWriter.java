@@ -9,14 +9,12 @@ import java.util.List;
 import java.util.Stack;
 
 import lv.coref.data.Mention;
-import lv.coref.data.MentionChain;
 import lv.coref.data.Paragraph;
 import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.data.Token;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
-import lv.coref.util.StringUtils;
 import lv.coref.util.Triple;
 
 public class ConllReaderWriter extends ReaderWriter {

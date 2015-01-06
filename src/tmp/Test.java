@@ -1,7 +1,6 @@
 package tmp;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.UUID;
 
 import lv.coref.data.Mention;
