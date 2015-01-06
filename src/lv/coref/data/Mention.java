@@ -14,6 +14,7 @@ import lv.coref.lv.Constants.Number;
 import lv.coref.lv.Constants.PosTag;
 import lv.coref.lv.Constants.PronType;
 import lv.coref.lv.Constants.Type;
+import lv.coref.util.StringUtils;
 
 public class Mention implements Comparable<Mention> {
 	private MentionChain mentionChain;
@@ -87,7 +88,7 @@ public class Mention implements Comparable<Mention> {
 		}
 		return s.toUpperCase().equals(acronym.toUpperCase());
 	}
-	
+
 	public boolean isBefore(Mention o) {
 		if (o == null)
 			return false;
@@ -134,7 +135,8 @@ public class Mention implements Comparable<Mention> {
 			return true;
 		else if (getString().length() < o.getString().length())
 			return false;
-		if (isBefore(o)) return true; //TODO what is better indicator: length or position
+		if (isBefore(o))
+			return true; // TODO what is better indicator: length or position
 		return false;
 	}
 
@@ -466,25 +468,55 @@ public class Mention implements Comparable<Mention> {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		sb.append(heads).append(" ");
-		for (Token seg : tokens) {
-			sb.append(seg.toString() + " ");
+		sb.append(getMentionChain().getID());
+		if (!getCategory().equals(Category.unknown))
+			sb.append("-").append(getCategory());
+		sb.append(" ").append(heads).append(" ");
+		for (Token t : tokens) {
+			sb.append(t.toString() + " ");
 		}
-		sb.append("|").append(getMentionChain().getID());
-		// sb.append("|").append(getID());
-		sb.append("|").append(getCategory());
 		sb.append("|").append(getType());
 		if (isPronoun())
 			sb.append("-" + getPronounType());
-		// sb.append(toParamString());
+		sb.append("|").append(getID());
+		sb.append("|").append(getGender());
+		sb.append("|").append(getNumber());
+		sb.append("|").append(getCase());
 		sb.append("]");
+		sb.append(toParamString());
 		return sb.toString();
 	}
+	
+//	public String getContext(int tokens, int maxWidth) {
+//		Sentence s = getFirstToken().getSentence();
+//		StringBuilder left = new StringBuilder();
+//		StringBuilder right = new StringBuilder();
+//		int iTok = 1;
+//		for (int i = getFirstToken().getPosition() - 1; i > 0 &&  (iTok < 0 || iTok < tokens); i--) {
+//			left.insert(0, s.get(i) + " ");
+//			if (left.length() > maxWidth && maxWidth >= 0) {
+//				left = new StringBuilder(".. " + left.substring(left.length() - maxWidth - 3));
+//				break;
+//			}
+//			iTok++;
+//		}
+//		iTok = 1;
+//		for (int i = getLastToken().getPosition() - 1; i < s.size() &&  (iTok < 0 || iTok < tokens); i++) {
+//			right.append(s.get(i)).append(" ");
+//			if (right.length() > maxWidth && maxWidth >= 0) {
+//				right = new StringBuilder(".. " + right.substring(0, maxWidth - 3));
+//				break;
+//			}
+//			iTok++;
+//		}
+//		left.append(this).append(right);
+//		return left.toString();		
+//	}
 
 	public String toParamString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
-		// sb.append("#").append(getID());
+		sb.append("#").append(getID());
 		sb.append("*MCne=").append(getMentionChain().isProper());
 		sb.append("*MCprop=").append(getMentionChain().getProperTokens());
 		sb.append("*").append(getHeadLemmaString());

@@ -1,4 +1,4 @@
-package lv.coref;
+package tmp;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,23 +14,22 @@ import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
 import lv.coref.score.SummaryScorer;
 
-public class Main {
+public class Test {
 	
-	public static void resolveAndScore(String refFile, String hypFile) {
+	public static void resolveAndScore(String refFile, String hypFile) throws Exception {
 		ConllReaderWriter rw = new ConllReaderWriter();
-		Text text = rw.getText(hypFile);
+		Text text = rw.read(hypFile);
 		MentionFinder mf = new MentionFinder();
 		mf.findMentions(text);
 		Ruler r = new Ruler();
 		r.resolve(text);
-		text.finalizeMentionChains();
 		
 		//text.removeSingletons();
 		
 		System.out.println(text);
 		rw.write("tmp/" + new File(text.getId()).getName() + "_" + UUID.randomUUID() + ".conll", text);
 		
-		Text goldText = new ConllReaderWriter().getText(refFile);
+		Text goldText = new ConllReaderWriter().read(refFile);
 		text.setPairedText(goldText);
 		goldText.setPairedText(text);
 		
@@ -39,9 +38,9 @@ public class Main {
 		System.err.println(summaryScorer);
 	}
 
-	public static Text resolveFile(String filename) {
+	public static Text resolveFile(String filename) throws Exception {
 		ConllReaderWriter rw = new ConllReaderWriter();
-		Text t = rw.getText(filename);
+		Text t = rw.read(filename);
 		return resolve(t);
 	}
 	
@@ -50,7 +49,6 @@ public class Main {
 		mf.findMentions(t);
 		Ruler r = new Ruler();
 		r.resolve(t);
-		t.finalizeMentionChains();
 		return t;
 	}
 	
@@ -59,13 +57,13 @@ public class Main {
 		return resolve(t);
 	}
 	
-	public static void test() {
+	public static void test() throws Exception {
 		ConllReaderWriter rw = new ConllReaderWriter();
 //		Text t = rw.getText("sankcijas.conll");
 //		Text t = rw.getText("news_63.conll");	
-		Text t = rw.getText("data/test.conll");	
+		Text t = rw.read("data/test.conll");	
 		
-		Text gold = new ConllReaderWriter().getText("data/test.corefconll");
+		Text gold = new ConllReaderWriter().read("data/test.corefconll");
 		t.setPairedText(gold);
 		gold.setPairedText(t);
 		
@@ -88,8 +86,6 @@ public class Main {
 		Ruler r = new Ruler();
 		r.resolve(t);
 		
-		t.finalizeMentionChains();
-		
 		System.out.println(t);
 		//rw.write("test.out", t);
 		//new ConllReaderWriter().write("tmp/test.out", t);
@@ -109,7 +105,7 @@ public class Main {
 	
 
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 //		test();
 //		resolveAndScore("data/corpus/corefconll/interview_23.corefconll","data/corpus/conll/interview_23.conll");
 		

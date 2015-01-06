@@ -22,6 +22,13 @@ public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
 	public Text(String id) {
 		this.id = id;
 	}
+	
+	public boolean isEmpty() {
+		if (size() == 0) return true;
+		if (get(0).size() == 0) return true;
+		if (get(0).get(0).size() == 0) return true;
+		return false;
+	}
 
 	public boolean add(Paragraph p) {
 		p.setPosition(this.size());
@@ -45,21 +52,21 @@ public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
 		this.nextMentionID = nextId;
 	}
 
-	public Map<String, MentionChain> finalizeMentionChains() {
-		Map<String, MentionChain> mc = new HashMap<>();
-		for (Paragraph p : this) {
-			for (Sentence s : p) {
-				for (Mention m : s.getMentions()) {
-					if (m.getMentionChain() == null) {
-						System.err.println("WARNING: no chain for " + m);
-					} else
-						mc.put(m.getMentionChain().getID(), m.getMentionChain());
-				}
-			}
-		}
-		mentionChains = mc;
-		return mc;
-	}
+//	public Map<String, MentionChain> finalizeMentionChains() {
+//		Map<String, MentionChain> mc = new HashMap<>();
+//		for (Paragraph p : this) {
+//			for (Sentence s : p) {
+//				for (Mention m : s.getMentions()) {
+//					if (m.getMentionChain() == null) {
+//						System.err.println("WARNING: no chain for " + m);
+//					} else
+//						mc.put(m.getMentionChain().getID(), m.getMentionChain());
+//				}
+//			}
+//		}
+//		mentionChains = mc;
+//		return mc;
+//	}
 
 	public void removeSingletons() {
 		for (Mention m : getMentions()) {

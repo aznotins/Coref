@@ -197,25 +197,35 @@ public class Sentence extends ArrayList<Token> {
 	}
 
 	/**
-	 * Initialize coreferences from spans (start, end, id)
+	 * Initialize coreferences from spans (start, end, id), categories TODO what
+	 * to do with multiple head mentions? - could specify separate mentions for
+	 * each head
 	 * 
 	 * @param spans
 	 * @param mf
 	 */
 	public void initializeCoreferences(
-			List<Triple<Integer, Integer, String>> spans) {
+			List<Triple<Integer, Integer, String>> mSpans,
+			List<Integer> mHeads, List<String> mCategories) {
 		Text text = getText();
-		for (Triple<Integer, Integer, String> span : spans) {
+		for (int i = 0; i < mSpans.size(); i++) {
+			assert mHeads == null || mSpans.size() == mHeads.size();
+			assert mCategories == null || mSpans.size() == mCategories.size();
+			Triple<Integer, Integer, String> span = mSpans.get(i);
+			String category = null;
+			if (mCategories != null)
+				category = mCategories.get(i);
+			Integer head = span.second;
+			if (mHeads != null && mHeads.get(i) != null)
+				head = mHeads.get(i);
 			String id = span.third;
 			List<Token> tokens = this.subList(span.first, span.second + 1);
-			List<Token> heads = this.subList(span.second, span.second + 1);
+			List<Token> heads = this.subList(head, head + 1);
 			Mention m = new Mention(text.getNextMentionID(), tokens, heads);
-
+			if (category != null)
+				m.setCategory(category);
 			addMention(m);
 			if (text.getMentionChain(id) == null) {
-				// MentionChain mc = new MentionChain(id);
-				// mc.add(m);
-				// m.setMentionChain(mc);
 				text.addMentionChain(new MentionChain(id, m));
 			} else {
 				text.getMentionChain(id).add(m);
@@ -231,27 +241,27 @@ public class Sentence extends ArrayList<Token> {
 	 * @param headMentions
 	 *            : Triple(position, id, category)
 	 */
-	public void initalizeCoreferencesFromHeads(
-			List<Triple<Integer, String, String>> headMentions) {
-		Text text = getText();
-		for (Triple<Integer, String, String> headMention : headMentions) {
-			Token head = get(headMention.first());
-			String id = headMention.second();
-			List<Token> heads = new ArrayList<>();
-			heads.add(head);
-			List<Token> tokens = head.getNode().getTokens();
-			// TODO filter wrong tokens in head subtree
-
-			Mention m = new Mention(getText().getNextMentionID(), tokens, heads);
-			m.setCategory(headMention.third());
-			addMention(m);
-			if (text.getMentionChain(id) == null) {
-				text.addMentionChain(new MentionChain(id, m));
-			} else {
-				text.getMentionChain(id).add(m);
-			}
-		}
-	}
+//	public void initalizeCoreferencesFromHeads(
+//			List<Triple<Integer, String, String>> headMentions) {
+//		Text text = getText();
+//		for (Triple<Integer, String, String> headMention : headMentions) {
+//			Token head = get(headMention.first());
+//			String id = headMention.second();
+//			List<Token> heads = new ArrayList<>();
+//			heads.add(head);
+//			List<Token> tokens = head.getNode().getTokens();
+//			// TODO filter wrong tokens in head subtree
+//
+//			Mention m = new Mention(getText().getNextMentionID(), tokens, heads);
+//			m.setCategory(headMention.third());
+//			addMention(m);
+//			if (text.getMentionChain(id) == null) {
+//				text.addMentionChain(new MentionChain(id, m));
+//			} else {
+//				text.getMentionChain(id).add(m);
+//			}
+//		}
+//	}
 
 	// TODO make mention category indetification faster
 	public void initializeMentionCategories(
@@ -290,18 +300,22 @@ public class Sentence extends ArrayList<Token> {
 	public Text getText() {
 		return getParagraph().getText();
 	}
-	
+
 	public String getTextString() {
 		StringBuilder sb = new StringBuilder();
-//		Set<String> noGapBefore = new HashSet<String>(Arrays.asList(".", ",", ":", ";", "!", "?", ")", "]", "}", "%"));
-//		Set<String> noGapAfter =  new HashSet<String>(Arrays.asList("(", "[", "{"));
-//		Set<String> quoteSymbols =  new HashSet<String>(Arrays.asList("'", "\""));
+		// Set<String> noGapBefore = new HashSet<String>(Arrays.asList(".", ",",
+		// ":", ";", "!", "?", ")", "]", "}", "%"));
+		// Set<String> noGapAfter = new HashSet<String>(Arrays.asList("(", "[",
+		// "{"));
+		// Set<String> quoteSymbols = new HashSet<String>(Arrays.asList("'",
+		// "\""));
 		for (Token t : this) {
-			sb.append(" "); sb.append(t.getWord());
+			sb.append(" ");
+			sb.append(t.getWord());
 			// TODO uzlabot teksta veidošanu no sadalītiem tokeniem
 		}
 		return sb.toString();
-	}  
+	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -323,7 +337,7 @@ public class Sentence extends ArrayList<Token> {
 			sb.append(" ");
 		}
 		String tmpText = sb.toString();
-//		tmpText = WordUtils.wrap(tmpText, 150, "\n\t", true);
+		// tmpText = WordUtils.wrap(tmpText, 150, "\n\t", true);
 		sb = new StringBuilder(tmpText);
 
 		// for (Mention m : getOrderedMentions()) {

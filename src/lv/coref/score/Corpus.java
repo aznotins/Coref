@@ -5,6 +5,7 @@ import java.util.List;
 
 import lv.coref.data.Text;
 import lv.coref.io.ConllReaderWriter;
+import lv.coref.io.ReaderWriter;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
 
@@ -16,27 +17,31 @@ public class Corpus {
 	}
 
 	public void add(String refFile, String hypFile) {
-		ConllReaderWriter rw = new ConllReaderWriter();
-		Text text = rw.getText(hypFile);
-		Text goldText = rw.getText(refFile);
-		text.setPairedText(goldText);
-		goldText.setPairedText(text);
-		goldText.setId(text.getId());
-		texts.add(text);
+		try {
+			ReaderWriter rw = new ConllReaderWriter();
+			Text text = rw.read(hypFile);
+			Text goldText = rw.read(refFile);
+			text.setPairedText(goldText);
+			goldText.setPairedText(text);
+			goldText.setId(text.getId());
+			texts.add(text);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void evaluate() {
 		List<Text> cumulativeTexts = new ArrayList<>(texts.size());
 		for (Text t : texts) {
 			
-//			System.err.println(t);
-//			System.err.println(t.getPairedText());
-			
+			// System.err.println(t);
+			// System.err.println(t.getPairedText());
+
 			cumulativeTexts.add(t);
-//			SummaryScorer scorer = new SummaryScorer();
-//			scorer.add(t);
-//			System.err.println("=== SCORE " + t.getId() + " ===");
-//			System.err.println(scorer);
+			// SummaryScorer scorer = new SummaryScorer();
+			// scorer.add(t);
+			// System.err.println("=== SCORE " + t.getId() + " ===");
+			// System.err.println(scorer);
 		}
 		SummaryScorer cumulativeScorer = new SummaryScorer();
 		cumulativeScorer.add(cumulativeTexts);
@@ -50,7 +55,6 @@ public class Corpus {
 		for (Text t : texts) {
 			mf.findMentions(t);
 			r.resolve(t);
-			t.finalizeMentionChains();
 		}
 	}
 

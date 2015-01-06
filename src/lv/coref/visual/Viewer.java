@@ -21,6 +21,7 @@ import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.data.Token;
 import lv.coref.io.ConllReaderWriter;
+import lv.coref.io.ReaderWriter;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
 
@@ -132,15 +133,13 @@ public class Viewer implements Runnable, ActionListener {
 		}
 	}
 
-	public static void main(final String[] args) {
-		ConllReaderWriter rw = new ConllReaderWriter();
-		Text text = rw.getText("data/test.conll");
+	public static void main(final String[] args) throws Exception {
+		ReaderWriter rw = new ConllReaderWriter();
+		Text text = rw.read("data/test.conll");
 		MentionFinder mf = new MentionFinder();
 		mf.findMentions(text);
 		Ruler r = new Ruler();
 		r.resolve(text);
-
-		text.finalizeMentionChains();
 		
 //		Text gold = new ConllReaderWriter().getText("data/test.corefconll");
 //		text.setPairedText(gold);

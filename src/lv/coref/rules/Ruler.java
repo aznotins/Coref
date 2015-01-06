@@ -22,7 +22,8 @@ import lv.coref.visual.Viewer;
 public class Ruler {
 
 	public static final boolean VERBOSE = true;
-
+	private List<Rule> rules = new ArrayList<>();
+	
 	public void resolve(Text t) {
 		List<Rule> rules = new ArrayList<>();
 //		rules.add(new AllInOne());
@@ -79,6 +80,23 @@ public class Ruler {
 		//System.out.println(t);
 		t.removeCommonSingletons();
 	}
+	
+	public List<Rule> getRules() {
+		return rules;
+	}
+
+	public void setRules(List<Rule> rules) {
+		this.rules = rules;
+	}
+	
+	public void addRule(Rule r) {
+		rules.add(r);
+	}
+
+	
+	
+	
+	
 	
 	public static void getDescription(Rule r, Mention m, Mention a) {
 		boolean correct = m.getMention(false) != null

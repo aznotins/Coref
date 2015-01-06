@@ -149,11 +149,13 @@ public class MentionChain extends HashSet<Mention> {
 
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		s.append("=== Cluster #").append(getID()).append(" ===\n");
+		s.append("=== Cluster #").append(getID());
+		s.append(getRepresentative()).append(" ===\n");
 
 		for (Mention m : this) {
 			s.append("  ");
-			s.append(m).append("\n");
+			s.append(m);
+			s.append("\n");
 		}
 		return s.toString();
 	}

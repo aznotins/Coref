@@ -1,9 +1,6 @@
 package lv.coref.tests;
 
 import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
 import lv.coref.data.Paragraph;
 import lv.coref.data.Sentence;
 import lv.coref.data.Text;
@@ -15,9 +12,10 @@ import org.junit.Test;
 public class IOTest {
 
 	@Test
-	public void conllReaderWriterTest() throws IOException {
+	public void conllReaderWriterTest() throws Exception {
 		ConllReaderWriter rw = new ConllReaderWriter();
-		Text text = rw.getText("data/test.conll");
+		Text text = rw.read("data/test.conll");
+		
 		int parCount = text.size();
 		int sentCount = 0;
 		int tokCount = 0;

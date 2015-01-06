@@ -8,7 +8,7 @@ public class Constants {
 
 	public static enum Category {
 		unknown, person, location, organization, profession, media, product, event, time, sum;
-		private final static String UNKNOWN = "unknown";
+		private final static String UNKNOWN = "unk";
 
 		public boolean isUnkown() {
 			return this.equals(unknown);
@@ -38,11 +38,8 @@ public class Constants {
 		}
 
 		public String toString() {
-			if (this == unknown) {
-				return UNKNOWN;
-			} else {
-				return name();
-			}
+			if (this == unknown) return UNKNOWN;
+			return name();
 		}
 
 		public static Category get(String value) {
@@ -73,6 +70,11 @@ public class Constants {
 				return true;
 			return this.equals(o);
 		}
+		
+		public String toString() {
+			if (this == UNKNOWN) return "UNK";
+			return name();
+		}
 	}
 
 	public static enum Number {
@@ -91,6 +93,11 @@ public class Constants {
 			if (o.equals(Number.UNKNOWN))
 				return true;
 			return this.equals(o);
+		}
+		
+		public String toString() {
+			if (this == UNKNOWN) return "UNK";
+			return name();
 		}
 	}
 
@@ -111,14 +118,29 @@ public class Constants {
 				return true;
 			return this.equals(o);
 		}
+		
+		public String toString() {
+			if (this == UNKNOWN) return "UNK";
+			return name();
+		}
 	}
 
 	public static enum Person {
-		FIRST, SECOND, THIRD, UNKNOWN
+		FIRST, SECOND, THIRD, UNKNOWN;
+		
+		public String toString() {
+			if (this == UNKNOWN) return "UNK";
+			return name();
+		}
 	}
 
 	public static enum Type {
-		NP, NE, PRON, CONJ, UNKNOWN
+		NP, NE, PRON, CONJ, UNKNOWN;
+		
+		public String toString() {
+			if (this == UNKNOWN) return "UNK";
+			return name();
+		}
 	}
 
 	public static enum PronType {

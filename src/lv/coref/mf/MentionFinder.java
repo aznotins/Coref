@@ -236,14 +236,14 @@ public class MentionFinder {
 		}
 	}
 
-	public static void compare() {
+	public static void compare() throws Exception {
 		ConllReaderWriter rw = new ConllReaderWriter();
 		Text text;
 		// t = rw.getText("news_63.conll");
 		// t = rw.getText("sankcijas.conll");
-		text = rw.getText("data/corpus/conll/interview_16.conll");
+		text = rw.read("data/corpus/conll/interview_16.conll");
 		Text goldText = rw
-				.getText("data/corpus/corefconll/interview_16.corefconll");
+				.read("data/corpus/corefconll/interview_16.corefconll");
 		text.setPairedText(goldText);
 		goldText.setPairedText(text);
 

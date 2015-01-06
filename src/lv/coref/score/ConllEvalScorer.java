@@ -38,19 +38,23 @@ public class ConllEvalScorer {
 	}
 
 	private Text createHeadMockup(Text t) {
-		String textFile = "tmp/" + UUID.randomUUID() + ".conll";
-		new ConllReaderWriter().write(textFile, t);
-		String goldTextFile = "tmp/" + UUID.randomUUID() + ".conll";
-		new ConllReaderWriter().write(goldTextFile, t.getPairedText());
-
-		Text copyText = new ConllReaderWriter().getText(textFile);
-		Text copyGoldText = new ConllReaderWriter().getText(goldTextFile);
-		convertToHeadMentions(copyText);
-		convertToHeadMentions(copyGoldText);
-		copyText.setPairedText(copyGoldText);
-		copyGoldText.setPairedText(copyText);
-		// System.out.println(copyText);
-		return copyText;
+		try {
+			String textFile = "tmp/" + UUID.randomUUID() + ".conll";
+			new ConllReaderWriter().write(textFile, t);
+			String goldTextFile = "tmp/" + UUID.randomUUID() + ".conll";
+			new ConllReaderWriter().write(goldTextFile, t.getPairedText());
+			Text copyText = new ConllReaderWriter().read(textFile);
+			Text copyGoldText = new ConllReaderWriter().read(goldTextFile);
+			convertToHeadMentions(copyText);
+			convertToHeadMentions(copyGoldText);
+			copyText.setPairedText(copyGoldText);
+			copyGoldText.setPairedText(copyText);
+			// System.out.println(copyText);
+			return copyText;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;		
 	}
 
 	private void convertToHeadMentions(Text text) {
@@ -279,9 +283,9 @@ public class ConllEvalScorer {
 		return sb.toString();
 	}
 
-	public static void main(String args[]) {
-		Text t = new ConllReaderWriter().getText("data/test.corefconll");
-		Text gold = new ConllReaderWriter().getText("data/test.corefconll");
+	public static void main(String args[]) throws Exception {
+		Text t = new ConllReaderWriter().read("data/test.corefconll");
+		Text gold = new ConllReaderWriter().read("data/test.corefconll");
 		t.setPairedText(gold);
 		gold.setPairedText(t);
 

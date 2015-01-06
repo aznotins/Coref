@@ -5,12 +5,12 @@ import lv.coref.data.Paragraph;
 import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.io.ConllReaderWriter;
+import lv.coref.io.ReaderWriter;
 
 public class Transformer {
-	public static void main(String[] args) {
-		ConllReaderWriter rw = new ConllReaderWriter();
-		Text t;
-		t = rw.getText("news_63.conll");
+	public static void main(String[] args) throws Exception {
+		ReaderWriter rw = new ConllReaderWriter();
+		Text t = rw.read("news_63.conll");
 		
 		for (Paragraph p : t) {
 			for (Sentence s : p) {

@@ -1,8 +1,6 @@
 package lv.coref.io;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -21,7 +19,13 @@ import lv.coref.rules.Ruler;
 import lv.coref.util.StringUtils;
 import lv.coref.util.Triple;
 
-public class ConllReaderWriter {
+public class ConllReaderWriter extends ReaderWriter {
+
+	public static enum TYPE {
+		CONLL, LETA
+	};
+
+	private TYPE type = TYPE.CONLL;
 
 	private static final int CONLL_POSITION = 0;
 	private static final int CONLL_WORD = 1;
@@ -34,44 +38,35 @@ public class ConllReaderWriter {
 	private static final int CONLL_NER = 8;
 	private static final int CONLL_COREF_CAT = 9;
 	private static final int CONLL_COREF = 10;
+	private static final int LETA_BOUNDARIES = 11;
 
 	private static final int CONLL_MAX = 10;
+	private static final int LETA_MAX = 11;
 
 	private static final String CONLL_DEFAULT = "_";
+
+	public ConllReaderWriter() {
+	}
+
+	public ConllReaderWriter(TYPE type) {
+		this.type = type;
+	}
 
 	/**
 	 * Paragraph => Sentence => Tokens
 	 */
 	private List<List<List<List<String>>>> conll;
-	private String conllID;
 
-	public Text getText(BufferedReader in) {
+	public Text read(BufferedReader in) throws IOException {
 		Text text = null;
-		try {
-			readCONLL(in);
-			text = getText(conll, conllID);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		readCONLL(in);
+		text = read(conll, getFileID());
 		return text;
 	}
 
-	public Text getText(String filename) {
-		Text text = null;
-		File file = new File(filename);
-		conllID = file.getName();
-		try {
-			readCONLL(filename);
-			text = getText(conll, conllID);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return text;
-	}
-
-	public Text getText(List<List<List<List<String>>>> conll, String id) {
+	public Text read(List<List<List<List<String>>>> conll, String id) {
 		this.conll = conll;
-		this.conllID = id;
+		setFileID(id);
 		Text text = new Text(id);
 		for (int iPar = 0; iPar < conll.size(); iPar++) {
 			List<List<List<String>>> par = conll.get(iPar);
@@ -111,12 +106,45 @@ public class ConllReaderWriter {
 						"O"));
 				// sentence.initializeNamedEntities(getSpans(sent, CONLL_NER,
 				// "-", false));
+
 				if (corefColumn) {
-					sentence.initializeCoreferences(getSpans(sent, CONLL_COREF,
-							CONLL_DEFAULT, true));
-					sentence.initializeMentionAttributes(
-							getSpans(sent, CONLL_COREF_CAT, CONLL_DEFAULT, true),
-							"category");
+					if (type.equals(TYPE.LETA)) {
+						List<Triple<Integer, Integer, String>> spans = new ArrayList<>();
+						List<Integer> heads = new ArrayList<>();
+						List<String> categories = new ArrayList<>();
+
+						for (int iTok = 0; iTok < sent.size(); iTok++) {
+							List<String> tok = sent.get(iTok);
+							String idString = tok.get(CONLL_COREF);
+							if (!idString.equals("_"))
+								continue;
+							String[] ids = idString.split("\\|");
+							String[] cats = tok.get(CONLL_COREF_CAT).split(
+									"\\|");
+							String[] bounds = tok.get(LETA_BOUNDARIES).split(
+									"\\|");
+							for (int mi = 0; mi < ids.length; mi++) {
+								Integer start = Integer.parseInt(bounds[mi]
+										.split(",")[0]);
+								Integer end = Integer.parseInt(bounds[mi]
+										.split(",")[1]);
+								spans.add(new Triple<Integer, Integer, String>(
+										start, end, ids[mi]));
+								heads.add(iTok);
+								categories.add(cats[mi]);
+							}
+						}
+						sentence.initializeCoreferences(spans, heads,
+								categories);
+					} else {
+						assert type.equals(TYPE.CONLL);
+						sentence.initializeCoreferences(
+								getSpans(sent, CONLL_COREF, CONLL_DEFAULT, true),
+								null, null);
+						sentence.initializeMentionAttributes(
+								getSpans(sent, CONLL_COREF_CAT, CONLL_DEFAULT,
+										true), "category");
+					}
 				}
 
 			}
@@ -248,17 +276,9 @@ public class ConllReaderWriter {
 		return spans;
 	}
 
-	public List<List<List<List<String>>>> readCONLL(String filename)
-			throws IOException {
-		BufferedReader in = new BufferedReader(new FileReader(filename));
-		readCONLL(in);
-		conllID = filename;
-		in.close();
-		return conll;
-	}
-
 	public List<List<List<List<String>>>> readCONLL(BufferedReader in)
 			throws IOException {
+		// System.err.println("START READ");
 		conll = new ArrayList<>();
 		List<List<List<String>>> par = new ArrayList<>();
 		List<List<String>> sent = new ArrayList<>();
@@ -272,7 +292,7 @@ public class ConllReaderWriter {
 					break;
 				}
 				if (line.startsWith("#begin document (")) {
-					conllID = line.substring(17, line.length() - 1);
+					setFileID(line.substring(17, line.length() - 1));
 					continue;
 				}
 
@@ -306,10 +326,13 @@ public class ConllReaderWriter {
 			par.add(sent);
 		if (par.size() > 0)
 			conll.add(par);
+		// System.err.println(conll.size() + "  " + par.size() + " " +
+		// sent.size());
+		// System.err.println("FINISHED READ");
 		return conll;
 	}
 
-	private void initialize(Text text) {
+	protected void initialize(Text text) {
 		conll = new ArrayList<>();
 		for (Paragraph p : text) {
 			List<List<List<String>>> sList = new ArrayList<>();
@@ -321,10 +344,12 @@ public class ConllReaderWriter {
 					sList.add(tList);
 				int tCounter = 0;
 				for (Token t : s) {
-					List<String> bits = new ArrayList<>(CONLL_MAX);
+					int max = CONLL_MAX;
+					if (type.equals(TYPE.LETA))
+						max = LETA_MAX;
+					List<String> bits = new ArrayList<>(max);
 					tList.add(bits);
-
-					for (int i = 0; i <= CONLL_MAX; i++)
+					for (int i = 0; i <= max; i++)
 						bits.add(CONLL_DEFAULT);
 
 					bits.set(CONLL_POSITION, Integer.toString(++tCounter));
@@ -338,6 +363,10 @@ public class ConllReaderWriter {
 					bits.set(CONLL_DEP, t.getDependency());
 					bits.set(CONLL_NER, t.getNamedEntity() != null ? t
 							.getNamedEntity().getLabel() : "O");
+
+					bits.set(CONLL_NER, t.getNamedEntity() != null ? t
+							.getNamedEntity().getLabel() : "O");
+
 				}
 
 				// for (NamedEntity ne : s.getNamedEntities()) {
@@ -351,36 +380,56 @@ public class ConllReaderWriter {
 		}
 	}
 
-	public void write(String filename, Text t) {
-		write(filename, Arrays.asList(t));
-	}
-
-	public void write(String filename, List<Text> texts) {
-		try {
-			PrintStream ps = new PrintStream(new File(filename), "UTF8");
-			for (Text t : texts) {
-				initialize(t);
-				write(ps, t);
-			}
-			ps.close();
-		} catch (IOException ex) {
-			System.err.println("Problem writing output to " + filename);
-		}
-	}
-
-	public void write(PrintStream out, Text t) {
-		if (conll == null)
-			initialize(t);
-		StringBuilder s = new StringBuilder();
-		s.append("#begin document (" + t.getId() + "); part 000\n");
+	public void setLETACoreferences(Text t) {
 		for (int iPar = 0; iPar < conll.size(); iPar++) {
 			List<List<List<String>>> par = conll.get(iPar);
 			Paragraph paragraph = t.get(iPar);
 			for (int iSen = 0; iSen < par.size(); iSen++) {
+				StringBuilder s = new StringBuilder();
 				List<List<String>> sen = par.get(iSen);
 				Sentence sentence = paragraph.get(iSen);
 				for (int iTok = 0; iTok < sen.size(); iTok++) {
 					List<String> tok = sen.get(iTok);
+					for (int i = tok.size(); i <= LETA_MAX; i++)
+						tok.add(CONLL_DEFAULT);
+					Token token = sentence.get(iTok);
+					if (token.getHeadMentions().size() == 0)
+						continue;
+					StringBuilder idString = new StringBuilder();
+					StringBuilder catString = new StringBuilder();
+					StringBuilder boundString = new StringBuilder();
+					for (Mention m : token.getHeadMentions()) {
+						idString.append(m.getMentionChain().getID())
+								.append("|");
+						catString.append(m.getCategory()).append("|");
+						boundString.append(m.getFirstToken().getPosition() + 1)
+								.append(",")
+								.append(m.getLastToken().getPosition() + 1)
+								.append("|");
+					}
+					idString.deleteCharAt(idString.length() - 1);
+					catString.deleteCharAt(catString.length() - 1);
+					boundString.deleteCharAt(boundString.length() - 1);
+					tok.set(CONLL_COREF, idString.toString());
+					tok.set(CONLL_COREF_CAT, catString.toString());
+					tok.set(LETA_BOUNDARIES, boundString.toString());
+				}
+			}
+		}
+	}
+
+	public void setCONLLCoreferences(Text t) {
+		for (int iPar = 0; iPar < conll.size(); iPar++) {
+			List<List<List<String>>> par = conll.get(iPar);
+			Paragraph paragraph = t.get(iPar);
+			for (int iSen = 0; iSen < par.size(); iSen++) {
+				StringBuilder s = new StringBuilder();
+				List<List<String>> sen = par.get(iSen);
+				Sentence sentence = paragraph.get(iSen);
+				for (int iTok = 0; iTok < sen.size(); iTok++) {
+					List<String> tok = sen.get(iTok);
+					for (int i = tok.size(); i <= CONLL_MAX; i++)
+						tok.add(CONLL_DEFAULT);
 					Token token = sentence.get(iTok);
 					StringBuilder coref = new StringBuilder();
 					StringBuilder corefCat = new StringBuilder();
@@ -423,42 +472,59 @@ public class ConllReaderWriter {
 						coref.append(CONLL_DEFAULT);
 						corefCat.append(CONLL_DEFAULT);
 					}
-
-					for (int i = tok.size(); i <= CONLL_MAX; i++)
-						tok.add(CONLL_DEFAULT);
-
 					tok.set(CONLL_COREF, coref.toString());
 					tok.set(CONLL_COREF_CAT, corefCat.toString());
-					s.append(StringUtils.join(tok, "\t"));
-					s.append("\n");
 				}
-				s.append("\n");
 			}
-			s.append("\n");
 		}
-		s.append("#end document\n");
-		out.print(s.toString());
+	}
+
+	public void write(PrintStream out, Text t) throws IOException {
+		if (conll == null)
+			initialize(t);
+		if (type.equals(TYPE.LETA)) {
+			setLETACoreferences(t);
+		} else if (type.equals(TYPE.CONLL)) {
+			setCONLLCoreferences(t);
+			out.println("#begin document (" + t.getId() + "); part 000\n");
+		}
+		for (List<List<List<String>>> par : conll) {
+			for (List<List<String>> sent : par) {
+				for (List<String> tok : sent) {
+					StringBuilder sb = new StringBuilder();
+					for (String bit : tok) {
+						sb.append(bit).append("\t");
+					}
+					sb.deleteCharAt(sb.length() - 1);
+					out.println(sb.toString());
+				}
+				out.println();
+			}
+			out.println();
+		}
+
+		if (type.equals(TYPE.CONLL))
+			out.println("#end document");
 		out.flush();
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 		Text t;
-		ConllReaderWriter rw = new ConllReaderWriter();
-		//t = rw.getText("data/test.corefconll");
-		t = rw.getText("data/test.conll");
-		
+		ReaderWriter rw = new ConllReaderWriter(TYPE.CONLL);
+		// t = rw.getText("data/test.corefconll");
+		t = rw.read("data/test.conll");
+
 		new MentionFinder().findMentions(t);
 		new Ruler().resolve(t);
-
+		rw.write(System.out, t);
 		System.out.println(t);
-		for (MentionChain mc : t.getMentionChains()) {
-			if (mc.size() > 1)
-				System.out.println(mc);
-		}
-		
-		
-//		Text t2 = rw.getText("data/test.corefconll");
-//		rw.write("tmp/twofiles.out", Arrays.asList(t, t2));
+		// for (MentionChain mc : t.getMentionChains()) {
+		// if (mc.size() > 1)
+		// System.out.println(mc);
+		// }
+
+		// Text t2 = rw.getText("data/test.corefconll");
+		// rw.write("tmp/twofiles.out", Arrays.asList(t, t2));
 
 	}
 

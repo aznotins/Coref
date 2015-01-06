@@ -39,7 +39,7 @@ public class Pipe {
 			String result = client.handle(r).getEntityAsText();
 			//System.err.println(result);
 			StringReader sr = new StringReader(result);
-			t = new ConllReaderWriter().getText(new BufferedReader(sr));
+			t = new ConllReaderWriter().read(new BufferedReader(sr));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
