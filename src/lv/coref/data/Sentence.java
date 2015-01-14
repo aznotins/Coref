@@ -241,27 +241,27 @@ public class Sentence extends ArrayList<Token> {
 	 * @param headMentions
 	 *            : Triple(position, id, category)
 	 */
-//	public void initalizeCoreferencesFromHeads(
-//			List<Triple<Integer, String, String>> headMentions) {
-//		Text text = getText();
-//		for (Triple<Integer, String, String> headMention : headMentions) {
-//			Token head = get(headMention.first());
-//			String id = headMention.second();
-//			List<Token> heads = new ArrayList<>();
-//			heads.add(head);
-//			List<Token> tokens = head.getNode().getTokens();
-//			// TODO filter wrong tokens in head subtree
-//
-//			Mention m = new Mention(getText().getNextMentionID(), tokens, heads);
-//			m.setCategory(headMention.third());
-//			addMention(m);
-//			if (text.getMentionChain(id) == null) {
-//				text.addMentionChain(new MentionChain(id, m));
-//			} else {
-//				text.getMentionChain(id).add(m);
-//			}
-//		}
-//	}
+	// public void initalizeCoreferencesFromHeads(
+	// List<Triple<Integer, String, String>> headMentions) {
+	// Text text = getText();
+	// for (Triple<Integer, String, String> headMention : headMentions) {
+	// Token head = get(headMention.first());
+	// String id = headMention.second();
+	// List<Token> heads = new ArrayList<>();
+	// heads.add(head);
+	// List<Token> tokens = head.getNode().getTokens();
+	// // TODO filter wrong tokens in head subtree
+	//
+	// Mention m = new Mention(getText().getNextMentionID(), tokens, heads);
+	// m.setCategory(headMention.third());
+	// addMention(m);
+	// if (text.getMentionChain(id) == null) {
+	// text.addMentionChain(new MentionChain(id, m));
+	// } else {
+	// text.getMentionChain(id).add(m);
+	// }
+	// }
+	// }
 
 	// TODO make mention category indetification faster
 	public void initializeMentionCategories(
@@ -352,6 +352,34 @@ public class Sentence extends ArrayList<Token> {
 		// sb.append("-");
 		// sb.append(m);
 		// }
+		return sb.toString();
+	}
+
+	public String getMentionString() {
+		Sentence paired = getPairedSentence();
+		StringBuilder sb = new StringBuilder();
+		sb.append(getTextString());
+		
+		for (Mention m : getOrderedMentions()) {
+			sb.append("\n  ");
+			if (paired != null) {
+				sb.append(m.getMention(true) == null ? "-" : "+");
+				sb.append(m.getMention(false) == null ? "-" : "+");				
+			}
+			sb.append(" ").append(m.toString());
+			//sb.append("\t").append(m.toParamString());
+		}
+		if (paired != null) {			
+			for (Mention m : paired.getOrderedMentions()) {				
+				if (m.getMention(true) == null || m.getMention(false) == null) {
+					sb.append("\n *");
+					sb.append(m.getMention(true) == null ? "-" : "+");
+					sb.append(m.getMention(false) == null ? "-" : "+");					
+					sb.append(" ").append(m.toString());
+					//sb.append("\t").append(m.toParamString());
+				}				
+			}
+		}
 		return sb.toString();
 	}
 

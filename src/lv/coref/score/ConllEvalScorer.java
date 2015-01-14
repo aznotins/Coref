@@ -49,7 +49,8 @@ public class ConllEvalScorer {
 			convertToHeadMentions(copyGoldText);
 			copyText.setPairedText(copyGoldText);
 			copyGoldText.setPairedText(copyText);
-			// System.out.println(copyText);
+//			System.out.println(copyText);
+//			System.out.println(copyGoldText);
 			return copyText;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -59,11 +60,12 @@ public class ConllEvalScorer {
 
 	private void convertToHeadMentions(Text text) {
 		for (Mention m : text.getMentions()) {
-			for (Token t : m.getTokens()) {
-				t.removeMention(m);
-			}
+//			for (Token t : m.getTokens()) {
+//				t.removeMention(m);
+//			}
 			if (m.getHeads().size() > 0) {
 				m.setTokens(Arrays.asList(m.getHeads().get(0)));
+				m.setHeads(Arrays.asList(m.getHeads().get(0)));
 				m.getHeads().get(0).addMention(m);
 			} else {
 				System.err.println("No heads for mention : " + m);
@@ -71,10 +73,11 @@ public class ConllEvalScorer {
 		}
 		for (Sentence s : text.getSentences()) {
 			for (Token t : s) {
-				if (t.getMentions().size() > 1) {
+				if (t.getHeadMentions().size() > 1) {
+					System.err.println(s);
 					System.err
 							.println("convertToHeadMentions multiple mentions on token (keep first) "
-									+ t + " : " + t.getMentions());
+									+ t + " : " + t.getHeadMentions());
 					// t.getMentions().iterator().next();
 				}
 			}

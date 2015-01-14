@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lv.coref.lv.Constants.Category;
 import lv.coref.lv.Constants.Type;
 
 public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
@@ -34,6 +35,24 @@ public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
 		p.setPosition(this.size());
 		p.setText(this);
 		return super.add(p);
+	}
+	
+	public Token getToken(int absolutePosition) {
+		int iTok = 0;
+		int iPar = 0;
+		int iSent = 0;		
+		Paragraph p = this.get(0);
+		Sentence s = p.get(0);		
+		while (iTok + s.size() <= absolutePosition) {
+			iTok += s.size();
+			if (iSent < p.size()) s = p.get(++iSent);
+			else {
+				p = this.get(++iPar);
+				iSent = 0;
+				s = p.get(iSent);
+			}
+		}	
+		return s.get(absolutePosition - iTok);
 	}
 
 	public String getId() {
@@ -78,6 +97,8 @@ public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
 	
 	public void removeCommonSingletons() {
 		for (Mention m : getMentions()) {
+			if (m.getCategory().equals(Category.time)) continue;
+			if (m.getCategory().equals(Category.sum)) continue;
 			if (m.getMentionChain().size() < 2 && !m.getType().equals(Type.NE)) {
 				removeMentionChain(m.getMentionChain());
 			}

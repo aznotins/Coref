@@ -49,6 +49,11 @@ public class ConllReaderWriter extends ReaderWriter {
 	public ConllReaderWriter(TYPE type) {
 		this.type = type;
 	}
+	
+	public ConllReaderWriter(TYPE type, boolean isReadingCoreferences) {
+		this.type = type;
+		setReadingCoreferences(isReadingCoreferences);
+	}
 
 	/**
 	 * Paragraph => Sentence => Tokens
@@ -105,7 +110,7 @@ public class ConllReaderWriter extends ReaderWriter {
 				// sentence.initializeNamedEntities(getSpans(sent, CONLL_NER,
 				// "-", false));
 
-				if (corefColumn) {
+				if (corefColumn && isReadingCoreferences()) {
 					if (type.equals(TYPE.LETA)) {
 						List<Triple<Integer, Integer, String>> spans = new ArrayList<>();
 						List<Integer> heads = new ArrayList<>();
@@ -421,9 +426,11 @@ public class ConllReaderWriter extends ReaderWriter {
 			List<List<List<String>>> par = conll.get(iPar);
 			Paragraph paragraph = t.get(iPar);
 			for (int iSen = 0; iSen < par.size(); iSen++) {
-				StringBuilder s = new StringBuilder();
 				List<List<String>> sen = par.get(iSen);
 				Sentence sentence = paragraph.get(iSen);
+				if (sentence.size() != sen.size())
+					System.err.println("Not equal size "
+							+ sentence.getTextString() + "\n" + sen);
 				for (int iTok = 0; iTok < sen.size(); iTok++) {
 					List<String> tok = sen.get(iTok);
 					for (int i = tok.size(); i <= CONLL_MAX; i++)

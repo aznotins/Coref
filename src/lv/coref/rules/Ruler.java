@@ -78,7 +78,7 @@ public class Ruler {
 			
 		}
 		//System.out.println(t);
-		t.removeCommonSingletons();
+		//t.removeCommonSingletons();
 	}
 	
 	public List<Rule> getRules() {
@@ -99,10 +99,11 @@ public class Ruler {
 	
 	
 	public static void getDescription(Rule r, Mention m, Mention a) {
-		boolean correct = m.getMention(false) != null
-				&& a.getMention(false) != null
-				&& m.getMention(false).getMentionChain() == a
-						.getMention(false)
+		boolean usePreciseSpans = false;
+		boolean correct = m.getMention(usePreciseSpans) != null
+				&& a.getMention(usePreciseSpans) != null
+				&& m.getMention(usePreciseSpans).getMentionChain() == a
+						.getMention(usePreciseSpans)
 						.getMentionChain();
 		
 		StringBuilder sb = new StringBuilder();
@@ -139,13 +140,10 @@ public class Ruler {
 		new MentionFinder().findMentions(t);
 		//new Ruler().resolve(t);
 		for (Sentence s : t.getSentences()) {
-			sb.append(s).append("\n");
-//			for (Mention m : s.getOrderedMentions()) {
-//				sb.append(" - " + m + "\t\t" + m.toParamString());
-//				sb.append("\n");
+			sb.append(s.getMentionString()).append("\n");
 		}
 		System.out.println(sb.toString());
-		SwingUtilities.invokeLater(new Viewer(t));
+		//SwingUtilities.invokeLater(new Viewer(t));
 	}
 
 	public static String stringTests(String... strings) {
@@ -200,8 +198,9 @@ public class Ruler {
 	}
 	
 	public static void main(String[] args) {
-		tests();
-		//fileTest("data/test/putins_korumpants.txt");
+		//tests();
+		fileTest("data/test/putins_korumpants.txt");
+		//fileTest("data/mentionTest/news_60.txt");
 	}
 
 }

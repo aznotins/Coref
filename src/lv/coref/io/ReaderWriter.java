@@ -12,7 +12,9 @@ import lv.coref.data.Text;
 
 public abstract class ReaderWriter {
 
-	String fileID;
+	private String fileID;
+
+	private boolean readingCoreferences = true;
 
 	public abstract Text read(BufferedReader in) throws Exception;
 
@@ -44,6 +46,7 @@ public abstract class ReaderWriter {
 			initialize(t);
 			write(ps, t);
 		}
+		ps.close();
 	}
 
 	public String getFileID() {
@@ -52,6 +55,14 @@ public abstract class ReaderWriter {
 
 	public void setFileID(String fileID) {
 		this.fileID = fileID;
+	}
+
+	public boolean isReadingCoreferences() {
+		return readingCoreferences;
+	}
+
+	public void setReadingCoreferences(boolean readingCoreferences) {
+		this.readingCoreferences = readingCoreferences;
 	}
 
 }

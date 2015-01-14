@@ -21,6 +21,7 @@ import lv.coref.io.ConllReaderWriter;
 import lv.coref.io.Pipe;
 import lv.coref.lv.Constants.Category;
 import lv.coref.lv.Constants.PosTag;
+import lv.coref.lv.Constants.PronType;
 import lv.coref.lv.Constants.Type;
 import lv.coref.lv.Dictionaries;
 import lv.coref.lv.MorphoUtils;
@@ -30,7 +31,7 @@ import lv.coref.util.StringUtils;
 
 public class MentionFinder {
 
-	public static final boolean VERBOSE = false;
+	public static final boolean VERBOSE = true;
 
 	public void findMentions(Text text) {
 		for (Paragraph p : text) {
@@ -45,14 +46,19 @@ public class MentionFinder {
 		// addNounPhraseMentions(sentence);
 		addNamedEntityMentions(sentence);
 		addAcronymMentions(sentence);
+		addQuoteMentions(sentence);
 		addNounPhraseMentions2(sentence);
 		addCoordinations(sentence);
 		// addCoordinationsFlat(sentence);
 		addPronounMentions(sentence);
 
 		MentionCleaner.cleanSentenceMentions(sentence);
+
+		removeNestedMentions(sentence);
+
 		updateMentionHeads(sentence);
 		updateMentionBoundaries(sentence);
+
 	}
 
 	private void updateMentionHeads(Sentence sentence) {
@@ -65,6 +71,33 @@ public class MentionFinder {
 		int l = sentence.size();
 		for (Mention m : sentence.getMentions()) {
 
+		}
+	}
+
+	private void removeNestedMentions(Sentence sentence) {
+		// System.err.println(sentence.getTextString());
+		for (Mention mention : sentence.getMentions()) {
+			boolean remove = false;
+			Token first = mention.getFirstToken();
+			if (first.getMentions().size() <= 1)
+				continue;
+			// System.err.println("consider nested" + mention);
+			if (mention.isPronoun()
+					&& Dictionaries.isDemonstrativePronoun(mention
+							.getLemmaString().toLowerCase()))
+				remove = true;
+			for (Mention m : first.getMentions()) {
+				if (m == mention)
+					continue;
+				if (mention.isNestedInside(m)) {
+					if (m.getCategory().equals(Category.person))
+						remove = true;
+				}
+			}
+			if (remove) {
+				sentence.removeMention(mention);
+				System.err.println("REMOVE NESTED: " + mention);
+			}
 		}
 	}
 
@@ -102,6 +135,7 @@ public class MentionFinder {
 			}
 		}
 	}
+
 	private void addAcronymMentions(Sentence sent) {
 		for (Token t : sent) {
 			if (t.isAcronym()) {
@@ -112,6 +146,19 @@ public class MentionFinder {
 				if (VERBOSE)
 					System.err.println("ACRONYM mention " + m);
 			}
+		}
+	}
+
+	private void addQuoteMentions(Sentence sent) {
+		for (Token t : sent) {
+//			if (t.is()) {
+//				Mention m = new Mention(sent.getText().getNextMentionID(), t);
+//				sent.addMention(m);
+//				sent.getText().addMentionChain(new MentionChain(m));
+//				m.setType(Type.NE);
+//				if (VERBOSE)
+//					System.err.println("ACRONYM mention " + m);
+//			}
 		}
 	}
 
@@ -292,9 +339,10 @@ public class MentionFinder {
 		mf.findMentions(t);
 
 		for (Sentence s : t.getSentences()) {
-			sb.append(s).append("\n");
+			sb.append(s.getTextString()).append("\n");
 			for (Mention m : s.getOrderedMentions()) {
-				sb.append(" - " + m + "\t\t" + m.toParamString());
+				sb.append(" - ").append(m);
+				//sb.append("\t\t").append(m.toParamString());
 				sb.append("\n");
 			}
 		}
@@ -320,10 +368,11 @@ public class MentionFinder {
 				mf.findMentions(t);
 
 				for (Sentence s : t.getSentences()) {
-					bw.write(s.toString());
+					bw.write(s.getTextString());
 					bw.write("\n");
 					for (Mention m : s.getOrderedMentions()) {
-						bw.write(" - " + m + "\t\t" + m.toParamString());
+						bw.write(" - " + m);
+						//bw.write("\t\t" + m.toParamString());
 						bw.write("\n");
 					}
 				}
@@ -338,16 +387,20 @@ public class MentionFinder {
 		// fileTests(new BufferedWriter(new FileWriter("mentionFinder.out")),
 		// FileUtils.getFiles("data/mentionTest", -1, -1, ""));
 
-		stringTest("Jānis Kalniņš devās mājup.", "Šodien J.K. devās mājup.",
-				"J. Kalniņš devās mājup.",
-				"Profesors Jānis Kalniņš devās mājup.",
-				"Šodien skolotājs Jānis Kalniņš mācīja ausgtāko matemātiku.");
+		stringTest("Kopš 2001. gada viņš strādājis dažādos amatos valsts SIA \" Psihiatrijas centrs \" ,"
+				+ " Garīgās veselības valsts aģentūrā un valsts SIA \" Rīgas Psihiatrijas un narkoloģijas "
+				+ "centrs \" , bijis arī docents RSU un vadījis lekcijas Latvijas Universitātē .");
 
-		stringTest("Latvija, Rīga un Liepāja iestājās par.",
-				"Jānis un Pēteris devās mājup.",
-				"Uzņēmuma vadītājs un valdes priekšēdētājs Jānis Krūmiņš izteica sašutumu.");
-
-		stringTest("SIA \"Cirvis\". ");
+//		stringTest("Jānis Kalniņš devās mājup.", "Šodien J.K. devās mājup.",
+//				"J. Kalniņš devās mājup.",
+//				"Profesors Jānis Kalniņš devās mājup.",
+//				"Šodien skolotājs Jānis Kalniņš mācīja ausgtāko matemātiku.");
+//
+//		stringTest("Latvija, Rīga un Liepāja iestājās par.",
+//				"Jānis un Pēteris devās mājup.",
+//				"Uzņēmuma vadītājs un valdes priekšēdētājs Jānis Krūmiņš izteica sašutumu.");
+//
+//		stringTest("SIA \"Cirvis\". ");
 	}
 
 }

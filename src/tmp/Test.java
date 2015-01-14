@@ -1,6 +1,8 @@
 package tmp;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import lv.coref.data.Mention;
@@ -8,10 +10,14 @@ import lv.coref.data.Paragraph;
 import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.io.ConllReaderWriter;
+import lv.coref.io.JsonReaderWriter;
+import lv.coref.io.MmaxReaderWriter;
 import lv.coref.io.Pipe;
+import lv.coref.io.ReaderWriter;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
 import lv.coref.score.SummaryScorer;
+import lv.coref.util.StringUtils;
 
 public class Test {
 	
@@ -102,24 +108,41 @@ public class Test {
 		
 	}
 	
-
+	public static void mkTest_2015Jan() {
+		String inFolder = "data/mktest_2015-jan/json_orig/";
+		String outFolder = "data/mktest_2015-jan/";
+		List<String> files = new ArrayList<>();
+//		files.add(inFolder + "personibas.json");
+//		files.add(inFolder + "idejaslatvijai.json");
+//		files.add(inFolder + "seile.json");
+//		files.add(inFolder + "dombrovskis.json");
+		files.add(inFolder + "test_taube.json");
+		
+		try {
+			for (String file : files) {
+					ReaderWriter in = new JsonReaderWriter();
+					ReaderWriter out = new ConllReaderWriter();
+					MmaxReaderWriter mrw = new MmaxReaderWriter();
+					Text text = in.read(file);
+					resolve(text);
+					text.removeCommonSingletons();
+					System.err.println(file);
+					System.err.println(text);
+					String name = StringUtils.getBaseName(file, ".json");
+					String outfile = outFolder + name + ".conll";
+					out.write(outfile, text);
+					mrw.write(outFolder + name, text);
+				}
+			}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	
 	public static void main(String[] args) throws Exception {
-//		test();
-//		resolveAndScore("data/corpus/corefconll/interview_23.corefconll","data/corpus/conll/interview_23.conll");
-		
-//		Text text = resolveFile("data/test/sankcijas.conll");
-//		new ConllReaderWriter().write("data/test/out/" + new File(text.getId()).getName()+ "_out", text);
-//		for (Sentence s : text.getSentences()) {
-//			System.err.println(s);
-//			for (Mention m : s.getOrderedMentions()) {
-//				System.err.println(" - " + m  + " \t\t" + m.toParamString());
-//			}
-//		}
-		
-		Text t = resolve("Jānis Kalniņš devās mājup.");
-		System.out.println(t);
-		
+		mkTest_2015Jan();
 	}
 
 }

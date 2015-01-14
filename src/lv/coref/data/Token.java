@@ -133,6 +133,23 @@ public class Token implements Comparable<Token> {
 	public Sentence getSentence() {
 		return sentence;
 	}
+	
+	public int getTextPosition() {
+		Text text = getSentence().getParagraph().getText();
+		int idx = 1;
+		int sent = getSentence().getPosition();
+		int par = getSentence().getParagraph().getPosition();
+		
+		main:
+		for (Paragraph p : text) {
+			for (Sentence s : p) {
+				if (p.getPosition() == par && s.getPosition() >= sent) break main;
+				idx += s.size();
+			}
+		}
+		idx += getPosition();
+		return idx;
+	}
 
 	public void setSentence(Sentence sentence) {
 		this.sentence = sentence;

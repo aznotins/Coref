@@ -105,6 +105,16 @@ public class Mention implements Comparable<Mention> {
 			return false;
 		return false;
 	}
+	
+	public boolean isNestedInside(Mention o) {
+		if (getSentence() != o.getSentence()) return false;
+		int ms = getFirstToken().getPosition();
+		int me = getLastToken().getPosition();
+		int os = o.getFirstToken().getPosition();
+		int oe = o.getLastToken().getPosition();
+		if (os <= ms && oe >= me) return true;
+		return false;		
+	}
 
 	public boolean isMoreRepresentativeThan(Mention o) {
 		if (o == null)
@@ -140,10 +150,17 @@ public class Mention implements Comparable<Mention> {
 	}
 
 	public void setTokens(List<Token> tokens) {
-		for (Token t : this.tokens) {
-			t.removeMention(this);
+//		for (Token t : this.tokens) {
+//			t.removeMention(this);
+//		}
+		for (Token t : tokens) {
+			t.addMention(this);
 		}
 		this.tokens = tokens;
+	}
+	
+	public void setHeads(List<Token> tokens) {
+		this.heads = tokens;
 	}
 
 	public Category getCategory() {
@@ -467,13 +484,15 @@ public class Mention implements Comparable<Mention> {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		sb.append(getMentionChain().getID());
+		sb.append("").append(getMentionChain() != null ? getMentionChain().getID() : "null");
 		if (!getCategory().equals(Category.unknown))
 			sb.append("-").append(getCategory());
-		sb.append(" ").append(heads).append(" ");
+		sb.append(heads);
+		sb.append(" ");
 		for (Token t : tokens) {
 			sb.append(t.toString() + " ");
 		}
+		
 		sb.append("|").append(getType());
 		if (isPronoun())
 			sb.append("-" + getPronounType());
@@ -482,7 +501,7 @@ public class Mention implements Comparable<Mention> {
 		sb.append("|").append(getNumber());
 		sb.append("|").append(getCase());
 		sb.append("]");
-		sb.append(toParamString());
+		//sb.append(toParamString());
 		return sb.toString();
 	}
 	

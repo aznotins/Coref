@@ -23,6 +23,9 @@ public class Dictionaries {
 					"kura", "kurš", "kāds", "kāda", "cik", "kā", "kad", "kur",
 					"tiklīdz", "līdz", "kopš"));
 
+	public static final Set<String> demonstrativePronouns = new HashSet<>(
+			Arrays.asList("šis", "šī", "tas", "tā"));
+	
 	public static final Set<String> unclearGender = new HashSet<>(
 			Arrays.asList("savs", "sava"));
 
@@ -30,7 +33,10 @@ public class Dictionaries {
 		
 	}
 	
-
+	public static boolean isDemonstrativePronoun(String s) {
+		if (demonstrativePronouns.contains(s)) return true;
+		return false;
+	}
 	
 	public static Set<String> getRelativeClauseIntroducers() {
 		return relativeClauseIntroducers;
