@@ -66,6 +66,24 @@ public class Token implements Comparable<Token> {
     	return true;
     }
 	
+	public boolean isQuote() {
+		// TODO quote dictionary
+		if (tag.equals("zq") || word.equals("\'")) return true;
+        return false;
+	}
+	
+	public Token getNext() {
+		int i = getPosition() + 1;
+		if (i < getSentence().size()) return getSentence().get(i);
+		return null;
+	}
+	
+	public Token getPrev() {
+		int i = getPosition() - 1;
+		if (i >= 0) return getSentence().get(i);
+		return null;
+	}
+	
 	public Node getNode() {
 		return node;
 	}

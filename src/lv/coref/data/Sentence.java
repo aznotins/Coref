@@ -30,13 +30,34 @@ public class Sentence extends ArrayList<Token> {
 	public Sentence(int position) {
 		this.position = position;
 	}
+	
+	public List<Token> matchTokensByLemmaText(String lemmaText) {
+		String[] bits = lemmaText.split(" ");
+		for (int i = 0; i < this.size(); i++) {
+			boolean ok = true;
+			for (int j = 0; j < bits.length; j++ ) {
+				if (j + i > size()) { ok = false; break; }
+				if (!get(i + j).getWord().equals(bits[j])) { ok = false; break; }
+			}
+			if (ok) {
+				return subList(i, i + bits.length);
+			}
+		}
+		return null;		
+	}
 
 	public boolean add(Token token) {
 		token.setPosition(this.size());
 		token.setSentence(this);
 		return super.add(token);
 	}
-
+	
+	@Override
+	public List<Token> subList(int fromIndex, int toIndex) {
+		// TODO Auto-generated method stub
+		return new ArrayList<>(super.subList(fromIndex, toIndex));
+	}
+	
 	public Paragraph getParagraph() {
 		return paragraph;
 	}
@@ -67,7 +88,14 @@ public class Sentence extends ArrayList<Token> {
 	}
 
 	public List<Mention> getMentions() {
-		return new ArrayList<>(mentions);
+		//return new ArrayList<>(mentions);
+		List<Mention> mentions = new ArrayList<>(this.mentions);
+		Collections.sort(mentions);
+		return mentions;
+	}
+	
+	public Set<Mention> getMentionSet() {
+		return mentions;
 	}
 
 	public List<Mention> getOrderedMentions() {
@@ -97,6 +125,13 @@ public class Sentence extends ArrayList<Token> {
 			// }
 			// System.err.println("TOKEN remove mention "
 			// + t.getMentions().contains(mention) + t.getMentions());
+		}
+		if (mention.getMentionChain() != null) {
+			if (mention.getMentionChain().size() == 1) {
+				getText().removeMentionChain(mention.getMentionChain());
+			} else {
+				mention.getMentionChain().remove(mention);
+			}
 		}
 	}
 
@@ -310,8 +345,8 @@ public class Sentence extends ArrayList<Token> {
 		// Set<String> quoteSymbols = new HashSet<String>(Arrays.asList("'",
 		// "\""));
 		for (Token t : this) {
-			sb.append(" ");
 			sb.append(t.getWord());
+			sb.append(" ");
 			// TODO uzlabot teksta veidošanu no sadalītiem tokeniem
 		}
 		return sb.toString();
@@ -367,6 +402,7 @@ public class Sentence extends ArrayList<Token> {
 				sb.append(m.getMention(false) == null ? "-" : "+");				
 			}
 			sb.append(" ").append(m.toString());
+			sb.append("\t - ").append(m.getParent());
 			//sb.append("\t").append(m.toParamString());
 		}
 		if (paired != null) {			

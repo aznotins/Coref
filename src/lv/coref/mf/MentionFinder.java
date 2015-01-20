@@ -19,19 +19,20 @@ import lv.coref.data.Text;
 import lv.coref.data.Token;
 import lv.coref.io.ConllReaderWriter;
 import lv.coref.io.Pipe;
+import lv.coref.lv.Constants.Case;
 import lv.coref.lv.Constants.Category;
 import lv.coref.lv.Constants.PosTag;
-import lv.coref.lv.Constants.PronType;
 import lv.coref.lv.Constants.Type;
 import lv.coref.lv.Dictionaries;
 import lv.coref.lv.MorphoUtils;
 import lv.coref.score.SummaryScorer;
+import lv.coref.tests.CorefTest;
 import lv.coref.util.FileUtils;
 import lv.coref.util.StringUtils;
 
 public class MentionFinder {
 
-	public static final boolean VERBOSE = true;
+	public static final boolean VERBOSE = false;
 
 	public void findMentions(Text text) {
 		for (Paragraph p : text) {
@@ -42,22 +43,22 @@ public class MentionFinder {
 	}
 
 	public void findMentionInSentence(Sentence sentence) {
-		// addNounMentions(sentence);
+//		 addNounMentions(sentence);
 		// addNounPhraseMentions(sentence);
+		// addCoordinationsFlat(sentence);
+
 		addNamedEntityMentions(sentence);
 		addAcronymMentions(sentence);
 		addQuoteMentions(sentence);
 		addNounPhraseMentions2(sentence);
-		addCoordinations(sentence);
-		// addCoordinationsFlat(sentence);
+		// //addCoordinations(sentence);
 		addPronounMentions(sentence);
-
 		MentionCleaner.cleanSentenceMentions(sentence);
-
-		removeNestedMentions(sentence);
-
 		updateMentionHeads(sentence);
 		updateMentionBoundaries(sentence);
+//		 addCoordinationsFlat(sentence);
+		removeAbstractMentions(sentence);
+		removeNestedMentions(sentence); // last step
 
 	}
 
@@ -67,10 +68,75 @@ public class MentionFinder {
 				m.addHead(m.getLastToken());
 	}
 
-	private void updateMentionBoundaries(Sentence sentence) {
-		int l = sentence.size();
+	public void removeAbstractMentions(Sentence sentence) {
 		for (Mention m : sentence.getMentions()) {
+			boolean remove = false;
+			if (m.isProperMention() && !m.isAcronym())
+				continue;
+			if (Dictionaries.abstractMentions.match(m.getHeadLemmaString()) != null)
+				remove = true;
 
+			if (remove) {
+				if (VERBOSE)
+					System.err.println("REMOVE ABSTRACT: " + m);
+				sentence.removeMention(m);
+			}
+		}
+	}
+
+	private void updateMentionBoundaries(Sentence sentence) {
+		for (Mention m : sentence.getMentions()) {
+			int start = m.getFirstToken().getPosition();
+			int end = m.getLastToken().getPosition();
+			if (start - 1 >= 0 && sentence.get(start - 1).isQuote())
+				start--;
+			if (end + 1 < sentence.size() && sentence.get(end + 1).isQuote())
+				end++;
+			// System.err.println(m + " " + sentence.get(start) +" " +
+			// sentence.get(end));
+			if (sentence.get(start).isQuote() && sentence.get(end).isQuote()) {
+				m.setTokens(sentence.subList(start, end + 1));
+				if (VERBOSE)
+					System.err.println("QUOTES ADDED to mention " + m);
+			}
+		}
+		List<String> introducers = Arrays.asList("valsts SIA", "SIA");
+		for (String s : introducers) {
+			List<Token> tokens = sentence.matchTokensByLemmaText(s);
+			// System.err.println(tokens);
+			if (tokens == null)
+				continue;
+			int end = tokens.get(tokens.size() - 1).getPosition();
+			if (end + 1 >= sentence.size())
+				continue;
+			Set<Mention> mentions = sentence.get(end + 1).getStartMentions();
+			for (Mention m : mentions) {
+				tokens.addAll(m.getTokens());
+				m.setTokens(tokens);
+				m.setType(Type.NE);
+				m.setCategory(Category.organization);
+				if (VERBOSE)
+					System.err.println("INTRODUCER ADDED " + s + " " + m);
+			}
+		}
+
+		for (Mention m : sentence.getMentions()) {
+			Token t = m.getFirstToken().getPrev();
+			if (t != null && t.getEndMentions().size() > 0) {
+				Mention max = null;
+				for (Mention mm : t.getEndMentions()) {
+					if (mm.isProperMention() && (max == null || max.getTokens().size() < mm.getTokens().size()))
+						max = mm;
+				}
+				if (max != null && max.getCase().equals(Case.GEN)) {
+					List<Token> tokens = new ArrayList<>();
+					tokens.addAll(max.getTokens());
+					tokens.addAll(m.getTokens());
+					m.setTokens(tokens);
+					if (VERBOSE)
+						System.err.println("ADDED GENITIVE MENTION " + max + " TO " + m);
+				}
+			}
 		}
 	}
 
@@ -78,25 +144,30 @@ public class MentionFinder {
 		// System.err.println(sentence.getTextString());
 		for (Mention mention : sentence.getMentions()) {
 			boolean remove = false;
-			Token first = mention.getFirstToken();
-			if (first.getMentions().size() <= 1)
-				continue;
+			// Token first = mention.getFirstToken();
 			// System.err.println("consider nested" + mention);
-			if (mention.isPronoun()
-					&& Dictionaries.isDemonstrativePronoun(mention
-							.getLemmaString().toLowerCase()))
-				remove = true;
-			for (Mention m : first.getMentions()) {
+			for (Mention m : sentence.getMentions()) {
+				// TODO don't process all mentions?
+				// System.err.println("consider nested " + mention + " inside "
+				// + m);
 				if (m == mention)
 					continue;
 				if (mention.isNestedInside(m)) {
-					if (m.getCategory().equals(Category.person))
+					// System.err.println("IS NESTED " + mention + " inside " +
+					// m);
+					if (m.getCategory().equals(Category.person) && m.isProperMention())
+						remove = true;
+					// if (m.isStrong()) remove = true;
+					if (mention.isPronoun()
+							&& Dictionaries.isDemonstrativePronoun(mention.getLemmaString().toLowerCase()))
 						remove = true;
 				}
+
 			}
 			if (remove) {
+				if (VERBOSE)
+					System.err.println("REMOVE NESTED: " + mention);
 				sentence.removeMention(mention);
-				System.err.println("REMOVE NESTED: " + mention);
 			}
 		}
 	}
@@ -106,17 +177,14 @@ public class MentionFinder {
 			List<Token> tokens = n.getTokens();
 			List<Token> heads = new ArrayList<>();
 			heads.add(tokens.get(tokens.size() - 1));
-			Mention m = new Mention(sent.getText().getNextMentionID(), tokens,
-					heads);
+			Mention m = new Mention(sent.getText().getNextMentionID(), tokens, heads);
 			sent.addMention(m);
 			sent.getText().addMentionChain(new MentionChain(m));
 
 			m.setCategory(n.getLabel());
-
-			if (!m.getCategory().equals(Category.unknown)
-					&& !m.getCategory().equals(Category.profession)
-					&& !m.getCategory().equals(Category.time)
-					&& !m.getCategory().equals(Category.sum)) {
+			m.setFinal(true);
+			if (!m.getCategory().equals(Category.unknown) && !m.getCategory().equals(Category.profession)
+					&& !m.getCategory().equals(Category.time) && !m.getCategory().equals(Category.sum)) {
 				m.setType(Type.NE);
 			} else {
 				m.setType(Type.NP);
@@ -150,17 +218,61 @@ public class MentionFinder {
 	}
 
 	private void addQuoteMentions(Sentence sent) {
-		for (Token t : sent) {
-//			if (t.is()) {
-//				Mention m = new Mention(sent.getText().getNextMentionID(), t);
-//				sent.addMention(m);
-//				sent.getText().addMentionChain(new MentionChain(m));
-//				m.setType(Type.NE);
-//				if (VERBOSE)
-//					System.err.println("ACRONYM mention " + m);
-//			}
+		for (int iTok = 0; iTok < sent.size(); iTok++) {
+			Token t = sent.get(iTok);
+			if (!t.isQuote())
+				continue;
+			int jTokMax = Math.min(sent.size(), iTok + 10);
+			boolean hasProperToken = false;
+			for (int jTok = iTok + 1; jTok < jTokMax; jTok++) {
+				Token jt = sent.get(jTok);
+				if (jt.getPosTag().equals(PosTag.V) && !jt.isProper())
+					break;
+				if (jt.isProper())
+					hasProperToken = true;
+				// TODO all uppercase letters means that this mention is proper
+				if (jt.isQuote()) {
+					List<Token> tokens = sent.subList(iTok + 1, jTok);
+					if (tokens.get(0).getTag().equals("zc"))
+						break; // comma
+					if (tokens.get(0).getTag().equals("ccs"))
+						break; // saiklis
+
+					List<Token> heads = Arrays.asList(sent.get(jTok - 1));
+
+					Mention m = new Mention(sent.getText().getNextMentionID(), tokens, heads);
+					if (hasProperToken)
+						m.setType(Type.NE);
+					else
+						m.setType(Type.NP);
+					sent.addMention(m);
+					sent.getText().addMentionChain(new MentionChain(m));
+					if (VERBOSE)
+						System.err.println("QUOTE mention " + m);
+					break;
+				}
+			}
 		}
 	}
+
+	// while (++i < d.tree.size()) {
+	// Node n = d.tree.get(i);
+	// if (n.isQuote()) {
+	// int j = i;
+	// while (++j - i <= max_l && j < d.tree.size()) {
+	// if (d.tree.get(j).sentence.getID() != n.sentence.getID()) break;
+	// if (d.tree.get(j).tag.charAt(0) == 'v' && !Character.isUpperCase(
+	// d.tree.get(j).word.charAt(0))) break; //nesatur d.v.
+	// if (d.tree.get(j).isQuote()) {
+	// if (i + 1 <= j-1) {
+	// String s = d.getSubString(i+1, j-1);
+	// boolean add = false;
+	// for (int k = 0; k < s.length(); k++) {
+	// if (Character.isUpperCase(s.charAt(k)) ){
+	// add = true;
+	// break;
+	// }
+	// }
 
 	private void addCoordinations(Sentence sent) {
 		Node n = sent.getRootNode();
@@ -171,18 +283,41 @@ public class MentionFinder {
 		int start = -1;
 		int end = -1;
 		boolean coord = false;
-		for (int i = 0; i < sent.size(); i++) {
-			Token t = sent.get(i);
-			if (t.getStartMentions().size() > 0) {
-				// TODO
-			}
+		for (Mention mention : sent.getMentions()) {
+			Token next = mention.getLastToken().getNext();
+			if (next == null)
+				continue;
+			if (!next.getLemma().equals("un"))
+				continue;
+			next = next.getNext();
+			if (next == null)
+				continue;
+			List<Mention> mentions = next.getOrderedStartMentions();
+			if (mentions.size() == 0)
+				continue;
+			// Collections.reverse(mentions);
+			Mention mention2 = mentions.get(0);
+			if (VERBOSE)
+				System.err.println("Coordination candidate " + mention + mention2);
+
+			List<Token> tokens = new ArrayList<>();
+			List<Token> heads = new ArrayList<>();
+			tokens.addAll(mention.getTokens());
+			tokens.addAll(mention2.getTokens());
+			heads.addAll(mention.getHeads());
+			heads.addAll(mention2.getHeads());
+			Mention m = new Mention(sent.getText().getNextMentionID(), tokens, heads);
+			sent.addMention(m);
+			sent.getText().addMentionChain(new MentionChain(m));
+			m.setType(Type.CONJ);
+			if (VERBOSE)
+				System.err.println("MENTION COORDINATION: " + m);
 		}
 	}
 
 	private void addCoordinations(Sentence sent, Node n) {
 		for (Node child : n.getChildren()) {
-			if (n.getLabel().endsWith("crdParts:crdPart")
-					&& n.getHeads().get(0).getPosTag() == PosTag.N) {
+			if (n.getLabel().endsWith("crdParts:crdPart") && n.getHeads().get(0).getPosTag() == PosTag.N) {
 				List<Token> tokens = n.getTokens();
 				List<Token> heads = new ArrayList<>();
 				for (Token t : tokens) {
@@ -191,13 +326,12 @@ public class MentionFinder {
 					}
 				}
 				if (heads.size() > 1) {
-					Mention m = new Mention(sent.getText().getNextMentionID(),
-							tokens, heads);
+					Mention m = new Mention(sent.getText().getNextMentionID(), tokens, heads);
 					sent.addMention(m);
 					sent.getText().addMentionChain(new MentionChain(m));
 					m.setType(Type.CONJ);
-					// if (VERBOSE)
-					System.err.println("MENTION COORDINATION: " + m);
+					if (VERBOSE)
+						System.err.println("MENTION COORDINATION: " + m);
 				}
 			} else {
 				addCoordinations(sent, child);
@@ -209,18 +343,16 @@ public class MentionFinder {
 	private void addPronounMentions(Sentence sent) {
 		for (Node n : sent.getNodes(false)) {
 			if (n.getHeads().get(0).getPosTag() == PosTag.P) {
-				Mention m = new Mention(sent.getText().getNextMentionID(),
-						n.getTokens(), n.getHeads());
+				Mention m = new Mention(sent.getText().getNextMentionID(), n.getTokens(), n.getHeads());
 				sent.addMention(m);
 				sent.getText().addMentionChain(new MentionChain(m));
 				String text = n.getHeads().get(0).getLemma();
 				m.setCategory(Dictionaries.getCategory(text));
 				m.setType(Type.PRON);
-				m.getLastHeadToken().setPronounType(
-						MorphoUtils.getPronounType(m.getLastHeadToken()
-								.getTag()));
-				m.getLastHeadToken().setPerson(
-						MorphoUtils.getPerson(m.getLastHeadToken().getTag()));
+				m.getLastHeadToken().setPronounType(MorphoUtils.getPronounType(m.getLastHeadToken().getTag()));
+				m.getLastHeadToken().setPerson(MorphoUtils.getPerson(m.getLastHeadToken().getTag()));
+				if (VERBOSE)
+					System.err.println("PRONNOUN MENTION: " + m);
 			}
 		}
 	}
@@ -228,8 +360,7 @@ public class MentionFinder {
 	private void addNounPhraseMentions(Sentence sent) {
 		for (Node n : sent.getNodes(false)) {
 			if (n.getHeads().get(0).getPosTag() == PosTag.N) {
-				Mention m = new Mention(sent.getText().getNextMentionID(),
-						n.getTokens(), n.getHeads());
+				Mention m = new Mention(sent.getText().getNextMentionID(), n.getTokens(), n.getHeads());
 				sent.addMention(m);
 				sent.getText().addMentionChain(new MentionChain(m));
 			}
@@ -239,17 +370,29 @@ public class MentionFinder {
 	private void addNounPhraseMentions2(Sentence sent) {
 		for (Node n : sent.getNodes(false)) {
 			if (n.getHeads().get(0).getPosTag() == PosTag.N) {
-				List<Token> tokens = sent.subList(n.getStart(), n.getHeads()
-						.get(n.getHeads().size() - 1).getPosition() + 1);
+				List<Token> tokens = sent.subList(n.getStart(),
+						n.getHeads().get(n.getHeads().size() - 1).getPosition() + 1);
 
 				// simple filter out incorrect borders due conjunctions,
 				// punctuation
 				int start = 0, end = tokens.size();
-				Set<String> fillerLemmas = new HashSet<String>(Arrays.asList(
-						"un", ",", "."));
+
+				Set<String> fillerLemmas = new HashSet<String>(Arrays.asList("un", ",", "."));
+				// filter out verbs
+				for (int i = start; i < end; i++) {
+					Token t = tokens.get(i);
+					if (t.getPosTag() == PosTag.V)
+						start = i + 1;
+				}
+				// filter out fillers
 				while (start < tokens.size()) {
 					Token t = tokens.get(start);
 					if (fillerLemmas.contains(t.getLemma())) {
+						start++;
+					} else if (t.getPosTag().equals(PosTag.ADJ) && !MorphoUtils.isDefAdj(t.getTag())) {
+						// System.err.println("REMOVE ADJ " + n + " " +
+						// t.getPosTag());
+						// TODO definite adjective as proper mention attribute
 						start++;
 					} else
 						break;
@@ -261,146 +404,31 @@ public class MentionFinder {
 					} else
 						break;
 				}
-				for (int i = start; i < end; i++) {
-					Token t = tokens.get(i);
-					if (t.getPosTag() == PosTag.V)
-						start = i + 1;
-				}
-
 				if (start > end)
 					continue;
 				tokens = tokens.subList(start, end);
 
-				Mention m = new Mention(sent.getText().getNextMentionID(),
-						tokens, n.getHeads());
+				Mention m = new Mention(sent.getText().getNextMentionID(), tokens, n.getHeads());
+
 				sent.addMention(m);
 				sent.getText().addMentionChain(new MentionChain(m));
 
 				m.setType(Type.NP);
 				if (m.getFirstToken().isProper())
 					m.setType(Type.NE);
+				m.setCategory(Dictionaries.getCategory(m.getLemmaString()));
+
+				if (VERBOSE)
+					System.err.println("NP mention " + m);
 			}
 		}
-	}
-
-	public static void compare() throws Exception {
-		ConllReaderWriter rw = new ConllReaderWriter();
-		Text text;
-		// t = rw.getText("news_63.conll");
-		// t = rw.getText("sankcijas.conll");
-		text = rw.read("data/corpus/conll/interview_16.conll");
-		Text goldText = rw
-				.read("data/corpus/corefconll/interview_16.corefconll");
-		text.setPairedText(goldText);
-		goldText.setPairedText(text);
-
-		MentionFinder mf = new MentionFinder();
-		mf.findMentions(text);
-
-		// System.out.println(text);
-		for (Sentence s : text.getSentences()) {
-			System.out.println(s);
-			// System.out.println("\t@" + s.getMentions());
-			System.out.println(s.getPairedSentence());
-
-			for (Mention m : s.getPairedSentence().getMentions()) {
-				if (m.getMention(true) == null) {
-					if (m.getMention(false) == null) {
-						System.out.println("\t-- " + m);
-					} else {
-						System.out.println("\t-+ " + m);
-					}
-				} else {
-					if (m.getMention(false) == null) {
-						System.out.println("\t+- " + m);
-					} else {
-						System.out.println("\t++ " + m);
-					}
-				}
-
-			}
-		}
-		SummaryScorer scorer = new SummaryScorer();
-		scorer.add(text);
-		System.err.println(scorer);
-	}
-
-	public static String stringTest(String... strings) {
-		String s = stringTests(strings);
-		System.out.println(s);
-		return s;
-	}
-
-	public static String stringTests(String... strings) {
-		String stringText = StringUtils.join(strings, "\n");
-		StringBuilder sb = new StringBuilder();
-		Text t = new Pipe().getText(stringText);
-		MentionFinder mf = new MentionFinder();
-		mf.findMentions(t);
-
-		for (Sentence s : t.getSentences()) {
-			sb.append(s.getTextString()).append("\n");
-			for (Mention m : s.getOrderedMentions()) {
-				sb.append(" - ").append(m);
-				//sb.append("\t\t").append(m.toParamString());
-				sb.append("\n");
-			}
-		}
-		return sb.toString();
-	}
-
-	public static void fileTests(BufferedWriter bw, List<String> files)
-			throws IOException {
-
-		for (String file : files) {
-			bw.write("\n\n\n==== " + file + " ===== \n");
-
-			String fileText = FileUtils.readFile(file, StandardCharsets.UTF_8);
-			// System.err.println(stringText);
-
-			String[] parText = fileText.split("\n");
-			for (String stringText : parText) {
-				stringText = stringText.trim();
-				if (stringText.length() == 0)
-					continue;
-				Text t = new Pipe().getText(stringText);
-				MentionFinder mf = new MentionFinder();
-				mf.findMentions(t);
-
-				for (Sentence s : t.getSentences()) {
-					bw.write(s.getTextString());
-					bw.write("\n");
-					for (Mention m : s.getOrderedMentions()) {
-						bw.write(" - " + m);
-						//bw.write("\t\t" + m.toParamString());
-						bw.write("\n");
-					}
-				}
-				bw.write("\n\n");
-			}
-		}
-		bw.close();
 	}
 
 	public static void main(String[] args) throws IOException {
-
-		// fileTests(new BufferedWriter(new FileWriter("mentionFinder.out")),
-		// FileUtils.getFiles("data/mentionTest", -1, -1, ""));
-
-		stringTest("Kopš 2001. gada viņš strādājis dažādos amatos valsts SIA \" Psihiatrijas centrs \" ,"
-				+ " Garīgās veselības valsts aģentūrā un valsts SIA \" Rīgas Psihiatrijas un narkoloģijas "
-				+ "centrs \" , bijis arī docents RSU un vadījis lekcijas Latvijas Universitātē .");
-
-//		stringTest("Jānis Kalniņš devās mājup.", "Šodien J.K. devās mājup.",
-//				"J. Kalniņš devās mājup.",
-//				"Profesors Jānis Kalniņš devās mājup.",
-//				"Šodien skolotājs Jānis Kalniņš mācīja ausgtāko matemātiku.");
-//
-//		stringTest("Latvija, Rīga un Liepāja iestājās par.",
-//				"Jānis un Pēteris devās mājup.",
-//				"Uzņēmuma vadītājs un valdes priekšēdētājs Jānis Krūmiņš izteica sašutumu.");
-//
-//		stringTest("SIA \"Cirvis\". ");
+		CorefTest.test("MENTIONS",
+				"Kopš 2001. gada viņš strādājis dažādos amatos valsts SIA \" Psihiatrijas centrs \" ,"
+						+ " Garīgās veselības valsts aģentūrā un valsts SIA \" Rīgas Psihiatrijas un narkoloģijas "
+						+ "centrs \" , bijis arī docents RSU un vadījis lekcijas Latvijas Universitātē .");
 	}
 
 }

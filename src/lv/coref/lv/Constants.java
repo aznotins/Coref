@@ -18,6 +18,7 @@ public class Constants {
 			if (this.equals(unknown)) return true;
 			if (o.equals(unknown)) return true;
 			if ((this.equals(person) || this.equals(profession)) && (o.equals(person) || o.equals(profession))) return true;
+			if ((this.equals(media) || this.equals(organization)) && (o.equals(organization) || o.equals(media))) return true;
 			return this.equals(o);
 		}
 		
@@ -26,6 +27,7 @@ public class Constants {
 				return false;
 			if (o.equals(unknown))
 				return false;
+			if (compatible(o)) return true;
 			return this.equals(o);
 		}
 
@@ -34,6 +36,7 @@ public class Constants {
 				return true;
 			if (o.equals(unknown))
 				return true;
+			if (compatible(o)) return true;
 			return this.equals(o);
 		}
 

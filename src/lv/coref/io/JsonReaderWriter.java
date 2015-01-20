@@ -276,7 +276,7 @@ public class JsonReaderWriter extends ReaderWriter {
 			}
 		} catch (Exception e) {
 			System.err.println("ERROR while updating tokens");
-			e.printStackTrace(System.err);
+			e.printStackTrace();
 		}
 	}
 

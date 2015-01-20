@@ -1,5 +1,6 @@
 package lv.coref.score;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +46,8 @@ public class ConllEvalScorer {
 			new ConllReaderWriter().write(goldTextFile, t.getPairedText());
 			Text copyText = new ConllReaderWriter().read(textFile);
 			Text copyGoldText = new ConllReaderWriter().read(goldTextFile);
+			new File(textFile).deleteOnExit();
+			new File(goldTextFile).deleteOnExit();
 			convertToHeadMentions(copyText);
 			convertToHeadMentions(copyGoldText);
 			copyText.setPairedText(copyGoldText);
@@ -114,15 +117,18 @@ public class ConllEvalScorer {
 			
 			runMetricScorer("muc", goldTextFile, textFile);
 			runMetricScorer("bcub", goldTextFile, textFile);
-//			runMetricScorer("ceafe", goldTextFile, textFile);
+			runMetricScorer("ceafe", goldTextFile, textFile);
 			
-			averagedScorer.setPrecision((mucScorer.getPrecision() + bCubedScorer.getPrecision()) / 2.0);
-			averagedScorer.setRecall((mucScorer.getRecall()	+ bCubedScorer.getRecall()) / 2.0);
-			averagedScorer.setF1((mucScorer.getF1() + bCubedScorer.getF1()) / 2.0);
+			new File(textFile).delete();
+			new File(goldTextFile).delete();
 			
-//			averagedScorer.setPrecision((mucScorer.getPrecision() + bCubedScorer.getPrecision() + ceafEScorer.getPrecision()) / 3.0);
-//			averagedScorer.setRecall((mucScorer.getRecall()	+ bCubedScorer.getRecall() + ceafEScorer.getRecall()) / 3.0);
-//			averagedScorer.setF1((mucScorer.getF1() + bCubedScorer.getF1() + ceafEScorer.getF1()) / 3.0);
+//			averagedScorer.setPrecision((mucScorer.getPrecision() + bCubedScorer.getPrecision()) / 2.0);
+//			averagedScorer.setRecall((mucScorer.getRecall()	+ bCubedScorer.getRecall()) / 2.0);
+//			averagedScorer.setF1((mucScorer.getF1() + bCubedScorer.getF1()) / 2.0);
+//			
+			averagedScorer.setPrecision((mucScorer.getPrecision() + bCubedScorer.getPrecision() + ceafEScorer.getPrecision()) / 3.0);
+			averagedScorer.setRecall((mucScorer.getRecall()	+ bCubedScorer.getRecall() + ceafEScorer.getRecall()) / 3.0);
+			averagedScorer.setF1((mucScorer.getF1() + bCubedScorer.getF1() + ceafEScorer.getF1()) / 3.0);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -280,7 +286,7 @@ public class ConllEvalScorer {
 		sb.append("muc: \t").append(mucScorer.toString());
 		sb.append("\nbcub: \t").append(bCubedScorer.toString());
 //		sb.append("\nceafm: \t").append(ceafMScorer.toString());
-//		sb.append("\nceafe: \t").append(ceafEScorer.toString());
+		sb.append("\nceafe: \t").append(ceafEScorer.toString());
 //		sb.append("\nblanc: \t").append(blancScorer.toString());
 		sb.append("\naveraged: \t").append(averagedScorer.toString());
 		return sb.toString();

@@ -25,7 +25,7 @@ public class MentionChain extends HashSet<Mention> {
 	public MentionChain(String id) {
 		this.id = id;
 	}
-	
+
 	public MentionChain(String id, Mention m) {
 		this(id);
 		add(m);
@@ -36,13 +36,13 @@ public class MentionChain extends HashSet<Mention> {
 		this(m.getID(), m);
 	}
 
-//	public Text getText() {
-//		return text;
-//	}
-//
-//	public void setText(Text text) {
-//		this.text = text;
-//	}
+	// public Text getText() {
+	// return text;
+	// }
+	//
+	// public void setText(Text text) {
+	// this.text = text;
+	// }
 
 	public Category getCategory() {
 		for (Mention m : this) {
@@ -60,7 +60,37 @@ public class MentionChain extends HashSet<Mention> {
 		return attr;
 	}
 
+	public Set<String> getAttributeTokens() {
+		Set<String> attr = new HashSet<>();
+		for (Mention m : this) {
+			attr.addAll(m.getAttributeTokens());
+		}
+		return attr;
+	}
+
 	public boolean weakAgreement(MentionChain o) {
+		boolean ok = true;
+		Category mcat = getCategory();
+		// TODO
+		if ((mcat.equals(Category.organization) || o.getCategory().equals(Category.organization))
+				&& !mcat.compatible(o.getCategory()))
+			return false;
+		if (!mcat.weakEquals(o.getCategory()))
+			return false;
+		Set<String> properTokens = getProperTokens();
+		for (String oProperToken : o.getProperTokens()) {
+			if (!properTokens.contains(oProperToken))
+				return false;
+		}
+		Set<String> attributeTokens = getAttributeTokens();
+		for (String oProperToken : o.getAttributeTokens()) {
+			if (!attributeTokens.contains(oProperToken))
+				return false;
+		}
+		return ok;
+	}
+
+	public boolean strictAgreement(MentionChain o) {
 		boolean ok = true;
 		Category mcat = getCategory();
 		if (!mcat.weakEquals(o.getCategory()))
@@ -107,7 +137,7 @@ public class MentionChain extends HashSet<Mention> {
 
 	public String getID() {
 		return id;
-		
+
 	}
 
 	public void setID(String id) {
@@ -155,6 +185,7 @@ public class MentionChain extends HashSet<Mention> {
 		for (Mention m : this) {
 			s.append("  ");
 			s.append(m);
+			s.append("\t\t").append(m.getSentence().getTextString());
 			s.append("\n");
 		}
 		return s.toString();

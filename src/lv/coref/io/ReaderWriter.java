@@ -25,26 +25,34 @@ public abstract class ReaderWriter {
 	public Text read(String filename) throws Exception {
 		setFileID(new File(filename).getPath());
 		BufferedReader br = new BufferedReader(new FileReader(filename));
-		return read(br);
+		Text text = read(br);
+		br.close();
+		return text;
 	}
 
 	public void write(String filename, Text t) throws Exception {
-		PrintStream ps = new PrintStream(new FileOutputStream(filename));
+		FileOutputStream fos = new FileOutputStream(filename);
+		PrintStream ps = new PrintStream(fos);
 		write(ps, t);
 		ps.close();
+		fos.close();
+	}
+	
+	private void write(OutputStream out, Text t, boolean close) throws Exception {
+		PrintStream ps = new PrintStream(out, true, "UTF-8");
+		write(ps, t);
+		if (close) ps.close();
 	}
 
 	public void write(OutputStream out, Text t) throws Exception {
-		PrintStream ps = new PrintStream(out, true, "UTF-8");
-		write(ps, t);
-		ps.close();
+		write(out, t, true);
 	};
 
 	public void write(String filename, Collection<Text> texts) throws Exception {
 		PrintStream ps = new PrintStream(new FileOutputStream(filename));
 		for (Text t : texts) {
 			initialize(t);
-			write(ps, t);
+			write(ps, t, false);
 		}
 		ps.close();
 	}

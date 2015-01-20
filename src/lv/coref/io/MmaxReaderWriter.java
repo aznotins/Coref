@@ -161,7 +161,7 @@ public class MmaxReaderWriter extends ReaderWriter {
 
 		int iMent = 1;
 		for (Mention m : text.getMentions()) {
-			String corefClass = m.getMentionChain().size() > 1 ? m
+			String corefClass = m.getMentionChain().size() > 1 ? "set_" + m
 					.getMentionChain().getID() : "empty";
 			String span = createSpanString("word_", m.getFirstToken().getTextPosition(),
 					m.getLastToken().getTextPosition());

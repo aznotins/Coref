@@ -32,7 +32,7 @@ public class Test {
 		//text.removeSingletons();
 		
 		System.out.println(text);
-		rw.write("tmp/" + new File(text.getId()).getName() + "_" + UUID.randomUUID() + ".conll", text);
+		//rw.write("tmp/" + new File(text.getId()).getName() + "_" + UUID.randomUUID() + ".conll", text);
 		
 		Text goldText = new ConllReaderWriter().read(refFile);
 		text.setPairedText(goldText);

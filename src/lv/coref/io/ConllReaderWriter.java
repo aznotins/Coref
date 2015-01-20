@@ -521,16 +521,11 @@ public class ConllReaderWriter extends ReaderWriter {
 
 		new MentionFinder().findMentions(t);
 		new Ruler().resolve(t);
-		rw.write(System.out, t);
+		//rw.write(System.out, t);
 		System.out.println(t);
 		// for (MentionChain mc : t.getMentionChains()) {
 		// if (mc.size() > 1)
 		// System.out.println(mc);
 		// }
-
-		// Text t2 = rw.getText("data/test.corefconll");
-		// rw.write("tmp/twofiles.out", Arrays.asList(t, t2));
-
 	}
-
 }

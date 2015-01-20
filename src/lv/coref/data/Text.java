@@ -104,6 +104,15 @@ public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
 			}
 		}
 	}
+	
+	public void removeCommonAbstractSingletons() {
+		for (Mention m : getMentions()) {
+			if (m.isPronoun() && m.getCategory().equals(Category.person)) continue;
+			if (m.getMentionChain().size() < 2 && !m.getType().equals(Type.NE) && m.getCategory().equals(Category.unknown)) {
+				removeMentionChain(m.getMentionChain());
+			}
+		}
+	}
 
 	public MentionChain getMentionChain(String id) {
 		return mentionChains.get(id);
@@ -135,8 +144,9 @@ public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
 	public void removeMentionChain(MentionChain mc) {
 		mentionChains.remove(mc.getID());
 		for (Mention m : mc) {
-			m.getSentence().removeMention(m);
-			mentionChains.remove(mc.getID());
+			m.setMentionChain(null);
+			if (m.getSentence().getMentionSet().contains(m))
+				m.getSentence().removeMention(m);
 		}
 	}
 	

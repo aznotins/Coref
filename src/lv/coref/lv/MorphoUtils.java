@@ -22,6 +22,7 @@ public class MorphoUtils {
 		else if (tag.charAt(0) == 'q') return PosTag.PART;
 		else if (tag.charAt(0) == 'z') return PosTag.PUNC;
 		else if (tag.charAt(0) == 'x') return PosTag.X;
+		else if (tag.charAt(0) == 'y') return PosTag.X;
 		else return PosTag.UNKNOWN;
 	}
 	
@@ -62,7 +63,7 @@ public class MorphoUtils {
 				case 'a': return Case.ACC; 
 				case 'l': return Case.LOC;
 				case 'v': return Case.VOC; 
-				//case 's': return Case.NOM; //�enet�venis
+				//case 's': return Case.NOM;
 				default: return Case.UNKNOWN;
 			}
 		}
@@ -74,7 +75,7 @@ public class MorphoUtils {
 				case 'a': return Case.ACC; 
 				case 'l': return Case.LOC;
 				case 'v': return Case.VOC; 
-				//case 's': return Case.NOM; //�enet�venis
+				//case 's': return Case.NOM;
 				default: return Case.UNKNOWN;
 			}
 		}
@@ -105,6 +106,11 @@ public class MorphoUtils {
 			}
 		}
 		return PronType.UNKNOWN;
+	}
+	
+	public static boolean isDefAdj(String tag) {
+		if (tag.startsWith("a") && tag.length() >= 6 && tag.charAt(5) == 'y') return true;
+		return false;
 	}
 	
 	public static void main(String[] args) {

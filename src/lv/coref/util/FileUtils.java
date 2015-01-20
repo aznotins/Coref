@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.CharSet;
+
 public class FileUtils {
 
 	public static List<String> getFiles(String baseDir, int limit, int skip,
@@ -36,6 +38,10 @@ public class FileUtils {
 	public static String readFile(String path, Charset encoding) throws IOException {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return new String(encoded, encoding);
+	}
+	
+	public static String readFile(String path) throws IOException {
+		return readFile(path, Charset.forName("UTF-8"));
 	}
 
 	public static Set<String> getSetFromColumn(String filename, int column,

@@ -120,8 +120,10 @@ public class Node {
 		StringBuilder s = new StringBuilder();
 		s.append("[");
 		s.append(heads);
-		s.append(" ").append(label);
-		s.append(" ").append(getTokens());
+		for (Token t : getTokens()) {
+			s.append(" ").append(t);
+		}
+		s.append(" |").append(label);
 		s.append(String.format(" (%d:%d:%d)", getHeight(), start, end));
 		s.append("]");
 		return s.toString();

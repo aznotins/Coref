@@ -28,6 +28,7 @@ public class MentionScorer {
 					boundaryScorer.addTP();
 				} else {
 					boundaryScorer.addFP();
+					//System.err.println("SCORE " + m);
 				}
 				if (m.getMention(false) != null) {
 					headScorer.addTP();

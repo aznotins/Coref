@@ -16,7 +16,7 @@ public class MentionCleaner {
 	public static final boolean VERBOSE = false;
 
 	public static void cleanSentenceMentions(Sentence sentence) {
-		List<Mention> mentions = sentence.getMentions();
+		List<Mention> mentions = sentence.getOrderedMentions();
 		Collection<Mention> unnecessaryMentions = new HashSet<Mention>();
 
 		for (int i = 0; i < mentions.size(); i++) {
@@ -91,22 +91,20 @@ public class MentionCleaner {
 				}
 
 				// intersection
-				boolean intersect = false;
+				
+				boolean intersect = m1.intersects(m2);
+//				boolean intersect = false;
+//				Set<Token> notInM1 = new HashSet<Token>(m2.getTokens());
+//				notInM1.removeAll(m1.getTokens());
+//				if (notInM1.size() < m2.getTokens().size())
+//					intersect = true;
+//				Set<Token> notInM2 = new HashSet<Token>(m1.getTokens());
+//				notInM2.removeAll(m2.getTokens());
+//				if (notInM2.size() < m1.getTokens().size())
+//					intersect = true;
+//				if (intersect && !notInM1.isEmpty() && !notInM2.isEmpty())
 
-				Set<Token> notInM1 = new HashSet<Token>(m2.getTokens());
-				notInM1.removeAll(m1.getTokens());
-				if (notInM1.size() < m2.getTokens().size())
-					intersect = true;
-
-				Set<Token> notInM2 = new HashSet<Token>(m1.getTokens());
-				notInM2.removeAll(m2.getTokens());
-				if (notInM2.size() < m1.getTokens().size())
-					intersect = true;
-
-				// if (intersect)
-				// System.out.println(m1+","+m2);
-
-				if (intersect && !notInM1.isEmpty() && !notInM2.isEmpty()) {
+				if (intersect) {
 					unnecessaryMentions.add(lessImportantMention);
 					if (VERBOSE)
 						System.err.println("CLEAN intersection!" + m1 + ", "
@@ -137,23 +135,30 @@ public class MentionCleaner {
 	}
 
 	private static Mention getLessImportantMention(Mention m1, Mention m2) {
+		if (m2.isFinal() && !m1.isFinal()) {
+			return m1;
+		} else if (!m2.isFinal() && m1.isFinal()) {
+			return m2;
+		}
+		
+		if (m2.isProperMention() && !m1.isProperMention()) {
+			return m1;
+		} else if (!m2.isProperMention() && m1.isProperMention()) {
+			return m2;
+		}
+		
 		if (m1.getTokens().size() > m2.getTokens().size()) {
 			return m2;
 		} else if (m1.getTokens().size() < m2.getTokens().size()) {
 			return m1;
-		} else {
-			if (m2.isProperMention() && !m1.isProperMention()) {
-				return m1;
-			} else if (!m2.isProperMention() && m1.isProperMention()) {
-				return m2;
-			} else {
-				if (!m2.getCategory().equals(Category.unknown) && m1.getCategory().equals(Category.unknown)) {
-					return m1;
-				} else if (!m2.getCategory().equals(Category.unknown) && m1.getCategory().equals(Category.unknown)) {
-					return m2;
-				}
-			}
 		}
+		
+		if (!m2.getCategory().equals(Category.unknown) && m1.getCategory().equals(Category.unknown)) {
+			return m1;
+		} else if (!m2.getCategory().equals(Category.unknown) && m1.getCategory().equals(Category.unknown)) {
+			return m2;
+		}
+		
 		return m2;
 	}
 }
