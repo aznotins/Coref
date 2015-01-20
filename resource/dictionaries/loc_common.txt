@@ -1,0 +1,7 @@
+location	iela
+location	jūra
+location	skola
+location	novads
+location	rajons
+location	pagasts
+location	reģions

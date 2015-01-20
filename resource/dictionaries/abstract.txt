@@ -1,0 +1,18 @@
+abstract	skaits
+abstract	vārds
+abstract	gals
+abstract	laiks
+abstract	skaits
+abstract	interese
+abstract	gadījums
+abstract	reize
+abstract	sākums
+abstract	priekšā
+abstract	vieta
+abstract	piemērs
+abstract	AS
+abstract	SIA
+abstract	VAS
+abstract	un
+abstract	,
+abstract	valsts SIA

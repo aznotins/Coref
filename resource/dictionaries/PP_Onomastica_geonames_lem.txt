@@ -1,0 +1,3505 @@
+location	Abadana
+location	Abakana
+location	Abava
+location	Ābeļs
+location	Aberdīna
+location	Abhāzija Autonoma Padome Sociālistiska Republika
+location	Abidžana
+location	Ablinga
+location	Abudabs
+location	Adelaida
+location	Adena
+location	Adigeja autonoms apgabals
+location	Adirondaks kalns
+location	Adisabeba
+location	Admiralitāte sala
+location	Adrija jūra
+location	Adžārija Autonoma Padome Sociālistiska Republika
+location	Afganistāna
+location	Āfrika
+location	Aginska Burjats autonoms apvidus
+location	Aglona
+location	Āhene
+location	Aidahs
+location	Aijova
+location	Ainažiabads
+location	Aizbaikāls
+location	Aizkarpat
+location	Aizkarpat apgawals
+location	Aizkaukāzs
+location	Aizkraukle
+location	Aizpute
+location	Aizvolga
+location	Akmena
+location	Akmene
+location	Akmene rajons
+location	Akmoļinska
+location	Aknīste
+location	Akrs
+location	Aktjubinska
+location	Aktjubinska apgabals
+location	Akonkagva
+location	Alabama
+location	Alaja kalns grēda
+location	Ālandu sala
+location	Alatau
+location	Alauksts
+location	Alaušs ezers
+location	Albānija
+location	Albānija Tauta Republika
+location	Aldāna
+location	Aldāna plakankalne
+location	Aleksandrija
+location	Aleksota
+location	Aleuti sala
+location	Alīta
+location	Alīta rajons
+location	Alma-ata
+location	Alma-ata apgabals
+location	Aloja
+location	Alpi
+location	Alsa
+location	Alsēdžs
+location	Alsunga
+location	Alsviķi
+location	Altajs novads
+location	Altajs
+location	Alūksne
+location	Alūksne rajons
+location	Alunta
+location	Alžīra
+location	Alžīrija
+location	Alžīrija Tauta Demokrātiska Republika
+location	Aļaska
+location	Aļaska līcis
+location	Aļaska grēda
+location	Amana
+location	Amats
+location	Amats
+location	Amazone
+location	Amerika
+location	Amerika Savienot Valsts
+location	Amsterdama
+location	Amudarja
+location	Amūra
+location	Amūra apgabals
+location	Ammāna
+location	Amsterdama
+location	Amudarja
+location	Amundsena jūra
+location	Amūra
+location	Anadirs
+location	Anča
+location	Andalūzija
+location	Andamans sala
+location	Andi
+location	Andižāna
+location	Andižāna apgabals
+location	Andora
+location	Angara
+location	Angarska
+location	Anglija
+location	Angola
+location	Anīkščs
+location	Anīkščs rajons
+location	Ankara
+location	Antakalne
+location	Antaliepte
+location	Antanava
+location	Antananarivs
+location	Antarktīda
+location	Antarktika
+location	Antiļs sala
+location	Antverpene
+location	Apalačāt
+location	Apaščt
+location	Ape
+location	Apenīni
+location	Apenīni sala
+location	Apgulbe
+location	Apīvardt ezers
+location	Apšuciems
+location	Apvienot Kamerūna Republika
+location	Apvienot Arābs Emirāts
+location	Arābija
+location	Arābija tuksnesis
+location	Arābija jūra
+location	Arābija tuksnesis
+location	Arafurs jūra
+location	Aragona
+location	Aragvaja
+location	Araksa
+location	Arāla jūra
+location	Ararats
+location	Ardēnis
+location	Argentīna
+location	Argentīna Republika
+location	Arhangeļsks
+location	Arhangeļsa apgabals
+location	Arins ezers
+location	Arizona
+location	Arkanzasa
+location	Arkanzasitija
+location	Arktika
+location	Armavirs
+location	Ārlingtona
+location	Arma
+location	Armēnija
+location	Armēnija Padome Sociālistiska Republika
+location	Arogala
+location	Artjoma
+location	Artjomonsks
+location	Asalnis
+location	Asmara
+location	Astrahaņa
+location	astrahaņa apgabals
+location	Astūrija
+location	Asuāna
+location	Asunsjona
+location	ASV
+location	Ašhabads
+location	Atēnas
+location	Atabaskt
+location	Atabaskties ezers
+location	Atēnas
+location	Atlants
+location	Atlantimjas okeāns
+location	Atlass
+location	Auce
+location	Audriņi
+location	Augsburga
+location	Augstkalne
+location	Augšezers
+location	Augšvolta
+location	Auštaitija
+location	Augšvolta
+location	Augsvolta Republika
+location	Aukštadvare
+location	Austrālija savienība
+location	Austrālija Savienība
+location	Austrālija Alpi
+location	Austrija
+location	Austrija Republika
+location	Austrumkazahija apgabals
+location	Austrumķīna jūra
+location	Aviļa
+location	Avinjona
+location	Azerbaidžāna
+location	Azerbaidžāna Padome Sociālistiska Republika
+location	Āzija
+location	Azoru sala
+location	Azova jūra
+location	Babelmandeba
+location	Babīte ezers
+location	Babrunga
+location	Babti
+location	Babuškina
+location	Badīt stepe
+location	Badanbādene
+location	Bādene-viortemberga
+location	Bafija Zeme
+location	Bagaslavišķs
+location	Baina zeme
+location	Bagdāde
+location	Bahamas sala
+location	Bahreina
+location	Baikāls
+location	Baireita
+location	Baisogala
+location	Bakingemšira
+location	Bakas
+location	Bakūžs kalns
+location	Balašova
+location	Balatons
+location	Balbierišķs
+location	Baldone
+location	Baleārs sala
+location	Balhašs
+location	Balēt
+location	Balkāni
+location	Balkāni kalns
+location	Balkāni pussala
+location	Baltās-baltija jūra kanāls
+location	Balta jūra
+location	Baltezers
+location	Baltiejs Lakajs
+location	Baltija
+location	Baltija jūra
+location	Baltimora
+location	Baltkrievija
+location	Baltkrievija Padome Sociālistiska Republika
+location	Baltot Anča
+location	Baltot Voķe
+location	Balvis
+location	Balvi rajons
+location	Bamaks
+location	Bandarseribegava
+location	Bandunga
+location	Bandžula
+location	Bangs
+location	Bangkoka
+location	Bangladeša Tauta Republika
+location	Baraba stepe
+location	Baronovičs
+location	Bangladeša
+location	Barbadosa
+location	Barenca jūra
+location	Barnaula
+location	Barselona
+location	Barstīčs
+location	Bārta
+location	Bartuva
+location	Baskunčaks
+location	Basra
+location	Basutolenda
+location	Baškīrija Autonoma Padome Sociālistiska Republika
+location	Bataķs
+location	Bata
+location	Batums
+location	Bauska
+location	Bauska rajons
+location	Bavārija
+location	Bāzele
+location	Baziloņs
+location	Bebrene
+location	Bebrt
+location	Bečuanalenda
+location	Bedfordšīra
+location	Beiruta
+location	Belaja
+location	Belfasta
+location	Belgoroda
+location	Belgoroda apgabals
+location	Belgrada
+location	Beliza
+location	Belmanta
+location	Boloje ezers
+location	Belomorska
+location	Belostoka
+location	Belova
+location	Beloveža gārša
+location	Belinskauzena jūra
+location	Beliza
+location	Belts
+location	Beludžistāna
+location	Beļģija
+location	Beļģija Karaliste
+location	Benaresa
+location	Benders
+location	Bēne
+location	Bengālija
+location	Bengālija līcis
+location	Bengazi
+location	Benina
+location	Benina Tauta Republika
+location	Berezina
+location	Berezņiks
+location	Bergena
+location	Berhtesgādena
+location	Beringa jūra
+location	Berings šaurums
+location	Beringa sala
+location	Bērkšīra
+location	Berlīne
+location	Bermuds sala
+location	Berne
+location	Bērze
+location	Bērzils
+location	Besarābija
+location	Betīgala
+location	Bijska
+location	Bikinis
+location	Bikini atolt
+location	Bilbas
+location	Bīriņi
+location	Birma
+location	Birma Savienība
+location	Birmingema
+location	Birodidžāna
+location	Birštona
+location	Birvēta
+location	Birži
+location	Biržuļs ezers
+location	Birži rajons
+location	Bisais
+location	Biskaja jūra
+location	Blagoveščenska
+location	Bismarks arhipelāgs
+location	Bizerta
+location	Blekpūla
+location	Bobrujska
+location	Bodene ezers
+location	Bofora jūra
+location	Bogota
+location	Bohēmija
+location	Bolderāja
+location	Bolīvija
+location	Boloņa
+location	Bombeja
+location	Bonna
+location	Bordo
+location	Borneo
+location	Bornholma
+location	Bornmuta
+location	Bosfors
+location	Bosnija un Hercegovina
+location	Bostons
+location	Botnija līcis
+location	Botsvāna
+location	Botsvana Republika
+location	Braitons
+location	Bramaputra
+location	Brandenburga
+location	Brasls
+location	Bratislava
+location	Bratska
+location	Braunšveiga
+location	Brazavila
+location	Brazīlija
+location	Brazīlija Federatīva Republika
+location	Brazilja
+location	Bredforda
+location	Brēmene
+location	Brenners
+location	Breslava
+location	Bresta
+location	Bresta apgabals
+location	Bretaņa
+location	Bridžporta
+location	Bridžtauna
+location	Brige
+location	Brisbena
+location	Brisele
+location	Britānija
+location	Bristole
+location	Briti sala
+location	Brjanska
+location	Brjanska apgabals
+location	Brns
+location	Brocēni
+location	Bromlis
+location	Brronksa
+location	Bruklina
+location	Bruneja
+location	Budapešta
+location	Buenosairesa
+location	Bufals
+location	Buga
+location	Buhāra
+location	Buhāra apgabals
+location	Bukareste
+location	Bukovīna
+location	Bulavaja
+location	Bulgārija
+location	Bulgārija Tauta Republika
+location	Buloņa
+location	Burgundija
+location	Burjatija Autonoma Padome Sociālistiska Republtks
+location	Burtnieks
+location	Burtnieks ezers
+location	Burundi
+location	Burundi Republika
+location	Butana
+location	Bužumbura
+location	Carnikava
+location	Ceilona
+location	Celebesa
+location	Celebesa jūra
+location	Ceļinograda
+location	Ceļinograda apgabals
+location	Centrāla Amerika
+location	Centrālāfrika Impērija
+location	Centrālāfrika Republika
+location	Centrālamerika
+location	Cēsis
+location	Chinvals
+location	Ciecere
+location	Ciklāda
+location	Cincinati
+location	Cindas
+location	Cīrava
+location	Cīrihe
+location	Cirišs ezers
+location	Cirma ezers
+location	Cusima
+location	Cusima šaurums
+location	Čada
+location	Čada Republika
+location	Čada ezers
+location	Čardžova
+location	Čardžova apgabals
+location	Čeboksars
+location	Čečenijas-ingušija Autonoma Padome Sociālistiska Republika
+location	Čehija
+location	Čehoslovakija
+location	Čehoslovakija Sociālistiska Republika
+location	Čeķišķe
+location	Čeļābinska
+location	Čeļābinska apgabals
+location	Čekuškins rags
+location	Čenstohova
+location	Čeremhova
+location	Čerkasi
+location	Čerkass apgabals
+location	Čerkeska
+location	Černovcs
+location	Černovcs apgabals
+location	Čerņigova
+location	Čerņigova apgabals
+location	Čestera
+location	Čečīra
+location	Četema
+location	Čečirs ezers
+location	Čikāga
+location	Čīle
+location	Šimkenta
+location	Šimkenta apgabals
+location	Čoibalsana
+location	Džomolungma
+location	Čukčs jūra
+location	Čukčs nacionāls apvidus
+location	Čukčs pussala
+location	Čulima
+location	Čuncina
+location	Čusova
+location	Čuvašija
+location	Čuvušija Autonoma Padome Sociālistiska Republika
+location	Dabiķene
+location	Dabšs
+location	Dadlis
+location	Dagda
+location	Dagda ezers
+location	Dagestāns
+location	Dagestāna Autonoma Padome Sociālistika Republika
+location	Daivana
+location	Daka
+location	Dakāra
+location	Dalasa
+location	Dalmācija
+location	Daļņija
+location	Damaska
+location	Danciga
+location	Dands
+location	Dane
+location	Dānija
+location	Dānija Karaliste
+location	Daņģe
+location	Darbs
+location	Darbēnis
+location	Dārbišīrs
+location	Dardaneļs
+location	Darems
+location	Daresalama
+location	Dārlinga
+location	Dārsūnišķs
+location	Daudzese
+location	Dārtmuta
+location	Daugava
+location	Daugavpils
+location	Daugavpils rajons
+location	Daugs
+location	Daugs ezers
+location	Dauģīvene
+location	Davosa
+location	Debeiķs
+location	Debesbraukšana sala
+location	Debrecene
+location	Degučs
+location	Delavērs
+location	Deli
+location	Deltuva
+location	Dembava
+location	Demoina
+location	Denkerka
+location	Denvera
+location	Derbiširs
+location	Desna
+location	Detroita
+location	Devons
+location	Dežņovs rags
+location	Didīsis Raists
+location	Didīsis Saurt
+location	Didvīžs
+location	Dienvidāfrika Republika
+location	Dienvidamerika
+location	Dienvidaustrālija
+location	Dienviddakota
+location	Dienvidkarolīna
+location	Dienvidkazahija apgabals
+location	Dienvidķīna jūra
+location	Dienvidorknejs sala
+location	Dienvidosetija autonoms apgabals
+location	Dienvidrietumi Āfrika
+location	Dienvidrodēzija
+location	Dienvidslāvija
+location	Dienvidslāvija Sociālistiska Federatīva Republika
+location	Dienvidi Buga
+location	Dienvidi Setlenda sala
+location	Dievenišķe
+location	Dievītis
+location	Dikļi
+location	Dimitrovgrada
+location	Dinārs Alpi
+location	Dinkersa
+location	Dilt
+location	Dīsburga
+location	Diseldorfs
+location	Dīsna
+location	Dīsnīkščs ezers
+location	Dīsns ezers
+location	Dižona
+location	Djepa
+location	Dņepra
+location	Dnepra - Buga kanāls
+location	Dņeprodzeržinska
+location	Dņepropetrovska
+location	Dņepropetrovska apgabals
+location	Dņestra
+location	Dobele
+location	Dobele apgabals
+location	Dobrudža
+location	Dodekanēza sala
+location	Dole salt
+location	Dodoma
+location	Doha
+location	Dominika
+location	Dominika Republika
+location	Dona
+location	Donava
+location	Donbass
+location	Doņeca
+location	Donecka skrausts
+location	Doņecka
+location	Doņecka apgabals
+location	Donegola līcis
+location	Dorseta
+location	Dotmunda
+location	Dortmunda
+location	Dortmunde
+location	Dovine
+location	Drabeši
+location	Drakons kalns
+location	Dreiliņi
+location	Dreiks šaurums
+location	Drēzdene
+location	Dridžs ezers
+location	Drobiča
+location	Drogoviča apgabals
+location	Drūkša
+location	Drūkšs ezers
+location	Druskininks
+location	Drusti
+location	Druviena
+location	Dubiņģs
+location	Dubiņģs ezers
+location	Dubīsa
+location	Dublina
+location	Dubulti
+location	Durbana
+location	Durbe
+location	Durbe ezers
+location	Dūrs
+location	Dusa
+location	Dūseiķs
+location	Duseta
+location	Duseta ezers
+location	Dušanbe
+location	Duvra
+location	Dviete
+location	Dvina
+location	Dviraģs ezers
+location	Dzeltena jūra
+location	Dzelzava
+location	Dzenis
+location	Dzērbene
+location	Dzeržinska
+location	Dzintars
+location	Džaipūra
+location	Džakarta
+location	Džalalabada
+location	Džambura
+location	Džambula apgabals
+location	Džeksonvila
+location	Dženova
+location	Dženova jūra
+location	Džersisitija
+location	Džibuti
+location	Džida
+location	Džokjakarta
+location	Džomolungma
+location	Džordžija
+location	Džukste
+location	Džungārija
+location	Džordžtauna
+location	Eberdīna
+location	Ebrejs autonoms apgabals
+location	Ebrs
+location	Edinburga
+location	Ēdole
+location	Egeja jūra
+location	Eglaine
+location	Ēģipte
+location	Ēģipte Arābs Republika
+location	Eibeja
+location	Eifrata
+location	Eipatorija
+location	Eirāzija
+location	Eire
+location	Eira ezers
+location	Eiropa
+location	Eišiške
+location	Eivona
+location	Ekvadora
+location	Ekvatoriāla Gvineja Republika
+location	Ekvatoriāla Gvineja
+location	Ēlande
+location	Elba
+location	Elbe
+location	Elbruss
+location	Elbruss kalns
+location	Eleja
+location	Elektrēns
+location	Elista
+location	Elizabetvila
+location	Eltons
+location	Elzasa
+location	Emba
+location	Emburga
+location	Endriejava
+location	Engelsa
+location	Engure
+location	Engure ezers
+location	Entebe
+location	Epsoma
+location	Ēresuns
+location	Erevāna
+location	Erfurte
+location	Ēgrļs
+location	Ērģeme
+location	Ers ezers
+location	Eritreja
+location	Ere Rijada
+location	Erzvēta ezers
+location	Eržvilka
+location	Eseksa
+location	Esene
+location	Esentuks
+location	Eskota
+location	Etiopija
+location	Etna
+location	Ēvele
+location	Evenks autonoms apvidus
+location	Evenks nacionāls apvidus
+location	Everests
+location	Evija
+location	Ezere
+location	Ezernieki
+location	Ēžerēle
+location	Ežezers
+location	Faifa
+location	Farers sala
+location	Feimaņi
+location	Feimaņi ezers
+location	Feliciānova
+location	Feodosija
+location	Fērbenksa
+location	Fergāna
+location	Fergāna apgabals
+location	Ferments
+location	Fesa
+location	Fidži
+location	Fidži sala
+location	Filipīnas
+location	Filipīnas Republika
+location	Filipīnas sala
+location	Fīna
+location	Flandrija
+location	Flensburga
+location	Florence
+location	Florida
+location	Florida pussala
+location	Florida šaurums
+location	Folklends sala
+location	Folkstona
+location	Formoza
+location	Fortlami
+location	Folrivers
+location	Fordefransa
+location	Francija Republika
+location	Francija
+location	Francis Jozefs Zeme
+location	Frankfurte pie Maina
+location	Frankfurte pie Odera
+location	Frītauna
+location	Frīzlande
+location	Frīzs sala
+location	Frunze
+location	Frunze
+location	Fudzis kalns
+location	Fudzijama
+location	Fulda
+location	Furka
+location	Gabona
+location	Gabona līcis
+location	Gabona Republika
+location	Gaborone
+location	Gagra
+location	Gaigalava
+location	Gajana
+location	Galapagu sala
+location	Gailis
+location	Gaiziņkalns , Gaiziņš
+location	Gajana
+location	Gajana Republika
+location	Galapagu sala
+location	Galipole
+location	Galējs Ziemelis
+location	Galēni
+location	Galgauska
+location	Galīcija
+location	Galipole
+location	Galons ezers
+location	Galoņs ezers
+location	Galve ezers
+location	Gambija
+location	Gana
+location	Gana Republika
+location	Ganga
+location	Garda ezers
+location	Gargžds
+location	Garkalne
+location	Garļava
+location	Garonna
+location	Garoza
+location	Gauja
+location	Gaujiena
+location	Gaure
+location	Gdanska
+location	Gdiņa
+location	Gēteborga
+location	Getisberga
+location	Gibraltārs šaurums
+location	Glazgova
+location	Gibraltārs
+location	Gilberta sala
+location	Glāzgova
+location	Glosteršīra
+location	Goa
+location	Gobs
+location	Golfs straume
+location	Gomeļa
+location	Gomeļa apgabals
+location	Gorīt
+location	Gorkija
+location	Gorkija apgabals
+location	Gorlovska
+location	Gornoaltaiska
+location	Gostiņa
+location	Gothoba
+location	Gotlande
+location	Gotvaldova
+location	Grāca
+location	Gramzda
+location	Granāda
+location	Grančako
+location	Grašis
+location	Greitbērleiks
+location	Greitleiks
+location	Greitsleivleiks
+location	Greivers
+location	Grenada
+location	Grenlande
+location	Grenlande jūra
+location	Grenoble
+location	Grieķija
+location	Grieķija Republika
+location	Griģišķe
+location	Griniča
+location	Griņķišķs
+location	Griškabūda
+location	Grīva
+location	Grobiņa
+location	Grodņa
+location	Grodņa apgabals
+location	Groznija
+location	Grūst
+location	Grundmaņs
+location	Gruzdžs
+location	Gruzija
+location	Gruzija Karš ceļš
+location	Grūzija Padome Sociālistiska Republika
+location	Guama
+location	Gubernija
+location	Gudžūnis
+location	Gulbene
+location	Gulbene rajons
+location	Gurjeva
+location	Gurjeva apgabals
+location	Gushrustaļnija
+location	Gvadalahara
+location	Gvadalkvivīra
+location	Gvadelupe
+location	Gvadiāna
+location	Gvajāna
+location	Gvajakila
+location	Gvatemala
+location	Gviāna
+location	Gvineja
+location	Gvineja-Bisau
+location	Gvinejas-bisais Republika
+location	Gvineja līcis
+location	Gvineja Republika
+location	Ģente
+location	Ģeļgaudišķs
+location	Ģērmants
+location	Ģiedraičs
+location	Ģiluitis
+location	Ģirkalne
+location	Ģiruļs
+location	Habārovska
+location	Habārovska novads
+location	Hāga
+location	Haidarabada
+location	Haidparks
+location	Haifa
+location	Haifona
+location	Haiti
+location	Hakasija autonoms apgabals
+location	Haleba
+location	Halifaksa
+location	Halla
+location	Halle
+location	Hambersaida
+location	Hamburga
+location	Hamiltona
+location	Handžova
+location	Haņkova
+location	Hanoja
+location	Hannovere
+location	Hanovers
+location	Hantimansijska
+location	Hantu-manss nacionāls apvidus
+location	Hanoja
+location	Harbina
+location	Harcs
+location	Harkova
+location	Harkova apgabals
+location	Hārlema
+location	Hardfordšīrs
+location	Hartuma
+location	Hārvela
+location	Havaja
+location	Havaja
+location	Havaja sala
+location	Havanna
+location	Havra
+location	Hebrids sala
+location	Heidelberga
+location	Heistingsa
+location	Hekla
+location	Helgolande
+location	Helsinki
+location	Hempšīra
+location	Hercogovina
+location	Hereforda un Vusters
+location	Heridža
+location	Herova
+location	Hersona
+location	Hersona apgabals
+location	Hibīnis
+location	Hija
+location	Himalaji
+location	Hindukušs
+location	Hīums
+location	Hirosima
+location	Hjūstona
+location	Hmeļnicka
+location	Hmeļnicks apgabals
+location	Hokaids
+location	Holande
+location	Holivuda
+location	Hondurasa
+location	Honiara
+location	Honkonga
+location	Honoluls
+location	Honsjus
+location	Hopjora
+location	Horezma apgabals
+location	Horna rags
+location	Horvātija
+location	Hošimira
+location	Hauaihe
+location	Huanhe
+location	Hudzona
+location	Hudzons līcis
+location	Hūrons
+location	Ibērija pussala
+location	Iecava
+location	Ieriķi
+location	Igarka
+location	Igaunija
+location	Igauknija Padome Sociālistiska Republika
+location	Igaunija Republika
+location	Ignalina
+location	Ignalina rajons
+location	Ikšķile
+location	Ilaķs
+location	Ilis
+location	Ilima
+location	Ilinoisa
+location	Ilmenis
+location	Ilūkste
+location	Ilza ezers
+location	Iļģis
+location	Imula
+location	Inčona
+location	Inčukalns
+location	Inda
+location	Indiāna
+location	Idianapolisa
+location	Indija
+location	Indija okeāns
+location	Indija Republika
+location	Indoķīna
+location	Indonēzija
+location	Indonēzija Republika
+location	Indostāna
+location	Indra
+location	Indrajs
+location	Indrāni
+location	Inesis
+location	Inna
+location	Insburga
+location	Insbruka
+location	Inturķe
+location	Invernesa
+location	Ipsviča
+location	Iraka
+location	Iraks Republika
+location	Irāna
+location	Īrija
+location	Īrija Republika
+location	Īrija jūra
+location	Irkutska
+location	Irlava
+location	Irtiša
+location	Isik-ķuls
+location	Isfahana
+location	Isikuls
+location	Islamabada
+location	Islande
+location	Īslande
+location	Īslīce
+location	Islingtona
+location	Īstenda
+location	Īstlotjana
+location	Īstsaseka
+location	Īstra
+location	Itālija
+location	Itālija Republika
+location	Ītona
+location	Ivanofrankovska
+location	Ivanofrankovska apgabals
+location	Ivanova
+location	Ivanova apgabasl
+location	Izmaira
+location	Izmirt
+location	Izraēla
+location	Izraēla Valsts
+location	Izvalga
+location	Iževska
+location	Jafa
+location	Jakutija
+location	Jakutija Autonomāpadomja Sociālistiska Republika
+location	Jakutska
+location	Jalta
+location	Jamaika
+location	Jamala
+location	Jamala Ņencs nacionāls apvidus
+location	Jana
+location	Jandzi
+location	Jangorajapāna
+location	Janopole
+location	Jāņamuiža
+location	Japāna
+location	Japāna sala
+location	Japānis jūra
+location	Jara
+location	Jārmuta
+location	Jaroslavļa
+location	Jaroslavļa apgabals
+location	Jasi
+location	Jašūnis
+location	Jaunāmuiža
+location	Jaunciems
+location	Jaunde
+location	Jaungulbene
+location	Jaungvineja
+location	Jaungvineja jūra
+location	Jaunhebrids sala
+location	Jaunjelgava
+location	Jaunkaledonija
+location	Jaunkalsnava
+location	Jaunorleāna
+location	Jauna zeme novads
+location	Jaunpagasts
+location	Jaunpiebalga
+location	Jaunpils
+location	Jaunzēlande
+location	Java
+location	Jeiska
+location	Jēkabpils
+location	Jēkabpils rajons
+location	Jelgava
+location	Jelgava rajons
+location	Jeloustona nacionāls parks
+location	Jemena
+location	Jemena Arābs Republika
+location	Jemena Tauta Demokrātiska Republika
+location	Jeņiseiska
+location	Jēna
+location	Jeņiseja
+location	Jersika
+location	Jeruzale
+location	Jeruzaleme
+location	Jiesa
+location	Jiezna
+location	Jitlande
+location	Jods
+location	Jodiejs Lakari
+location	Jodkrante
+location	Jodšiļs
+location	Jodupe
+location	Jodžs ezers
+location	Johannesburga
+location	Jokohoma
+location	Jonava
+location	Jonava rajons
+location	Jonija jūra
+location	Jonija sala
+location	Jonišķēle
+location	Jonišķs
+location	Jonišķs rajons
+location	Jordāna
+location	Jordāna Hašimīts Karaliste
+location	Jorkšira
+location	Joškarota
+location	Josta
+location	Josvaiņs
+location	Jotija
+location	Jugla
+location	Juglasciems
+location	Jugla ezers
+location	Jukatāna
+location	Jūkona
+location	Jumprava
+location	Juris
+location	Jūra
+location	Jurbarka
+location	Jūre
+location	Jūrkalne
+location	Jūrmala
+location	Jūrmalciems
+location	Just
+location	Jūžinti
+location	Južnosahalinska
+location	Kabardas-balkārija Autonoma Padome Sociālistiska Republika
+location	Kabile
+location	Kabula
+location	Kačerģine
+location	Kačors
+location	Kadisa
+location	Kahovska
+location	Kaibala
+location	Kaira
+location	Kaišadore
+location	Kaišadore rajons
+location	Kajenna
+location	Kaķenieki
+location	Kalabrija
+location	Kalahars
+location	Kale
+location	Kalifornija
+location	Kalifornija līcis
+location	Kalimantāna
+location	Kaljas
+location	Kalkuta
+location	Kalmikija Autonoma Padome Srciālistiska Republika
+location	Kalnciems
+location	Kalngale
+location	Kalnu-altaja autonoms apgabals
+location	Kalnu-badahšara autonoms apgabals
+location	Kalnu-karabaha autonoms apgabals
+location	Kaltanēni
+location	Kaltene
+location	Kaltinēni
+location	Kaluga
+location	Kaluga apgabals
+location	Kalupe
+location	Kalvarija
+location	Kalveļs
+location	Kalvene
+location	Kalvis ezers
+location	Kaļiņina
+location	Kaļiņina apgabals
+location	Kaļiņingrada
+location	Kaļiņingrada apgabals
+location	Kama
+location	Kamajs
+location	Kambodža
+location	Kambijs
+location	Kamčatka
+location	Kamčatka apgabals
+location	Kameņecpodoļska
+location	Kamerūna
+location	Kamoja
+location	Kampt
+location	Kampala
+location	Kampučija
+location	Kanāda
+location	Kanāriju sala
+location	Kanaveraga rags
+location	Kanbera
+location	Kandava
+location	Kangars
+location	Kanna
+location	Kantabrija klnis
+location	Kantons
+location	Kanzasa
+location	Kanzassitija
+location	Kaņiers ezers
+location	Kaņina pussala
+location	Kapčamieste
+location	Kāpa
+location	Kaprs
+location	Kapsuka
+location	Kapsuka rajons
+location	Kapzeme
+location	Karačajas-čerkesija Padome Sociālistiska Republika
+location	Karačaju-čerkess autonoms apgabals
+location	Karači
+location	Karaganda
+location	Karaganda apgabals
+location	Karakalpaki
+location	Karakalpakija Autonoma Padome Sociālistiska Republika
+location	Karakasa
+location	Karakorums
+location	Kara jūra
+location	Karakums
+location	Kārdifa
+location	Karēlija Autonoma Padome Sociālistiska Republika
+location	Karību jūra
+location	Kārklēni
+location	Kārķi
+location	Karmarksštate
+location	Karlaila
+location	Karlovs Varēt
+location	Karlsrūe
+location	Karmēlava
+location	Karmeliti
+location	Kārniņš
+location	Karolinišķe
+location	Karolīns sala
+location	Karpati
+location	Karpentārija līcis
+location	Kārsava
+location	Karšs
+location	Kartena
+location	Karva
+location	Kasablanka
+location	Kaskāds kalns
+location	Kaspijas jūra
+location	Kašmira
+location	Katalonija
+location	Katanga
+location	Katara
+location	Kategats
+location	Katīčs
+location	Katlakalns
+location	Katmands
+location	Katovice
+location	Katra
+location	Katvari
+location	Kaugurciems
+location	Kaukāzs kalns
+location	Kaunata
+location	Kauņa
+location	Kauņa jūra
+location	Kauņa rajons
+location	Kavarska
+location	Kazahija
+location	Kazahija Padome Sociālistiska Republika
+location	Kazahstāna
+location	Kazaņa
+location	Kazbeks
+location	Kazdanga
+location	Kazls Rūdīt
+location	Kefalēnija
+location	Keiptauna
+location	Keitnesa
+location	Kembridža
+location	Kembridžšīra
+location	Kemerova
+location	Kemerova apgabals
+location	Kenija
+location	Kenija Republika
+location	Kēnigsberga
+location	Kensingtona
+location	Kenta
+location	Kenterberija
+location	Kentukija
+location	Kerča
+location	Kerča šaurums
+location	ikerča pussala
+location	Kesonsitija
+location	Kigals
+location	Kijeva
+location	Kijeva apgabals
+location	Kiklāda
+location	Kiklāds sala
+location	Kilimandžārs
+location	Kilkenija
+location	Kingstons
+location	Kinrosa
+location	Kinšasa
+location	Kioto
+location	Kipra
+location	Kipra Republika
+location	Kirasas
+location	Kirenaika
+location	Kirgīzija
+location	Kirgīzija Padome Sociālistiska Republika
+location	Kirova
+location	Kirovobada
+location	Kirova apgabals
+location	Kirovograda
+location	Kirovograda apgabals
+location	Kirovska
+location	Kislovodska
+location	Kišiņeva
+location	Kito
+location	Kizils
+location	Kizilkums
+location	Klaida
+location	Klaipēda rajons
+location	Klaipēda
+location	Klaņģs
+location	Klapkalnciems
+location	Klīkoļs
+location	Klinšs kalns
+location	Klīvlends
+location	Klondaika
+location	Klovaiņs
+location	Kluss okeāns
+location	Kļazma
+location	Kļina
+location	Kobe
+location	Kola pussala
+location	Kolgujeva
+location	Kolima
+location	Kolka
+location	Kolka rags
+location	Kolmāra
+location	Kolombs
+location	Kolomda
+location	Kolorāds
+location	Kolorādospringsa
+location	Kolumbija
+location	Kolumbija apgabals
+location	Komandors sala
+location	Kombuļi
+location	Komi Autonoma Padome Sociālistiska Republika
+location	Komi-permiešs nacionāls apvidus
+location	Koms ezers
+location	Komoras sala
+location	Komsomoļska
+location	Komsomoļska pie Amūra
+location	Konakri
+location	Konektikuta
+location	Kongo
+location	Kongo Tauta Demokrātiska Republika
+location	Konstanca
+location	Kopenhāgena
+location	Koraļļs jūra
+location	Kordiljers
+location	Kordova
+location	Koreja
+location	Koreja Tauta Demokrātiska Republika
+location	Koreja šaurums
+location	Korfs
+location	Korģene
+location	Korinta līcis
+location	Korjauks nacionāls apvidus
+location	Kornvola
+location	Korsika
+location	Kostarika
+location	Kostroma
+location	Kostroma apgabals
+location	Klošice
+location	Koventri
+location	Kovrova
+location	KPFSR
+location	Krakatau
+location	Krakova
+location	Kraķis
+location	Kramamtorska
+location	Krāslava
+location	Krāslava rajons
+location	Krasnodara
+location	Krasnodara novads
+location	Krasnodona
+location	Krasnojarska
+location	Krasnojarska novads
+location	Krasnokamska
+location	Krasnouraļska
+location	Krasnovodska
+location	Krašti
+location	Krauna
+location	Kražante
+location	Kražs
+location	Krēfelde
+location	Kreķenava
+location	Kremenčuga
+location	Krēta
+location	Kretinga
+location	Kretinga rajons
+location	Kretogns ezers
+location	Krievija
+location	Krievija Padome Federatīva Sociālistiska Republika
+location	Krima
+location	Krima apgabals
+location	Krimulda
+location	Krivojroga
+location	Krīžkalne
+location	Kroja
+location	Kroidona
+location	Kroka Lanka
+location	Krone
+location	Kronštate
+location	Krote
+location	Kruki
+location	Krūks
+location	Krustiņš
+location	Krustpils
+location	Kualalompūra
+location	Kuba
+location	Kubaņa
+location	Kuba Republika
+location	Kudimkara
+location	Kudirma Naumieste
+location	Kuibiševa
+location	Kuibiševa apgabals
+location	Kuivižs
+location	Kuja
+location	kuks arhipelāgs
+location	Kuks šaurums
+location	Kuka jūra
+location	Kuks sala
+location	Kūka
+location	Kunluns
+location	Kulautuva
+location	Kuldīga
+location	Kuldīga rajons
+location	Kulpe
+location	Kurt
+location	Kuļs
+location	Kumbrs
+location	Kumpote
+location	Kunceva
+location	Kundziņsala
+location	Kupa
+location	Kupišķs
+location	Kupišķs rajons
+location	Kuprava
+location	Kuprelišķs
+location	Kurt
+location	Kurdistāna
+location	kurgāna
+location	Kurgāna apgabals
+location	Kuriļs sala
+location	Kurkļs
+location	Kurska
+location	Kursīši
+location	Kurska
+location	Kurska apgabals
+location	Kuršēni
+location	Kurt joma
+location	Kurt kāpa
+location	Kurtuvēni
+location	Kurzeme
+location	Kurzeme augstiene
+location	Kusa
+location	kustanaja
+location	Kustanaja apgabals
+location	Kutaisi
+location	Kuveita
+location	Kuzbass
+location	Kuzņecka
+location	Kužs
+location	Kvebeka
+location	Kvēdarna
+location	Kvietišķs
+location	Kvīnslenda
+location	Kzilorda
+location	Kzilorda apgabals
+location	Ķauna
+location	Ķedaiņs
+location	Ķedains rajons
+location	Ķegums
+location	Ķeipene
+location	Ķekava
+location	Ķelme
+location	Ķelme rajons
+location	Ķelne
+location	Ķemeri
+location	Ķengarags
+location	Ķernave
+location	Ķertojs ezers
+location	Ķēbarti
+location	Ķīle
+location	Ķīle kanāls
+location	Ķīna
+location	Ķīna Tauta Republika
+location	Ķinti
+location	Ķīpsala
+location	Ķirpēni
+location	Ķirsna
+location	Ķīršina
+location	Ķīšezers
+location	Ķīve
+location	Laba
+location	Labanova
+location	Laba Cerība rags
+location	Labradora
+location	Lādoga ezers
+location	Lagomadžore
+location	Lagosa
+location	Lahora
+location	Laidze
+location	Laižuva
+location	Lamanšs
+location	Lampēdžs
+location	Langstiņi
+location	Lankašīra
+location	Laņķesa
+location	Laosa
+location	Laosa Tauta Demokrātiska Republika
+location	Lapasa
+location	Laperūzs šaurums
+location	Laplata
+location	Lapmežciems
+location	Laptevs jūra
+location	Lapzeme
+location	Latgale
+location	Latīņamerika
+location	Latvija
+location	Latvija Padome Sociālistiska Republika
+location	Latvija Republika
+location	Lauciena
+location	Lauderi
+location	Laukuva
+location	Lauķesa
+location	Lauķesa ezers
+location	Lautere
+location	Lavīss ezers
+location	Lavorišķe
+location	Lazdijs
+location	Lazdona
+location	Leckava
+location	Lēdmane
+location	Lēdurga
+location	Leimaņi
+location	Leipaliņģe
+location	Leipciga
+location	Lejasciems
+location	Lejasstrazdi
+location	Lēna ezers
+location	Lentvare
+location	Leņķime
+location	Lesteršīra
+location	Lesba
+location	Lesota
+location	Lesteršīra
+location	Lēvene
+location	Lezba sala
+location	Lhasa
+location	Libāna
+location	Libāna Republika
+location	Lībeka
+location	Libērija
+location	Libērija Republika
+location	Lībija
+location	Lībija Arābs Republika
+location	Lībija tuksnesis
+location	Librevila
+location	Līcis
+location	Līst
+location	Līdsa
+location	Līduvēns
+location	Liede
+location	Liels Lāčezers
+location	Liels Sālsezers
+location	Liels Vergezers
+location	Liela Jugla
+location	Lielauce ezers
+location	Lielbērze
+location	Ltelbritānija
+location	Lielbritānija un Ziemeļīrija Apvienot Karaliste
+location	Lieldienas salt
+location	Lielmēmele
+location	Lielplatone
+location	Liels ezers
+location	Lielupe
+location	Lielvārde
+location	Lielvircava
+location	Liepāja
+location	Lietuva
+location	Lietuvaspadomja Sociālistiska Republika
+location	Lietuva Republika
+location	Ligajs ezers
+location	Līgatne
+location	Līgums
+location	Ligūrija jūra
+location	Līguti
+location	Lihtenšteina
+location	Līksna
+location	Liķēns
+location	Lilistes-dūņs ezers
+location	Lille
+location	Lima
+location	Limbaži
+location	Limbaži rajons
+location	Lilongve
+location	Linca
+location	Linkmeļs
+location	Linsmamkalne
+location	Linkolnšīra
+location	Linkuva
+location	Liona
+location	Lisabona
+location	Lišķava
+location	Litene
+location	Litlroka
+location	Līvāni
+location	Līvbērze
+location	Liverpūle
+location	Livorna
+location	Lizums
+location	Lježa
+location	Lobīt
+location	Lodza
+location	Lodžs ezers
+location	Lofots sala
+location	Lokarna
+location	Loķe
+location	Loķess ezers
+location	Lombardija
+location	Lome
+location	Loms
+location	Londona
+location	Londonderija
+location	Lone
+location	Longailenda
+location	Losandželosa
+location	Loss ezers
+location	Lotringa
+location	Lovate
+location	Lozanna
+location	Luanda
+location	Luāra
+location	Lubāna
+location	Lubāna ezers
+location	Lubezere
+location	Lubumbašs
+location	Lucavsala
+location	Lucerna
+location	Lucka
+location	Ludza
+location	Ludza ezers
+location	Ludza rajons
+location	Luganska
+location	Luganska apgabals
+location	Luisvila
+location	Luiziāna
+location	Lukna ezers
+location	Luksemburga
+location	Lūksta ezers
+location	Lukšs
+location	Lukšta ezers
+location	Lukišķe
+location	Lusaka
+location	Lūše
+location	Lūsis ezers
+location	Lutriņi
+location	Luvra
+location	Lūzt
+location	Lūzvana
+location	Ļaude
+location	Ļudona
+location	Ļeņinobada
+location	Ļeņinobada apgabals
+location	Ļeņingrada
+location	Ļeņingrada apgabals
+location	Ļeņīnokana
+location	Ļeņinogorska
+location	Ļipecka
+location	Ļipecka apgabals
+location	Ļoļs
+location	Ļubava
+location	Ļubļina
+location	Ļudvinova
+location	Ļvova
+location	Ļvova apgabals
+location	Macesta
+location	Madagaskara
+location	Madagaskara Demokrātiska Republika
+location	Madeira
+location	Madeira sala
+location	Madliena
+location	Madona
+location	Madona rajons
+location	Madrasa
+location	Madride
+location	Mafekinga
+location	Magadana
+location	Magadana apgabals
+location	Magdeburga
+location	Magelāns šaurums
+location	Magņitogorska
+location	Mahačkala
+location	Maikopa
+location	Maina
+location	Mainca
+location	Maišagala
+location	Majami
+location	Majors
+location	Majorka
+location	Makejevka
+location	Miasura
+location	Makasara šaurums
+location	Makenzs
+location	Maķs ezers
+location	Maķedonija
+location	Malabs
+location	Malāga
+location	Malaizija
+location	Malaizija Federācija
+location	Malaja
+location	Malaja arhipelāgs
+location	Malaka
+location	Malaka šaurums
+location	Malavs
+location	Malavi Republika
+location	Male
+location	Malt
+location	Mali Republika
+location	Maljorka
+location	Malme
+location	Malnava
+location	Malata
+location	Mālpils
+location	Malta
+location	Mālupe
+location	Maļinovska
+location	Maļorka
+location	Managva
+location	Manausa
+location	Manama
+location	Mančesters
+location	Mandžūrija
+location	Mangaļs
+location	Manhatana
+location	Manheima
+location	Manila
+location	Manitoba
+location	Mārciena
+location	Mārciklona
+location	Marģs ezers
+location	Mars
+location	Mariampole
+location	Maputs
+location	Mariana sala
+location	Marianna
+location	Mars apgabals
+location	Mars Autonoma Padome Sociālistiska Republika
+location	Marakaiva
+location	Mareja
+location	Mārgika
+location	Marica
+location	Marienburga
+location	Marientāle
+location	Mārkalne
+location	Marķīzs sala
+location	Markučs
+location	Marmors jūra
+location	Marna
+location	Maroka
+location	Maroka Karaliste
+location	Marseļa
+location	Mārsnēni
+location	Maršals sala
+location	Martinika
+location	Mārupe
+location	Marvele
+location	Māsa
+location	Masačūsetca
+location	Masera
+location	Maskarēns sala
+location	Maskava
+location	Maskava apgabals
+location	Maskava rajons
+location	Maskava upe
+location	Mastis
+location	Matīši
+location	Maunaloa
+location	Maurīcija
+location	Mauritānija
+location	Mauritānija Islams Republika
+location	Mazs Belts
+location	Mazs Vergezers
+location	Maza Jugla
+location	Mazāzija
+location	Mazirbe
+location	Mazsalaca
+location	Mazūrs ezers
+location	Mažeiķs
+location	Mažeiķs rajons
+location	Mažupe
+location	Mbabane
+location	Meca
+location	Medina
+location	Mehiko
+location	Meirāni
+location	Meisene
+location	Meka
+location	Mekleburga
+location	Mekonga
+location	Meksika
+location	Meksika līcis
+location	Meksika Savienot Valsts
+location	Melanēzija
+location	Melars
+location	Melburna
+location	Melitopole
+location	Mellužs
+location	Melna jūra
+location	Melnkalne
+location	Melnraģe
+location	Melnsils
+location	Melnupe
+location	Melvila sala
+location	Mēmele
+location	Memfisa
+location	Mena
+location	Menorka
+location	Menhetena
+location	Menorka
+location	Mensfīlda
+location	Mergupe
+location	Mērilenda
+location	Merķe
+location	Merķine
+location	Mērse
+location	Mērsrsgs
+location	Mesīna
+location	Mesīna šaurums
+location	Mesčora
+location	Meškuičs
+location	Metelis
+location	Mezopotāmija
+location	Mežaparks
+location	Mežāre
+location	Mežciems
+location	Mežotne
+location	Mežvidi
+location	Mickūns
+location	Mičigana
+location	Mičigans
+location	Mielaģēns
+location	Midlseksa
+location	Midveja sala
+location	Mikronēzija
+location	Milāna
+location	Milānija
+location	Milvoks
+location	Mincis
+location	Mindanao
+location	Mineapolisa
+location	Minesota
+location	Minhene
+location	Minija
+location	Minska
+location	Minska apgabals
+location	Minusinska
+location	Mirnijs
+location	Miroslava
+location	Misa
+location	Misisips
+location	Misisipija
+location	Misūrs
+location	Misūrija
+location	Miškolca
+location	Mituva
+location	Mogadiša
+location	Mogiļeva
+location	Mogiļeva apgabals
+location	Moldāvija
+location	Moldāvija Padome Sociālistiska Republika
+location	Moldova
+location	Molēti
+location	Molēts rajons
+location	Molodečna
+location	Molodečna apgabals
+location	Moluku sala
+location	Monako
+location	Monblans
+location	Mongolija
+location	Mongolija Tauta Republika
+location	Monreāla
+location	Monrovija
+location	Montāna
+location	Montekarls
+location	Montevides
+location	Montgomerija
+location	Morāva
+location	Morāvija
+location	Mordvija Autonoma Padome Sociālistiska Republika
+location	Moricsala
+location	Moronis
+location	Mosēda
+location	Mosula
+location	Mazambika
+location	Mozambika Tauta Republika
+location	Mozambika šaurums
+location	Mozele
+location	Mukdena
+location	Murava
+location	Murjāņi
+location	Murmanska
+location	Murmanska apgabals
+location	Murmastiene
+location	Mūsa
+location	Muse
+location	Musninks
+location	Nagasaks
+location	Nagoja
+location	Nahičevāna
+location	Nahičevāna Autonoma Padome Sociālistiska Republika
+location	Nahodka
+location	Nairobi
+location	Naļčika
+location	Namangāna
+location	Namangāna apgabals
+location	Namībija
+location	Namiķis
+location	Nankins
+location	Nante
+location	Narina
+location	Nariņciems
+location	Narofominska
+location	Narva
+location	Nass
+location	Naujamieste
+location	Naujasis Dauģelišķis
+location	Naujiejs Verķs
+location	Naujojs Akmene
+location	Naujojs Viļņa
+location	Naukšēni
+location	Nauris
+location	Nautrēni
+location	Nāve jūra
+location	Nāve sala
+location	Ndžamena
+location	Neapole
+location	Neapolet līcis
+location	Nebraskt
+location	Neise
+location	Nekārt
+location	Nemakščāt
+location	Nemenčine
+location	Nemunt
+location	Nemunaite
+location	Nemunēle
+location	Nemunēlet Radvilišķs
+location	Nepāla
+location	Nevadīt
+location	Nepāla Karaliste
+location	Nere
+location	Nereta
+location	Neringa
+location	Nesaule kalns
+location	Nevadīt
+location	Nevarēnāt
+location	Neveja
+location	Nevēža
+location	Nevēžties ezers
+location	Niagara
+location	Niagara ūdenskritums
+location	Niameja
+location	Nica
+location	Nīca
+location	Nīcgalede
+location	Ničs
+location	Nida
+location	Nida purvs
+location	Nīderlande
+location	Nīderlande Karaliste
+location	Nigēra
+location	Nigēra Republika
+location	Nigērija
+location	Nigērija Federatīva Republika
+location	Nīgranda
+location	Nikolājeva
+location	Nikolājeva apgabals
+location	Nikolājevska pie Amūra
+location	Nikopole
+location	Nikosīna
+location	Nīkozija
+location	Nīkrāce
+location	Nītaure
+location	Nigēra
+location	Nigērija
+location	Nikaragva
+location	Nikobaru sala
+location	Nikosina
+location	Nīla
+location	Nirnberga
+location	Njasa ezers
+location	Nordkapt
+location	Noreiķišķet
+location	Norfolka
+location	Noridžt
+location	Noriļskt
+location	Normandija
+location	Normandija sala
+location	Normandija pussala
+location	Normaņt sala
+location	Nortamberlendt
+location	Nortjorkšīrt
+location	Norvēģija
+location	Norvēģija Karaliste
+location	Norvēģis jūra
+location	Notingemt
+location	Notingemšīrt
+location	Noja
+location	Novat Zemļa
+location	Novgorodt
+location	Novgorodties apgabals
+location	Novočerkaskt
+location	Novokuzņeckt
+location	Novomoskovskt
+location	Novosibirskt
+location	Novosibirskties apgabals
+location	Novošahtinskt
+location	Nuakšota
+location	Nūbija
+location	Nūbija tuksnesis
+location	Nukualofa
+location	Nukuss
+location	Numeja
+location	Ņeņčs nacionāls apvidus
+location	Ņeva
+location	Ņižņijtagila
+location	Ņuarka
+location	Ņūdžereija
+location	Ņūdžersija
+location	Ņjūfaundlenda
+location	Ņūhepšīrs
+location	Ņujorka
+location	Ņūkāsla
+location	Ņūmeksika
+location	Ņūorleāna
+location	Ņūporta
+location	Oba
+location	Obele
+location	Obelija
+location	Obeļs
+location	Odera
+location	Odesa
+location	Odesa apgabals
+location	Odze ezers
+location	Oglaine
+location	Odra
+location	Ogre
+location	Ogresgals
+location	Ogre rajons
+location	Ohais
+location	Ohotska jūra
+location	Oka
+location	Okeānija
+location	Okinava
+location	Oklahoma
+location	Oklakomsitija
+location	Oklenda
+location	Oksforda
+location	Oksfordšīrs
+location	Okte
+location	Oktobris rajons
+location	Olaine
+location	Olbers
+location	Oldema
+location	Olga purvs
+location	Olimps
+location	Olstera
+location	Olština
+location	Omāna
+location	Omāna līcis
+location	Omska
+location	Omska apgabals
+location	Ontāris
+location	Oņega
+location	Oņega ezers
+location	Onušķs
+location	Oranža
+location	Ordžonikidze
+location	Oregona
+location	Orehozujeva
+location	Orenburga
+location	Orenburga apgabals
+location	Orinoko
+location	Orīšs
+location	Orknejs sala
+location	Orla
+location	Orla apgabals
+location	Orleāna
+location	Ornicāns
+location	Orska
+location	Orša
+location	Osaka
+location	Osls
+location	Ostende
+location	Ostrava
+location	Ostina
+location	Osveja ezers
+location	Osvemcina
+location	Osis
+location	Ošāni
+location	Oša apgabals
+location	Otaņķi
+location	Otava
+location	Ozolaine
+location	Ozols
+location	Ozoliņi
+location	Ozolnieki
+location	Pabaži
+location	Paberže
+location	Pabirže
+location	Pāce
+location	Padekale
+location	Padome Savienība
+location	Padome Sociālistiska Republika Savienība
+location	Padut
+location	Paģēģāt
+location	Paģirāt
+location	Pajūre
+location	Pagopūāgs
+location	Pakasīt ezers
+location	Pakistāna
+location	Pakistāna Islams Republika
+location	Pakrot
+location	Pakrojas rajons
+location	Pakuļāt
+location	Palangt
+location	Palavana
+location	Palau sala
+location	Palemont
+location	Palerms
+location	Palestīna
+location	Palsmane
+location	Pamirt
+location	Pampāļi
+location	Pamūša
+location	Panama
+location	Panama kanāls
+location	Panama zeme šaurums
+location	Pandēle
+location	Panemune
+location	Panemunēle
+location	Panerāt
+location	Panevežt
+location	Panevežties rajons
+location	Pape ezers
+location	Papile
+location	Papua-jaungvineja
+location	Paragvaja
+location	Parānt
+location	Paramarībs
+location	Parant
+location	Pārdaugava
+location	Pārgauja
+location	Parīze
+location	Pārlielupe
+location	Parma
+location	Parogle
+location	Paršezert
+location	Pārventa
+location	Pasiena
+location	Pasvale
+location	Pasvalet rajons
+location	Pašile
+location	Pašvitine
+location	Patagonija
+location	Pavenčāt
+location	Paviļņa
+location	Pāvilosta
+location	Pavlodart
+location	Pavlovdarties apgabals
+location	Pažaišle
+location	Pečora
+location	Pededze
+location	Peipuss
+location	Pekina
+location	Peloponesa
+location	Peltes
+location	Pemba
+location	Pendžaba
+location	Penhs
+location	Penīns kalns
+location	Penkule
+location	Penns Alpi
+location	Pensilvānija
+location	Penza
+location	Penza apgabals
+location	Perekops
+location	Pērkons ezers
+location	Pirlharbora
+location	Perloja
+location	Perma
+location	Perma apgabals
+location	Pērnava
+location	Pērse
+location	Persija līcis
+location	Peršēķe
+location	Peršokšņs ezers
+location	Peri
+location	Peskadors sala
+location	Pēterburga
+location	Pēternieki
+location	Pēterpils
+location	Petrašūns
+location	Petropavlovska
+location	Petrozavodska
+location	Phenjaka
+location	Pieamūra
+location	Piedruja
+location	Piejūra
+location	Piejūra novads
+location	Pīblesa
+location	Pieniņš
+location	Pievolga
+location	Pikstere ezers
+location	Piķeļs
+location	Pildīt
+location	Pilda ezers
+location	Pilsblīdene
+location	Pilsrundāle
+location	Piltene
+location	Pilve
+location	Pilvišķs
+location	Pilzene
+location	Pinska
+location	Pirčupe
+location	Pirenejs
+location	Pireneju pussala
+location	Pitālova
+location	Pīrlharbors
+location	Pīteļs ezers
+location	Pīterbors
+location	Pitrags
+location	Pitsburga
+location	Pīvesa
+location	Piza
+location	Pjatigorska
+location	Plācis
+location	Plateņs
+location	Plateļs ezers
+location	Platone
+location	Pleskava
+location	Pleskava apgabals
+location	Plieņciems
+location	Plimuta
+location	Plinkšs ezers
+location	Plisūns ezers
+location	Ploce
+location	Ploēšti
+location	Plovdiva
+location	Pluņģe
+location	Plunģe rajons
+location	Plzena
+location	Pļaviņas
+location	Plzeņa
+location	Pļavnieki
+location	Pnompeņa
+location	Pnompeņa
+location	Po
+location	Pociems
+location	Podoļa
+location	Polija
+location	Polija Tauta Republika
+location	Polinēzija
+location	Polocka
+location	Poltava
+location	Poltava apgabals
+location	Pomerānija
+location	Ponaksteetls
+location	Pope
+location	Popokatepetls
+location	Portartura
+location	Portlenda
+location	Portluis
+location	Portmorsbs
+location	Portofspeina
+location	Portonova
+location	Portoprensa
+location	Portovana
+location	Portprensa
+location	Portsaida
+location	Portoriks
+location	Portsmuta
+location	Potugāle
+location	Potomaka
+location	Potsdama
+location	Poznaņa
+location	Praga
+location	Prāga
+location	Pravienišķe
+location	Praja
+location	Praviršuļa tīrelis
+location	Pretorija
+location	Preiļi
+location	Preiļi rajons
+location	Pretorija
+location	Priedaine
+location	Priekule
+location	Priekuļi
+location	Priens
+location	Priens rajons
+location	Pripete
+location	Proletārietis rajons
+location	Prūsija
+location	Prūta ezers
+location	Prževaļskis
+location	PSRS
+location	Pudinava
+location	Puertoriko
+location	Pruta
+location	Puikule
+location	Pumpens
+location	Pune
+location	Pūņas
+location	Pūre
+location	Purmsāti
+location	Pusana
+location	Puša
+location	Pušalote
+location	Puša ezers
+location	Puškins
+location	Puze ezers
+location	Pusana
+location	Rabats
+location	Radopole
+location	Radvilišķs
+location	Radvilišķs rajons
+location	Ragaciems
+location	Raguva
+location	Raiskums
+location	Rāmava
+location	Ramīgals
+location	Ranguna
+location	Ranka
+location	Rasa
+location	Raseiņs
+location	Raseiņs rajons
+location	Rasnupļi
+location	Rase ezers
+location	Ratnīča
+location	Ratnieks
+location	Raudodvare
+location	Raudone
+location	Rauna
+location	Raut
+location	Ravalpindis
+location	Ravenna
+location	Rāzna ezers
+location	Redinga
+location	Redrivers
+location	Reikjaviks
+location	Riemsa
+location	Reina
+location	Reisķs tīrelis
+location	Reinjora
+location	Rekava
+location	Reķīva
+location	Reķīva ezers
+location	Remte
+location	Rencēni
+location	Renda
+location	Rēzekne
+location	Rēzekne rajons
+location	Rēzna ezers
+location	Resifs
+location	Ričmonda
+location	Riebiņi
+location	Rietava
+location	Rietumindija
+location	Rietumberlīne
+location	Rietumkazahija apgabals
+location	Rietumsomos
+location	Rietumvirdžīnija
+location	Rīga
+location	Rīga līcis
+location	Rīga rajons
+location	Rīgene
+location	Rimiešs ezers
+location	Rijada
+location	Riminis
+location	Ringuva
+location	Riodeors
+location	Riodežaneiro
+location	Riogrande
+location	Rionegrs
+location	Rītupe
+location	Rīva
+location	Rivjēra
+location	Rjazaņa
+location	Rjazaņa apgabals
+location	Ročesters
+location	Roda
+location	Rodailends
+location	Roma
+location	Rona
+location	Rostoka
+location	Roterdama
+location	Ruanda
+location	Rumānija
+location	Rumānija Sociālistiska Republika
+location	Rūnīt
+location	Safolkt
+location	Sahalīnt
+location	Sahāra
+location	Salonikāt
+location	Salvadora
+location	Samarkandt
+location	Samoa sala
+location	Sana
+location	Sanantonis
+location	Sandjēgs
+location	Sanfrancisks
+location	Sanhose
+location	Sanhuant
+location	Sanmarīno
+location	Sanpaulu
+location	Sanrems
+location	Sansalvadort
+location	Sansevastjant
+location	Santakrust
+location	Santjags
+location	Santodomings
+location	Santome
+location	Santome un Prinsipi
+location	Sapors
+location	Saragost
+location	Saravakt
+location	Sardīnija
+location	Sarīt
+location	Sarkana jūra
+location	Saseksa
+location	Saskačevant
+location	Saudt Arābija
+location	Sauthemptont
+location	Sedāna
+location	Seišeļs sala
+location	Sēna
+location	Sendenis
+location	Senegala
+location	Sentdžordžesa
+location	Sentetjēna
+location	Sentlorensa
+location	Sentluisa
+location	Serbija
+location	Seula
+location	Sevans
+location	Sevastopole
+location	Severna
+location	Sevilja
+location	Sibīrija
+location	Sicīlija
+location	Sidneja
+location	Sietla
+location	Sigulda
+location	Simferopole
+location	Sinaja pussala
+location	Singapūra
+location	Singapūra šaurums
+location	Sinsitija
+location	Sirakūza
+location	Sirdarja
+location	Sīrija
+location	Sīrija Arābs Republika
+location	Sjangana
+location	Sjerraleone
+location	Sjerranevada
+location	Skageraks
+location	Skandināvija pussala
+location	Skārbors
+location	Skotija
+location	Slovakija
+location	Slovakija Sociālistiska Republika
+location	Slovēnija
+location	Sočs
+location	Sofija
+location	Solsbers
+location	Soltleiksitija
+location	Somālija
+location	Somerseta
+location	Somija
+location	Soms līcis
+location	Sona
+location	Spānija
+location	Stambula
+location	Staraplanins
+location	Stefordšīrs
+location	Stērlinga
+location	Stokholma
+location	Strasbūra
+location	Stretforda pie Eivona
+location	Stombolis
+location	Sudāna
+location	Sudetis
+location	Sueca
+location	Sueca kanāls
+location	Suhums
+location	Sukre
+location	Sulavesi
+location	Sulavesi jūra
+location	Sumatra
+location	Surabaja
+location	Surinama
+location	Suva
+location	Svazilenda
+location	Sverdlovska
+location	Svēta Helēna sala
+location	Svonsāt
+location	Šaba
+location	Šanhaja
+location	Šefilda
+location	Šelda
+location	Šenjana
+location	Šerbūra
+location	Šetlenda sala
+location	Špicbergena
+location	Špre
+location	Šrilanka
+location	Šropšīra
+location	Šrūsbers
+location	Štrālzunde
+location	Štutgarte
+location	Šveice
+location	Tadžikija
+location	Tadžikija Padome Sociālistiska Republika
+location	Taiti
+location	Taivana
+location	Taizeme
+location	Taklamakans tuksnesis
+location	Tāls Austrumi
+location	Tallina
+location	Tandžera
+location	Tanganjiks
+location	Tanganjika ezers
+location	Tanzānija
+location	Tasmāna jūra
+location	Tasmānija
+location	Taškenta
+location	Tatārija Autonoma Padome Sociālistiska Republika
+location	Tatrs
+location	Taurs
+location	Tbilisi
+location	Tebriza
+location	Tegusigalps
+location	Teherāna
+location	Teksasa
+location	Telaviva
+location	Temza
+location	Tenerife
+location	Tenesi
+location	Tibeta
+location	Tibra
+location	Tigra
+location	Timora
+location	Timps
+location	Tirāna
+location	Tirēns jūra
+location	Tirole
+location	Tisa
+location	Titikaka ezers
+location	Tjanšaņs
+location	Tobags
+location	Tobruka
+location	Togo
+location	Tokija
+location	Toleds
+location	Toljati
+location	Tombuka
+location	Tonga
+location	Torkis
+location	Toronts
+location	Totnema
+location	Trafalgara rags
+location	Transvāla
+location	Trenta
+location	Trieste
+location	Trinidads un Tobags
+location	Tripole
+location	Tulona
+location	Tulūza
+location	Tunisa
+location	Tunisija
+location	Turcija
+location	Turīna
+location	Turkmēnija
+location	Turkmēnijass Padome Sociālistiska Republika
+location	Tuva Autonoma Padome Sociālistiska Republika
+location	Tuvs Austrumi
+location	Tvīda
+location	Tviknema
+location	Udmurdija Autonoma Padome Sociālistiska Republika
+location	Ufa
+location	Uganda
+location	Ugunszeme
+location	Ukraina
+location	Ukraina Padome Sociālistiska Republika
+location	Ulanbators
+location	Ulanude
+location	Uļjanovska
+location	Ungārija
+location	Ungārija Tauta Republika
+location	Urāla
+location	Urugvaja
+location	Uzbekija
+location	Uzbekijas Padome Sociālistiska Republika
+location	Vācija
+location	Vācija Demokrātiska Republika
+location	Vācija Federatīva Republika
+location	Vaduca
+location	Vagadugs
+location	Vaiominga
+location	Valensija
+location	Valleta
+location	Valparaiss
+location	Vans ezers
+location	Vankūvers
+location	Varanasis
+location	Varšava
+location	Vašingtona
+location	Vaterls
+location	Vatikāns
+location	Veimāra
+location	Velingtona
+location	Velsa
+location	Venēcija
+location	Venecuēla
+location	Veners
+location	Venta
+location	Ventspils
+location	Verakrusa
+location	Verdena
+location	Vermonta
+location	Verona
+location	Versaļa
+location	Vestende
+location	Vestlotjana
+location	Vestsaseksa
+location	Vestminsters
+location	Veterns
+location	Vezuvs
+location	Vidējs Austrumi
+location	Vtdusazija
+location	Vidusjūra
+location	Vidzeme
+location	Viktorija
+location	Viktorija ezers
+location	Viltšīra
+location	Viļņa
+location	Vindhuka
+location	Vtndzora
+location	Vīne
+location	Vinipega
+location	Virdžīnija
+location	Viskonsina
+location	Visla
+location	Višis
+location	Vjetnama
+location	Vjetnama Sociālistiska Republika
+location	Vladivostoka
+location	Volga
+location	Vorikšīrs
+location	Zagreba
+location	Zaira
+location	Zālamans sala
+location	Zalcburga
+location	Zaļš Rags Sala
+location	Zambezs
+location	Zambija
+location	Zanzibārs
+location	Zemgale
+location	Ziemeļamerika
+location	Ziemeļdakota
+location	Ziemeļīrija
+location	Ziemeļosetija Autonoma Padome Sociālistiska Republika
+location	Ziemelis Ledus okeāns
+location	Ziloņkauls Krasts
+location	Zimbabve
+location	Zomba
+location	Zunds šaurums
+location	Zviedrija
+location	Ženēva
+location	Ženēva ezers
+location	Robežnieki
+location	Ročesters
+location	Roda
+location	Rodailends
+location	Rodēzija
+location	Rodopis
+location	Roja
+location	Roķišķs
+location	Roķišķs rajons
+location	Roma
+location	Rona
+location	Ropaži
+location	Rosme
+location	Rostoka
+location	Rostova
+location	Rostova pie Dona
+location	Rostova apgabals
+location	Roterdama
+location	Rovēja
+location	Rovna
+location	Rovgna apgabals
+location	Rozalims
+location	Rožupe
+location	Ruāna
+location	Ruanda
+location	Ruanda Republika
+location	Ruba
+location	Rubenis
+location	Rubiķs ezers
+location	Rucava
+location	Rudamina
+location	Rudbārdis
+location	Rūdišķe
+location	Rudzētis
+location	Rugājs
+location	Rūjiena
+location	Rumānija
+location	Rumānija Sociālistiska Republika
+location	Rumbula
+location	Rumbišķe
+location	Rundēni
+location	Rūra
+location	Rūra apgabals
+location	Rusne
+location	Rustavis
+location	Rustēgs ezers
+location	Rūžs ezers
+location	Rževa
+location	Sabile
+location	Safolkt
+location	Sahalīnt
+location	Sahaklīnties apgabals
+location	Sahalīnties līcis
+location	Sahāra
+location	Saigont
+location	Saimties ezers
+location	Sajāns
+location	Sacīt
+location	Saksija
+location	Sakstagals
+location	Sals
+location	Salaca
+location	Salacgrīva
+location	Salanta
+location	Salate
+location	Salaspils
+location	Saldeņāt
+location	Sala
+location	Saldus
+location	Saldus rajons
+location	Saldutišķāt
+location	Saliena
+location	Salinieks
+location	Saliņa ezers
+location	Salvant
+location	Saločs
+location	Salonikāt
+location	Saltonišķet
+location	Salvadora
+location	Sams
+location	Samart
+location	Samarkandt
+location	Samarkandties apgabals
+location	Samavt
+location	Samoa sala
+location	Sana
+location	Sanantonis
+location	Sandjēgs
+location	Sanfrancisks
+location	Sanhose
+location	Sanhuant
+location	Sanmarīno
+location	Sanpaulu
+location	Sanrems
+location	Sansalvadort
+location	Sansevastjant
+location	Santakrust
+location	Santjags
+location	Santodomings
+location	Santome
+location	Santome un Trinsipi
+location	Sapieģine
+location	Sapors
+location	Saragost
+location	Sarājevt
+location	Saranskt
+location	Sāra apgabals
+location	Sarātovt
+location	Sarātovas apgabals
+location	Sārcene ezers
+location	Saravakt
+location	Sardīnija
+location	Sārems
+location	Sarīt
+location	Sarģenāt
+location	Sarkana jūra
+location	Saseksa
+location	Saskačevant
+location	Sasmaka ezers
+location	Sasnt
+location	Sasnavt
+location	Saudt Arābija
+location	Sauka
+location	Sauka ezers
+location	Saulaine
+location	Sauleskalns
+location	Saulkalne
+location	Saune
+location	Saurieši
+location	Sauthemptont
+location	Savoja
+location	Seda
+location	Seda tīrelis
+location	Sedāna
+location	Segeda
+location	Seinis
+location	Seira
+location	Seirija ezers
+location	Seirijs
+location	Seligers
+location	Seišeļs sala
+location	Sēlpils
+location	Sēļi
+location	Semelišķe
+location	Semipalatinska
+location	Semipalatinska apgabals
+location	Sēna
+location	Sendenis
+location	Senegala
+location	Senegala Republika
+location	Sentdžordžesa
+location	Sentetjēna
+location	Sentlorensa
+location	Sentluisa
+location	Serbija
+location	Seredža
+location	Serpuhova
+location	Sesava
+location	Seula
+location	Sevans
+location	Sevastopole
+location	Severna
+location	Severnaja Zemļa
+location	Sevilja
+location	Siāma
+location	Siāma līcis
+location	Sibīrija
+location	Sicīlija
+location	Sidneja
+location	Sidrabene
+location	Siesarta ezers
+location	Siesarte
+location	Sietla
+location	Siesiks
+location	Siktivkara
+location	Sigulda
+location	Sils ezers
+location	Silciems
+location	Silene
+location	Silēzija
+location	Silmala
+location	Silva
+location	Simferopole
+location	Simna
+location	Simns ezers
+location	Sinaja pussala
+location	Singapūra
+location	Singapūra Republika
+location	Singapūra šaurums
+location	Sinole
+location	Sinsitija
+location	Sintauti
+location	Sirakūza
+location	Sirdarja
+location	Sirdarja apgabals
+location	Sīrija
+location	Sīrija Arābs Republika
+location	Sīrija tuksnesis
+location	Sisties ezers
+location	Sīvers ezers
+location	Sizraņa
+location	Sjangana
+location	Sjeraleone
+location	Sjeranevada
+location	Skaligišķs
+location	Skageraks
+location	Skaišķs ezers
+location	Skaistģire
+location	Skaistkalne
+location	Skandināvija
+location	Skandināvija kalns
+location	Skandināvija pussala
+location	Skapišķs
+location	Skārbors
+location	Skotija
+location	Skaudvile
+location	Skiemone
+location	Skirsnemune
+location	Skoda
+location	Skoda rajons
+location	Skotija
+location	Skrīveri
+location	Skrudaliena
+location	Skrunda
+location	Skulte
+location	Slampe
+location	Slate
+location	Slītere rezervāts
+location	Slocene
+location	Sloka
+location	Sloka ezers
+location	Slovakija
+location	Slovakija Sociālistiska Republika
+location	Slovēnija
+location	Smalinieks
+location	Smalva ezers
+location	Smēlīne ezers
+location	Smelte
+location	Smiltīne
+location	Smiļģs
+location	Smoļenska
+location	Smoļenska apgabals
+location	Snaiģins ezers
+location	Snēpele
+location	Sniķere
+location	Sočs
+location	Sofija
+location	Solsbers
+location	Soltleiksitija
+location	Soļimanska
+location	Somālija
+location	Somālija pussala
+location	Somālija Demokrātiska Republika
+location	Somerseta
+location	Somersetšīra
+location	Somija
+location	Somija Republika
+location	Somma
+location	Soms līcis
+location	Sopota
+location	Sorbonna
+location	Sosa ezers
+location	Sona
+location	Sovetska
+location	Spānija
+location	Spāre
+location	Spāre ezers
+location	Spartaks
+location	Sporāda
+location	Spruževa
+location	Stambula
+location	Stabulnieks
+location	Staicele
+location	Staklišķe
+location	Stāķi
+location	Stalbe
+location	Staļģene
+location	Stāmeriena
+location	Staraplanins
+location	Stefordšīrs
+location	Stērlinga
+location	Stokholma
+location	Strasbūra
+location	Stretforda pie Eivona
+location	Stombolis
+location	Sudāna
+location	Sudetis
+location	Sueca
+location	Sueca kanāls
+location	Suhums
+location	Sukre
+location	Sulavesi
+location	Sulavesi jūra
+location	Sumatra
+location	Surabaja
+location	Surinama
+location	Suva
+location	Svazilenda
+location	Sverdlovska
+location	Sverdlovska apgabals
+location	Svēta Helēna sala
+location	Svēts Labrenča upe
+location	Svētciems
+location	Svēte
+location	Svētupe
+location	Svīla
+location	Svira
+location	Svirkalne
+location	Sviltene
+location	Svonsāt
+location	Šaba
+location	Šahti
+location	Šaķs
+location	Šaķs rajons
+location	Šanhaja
+location	Šefilda
+location	Šalča
+location	Šalčininks
+location	Šalpe
+location	Šaltona
+location	Šampaņa
+location	Šančs
+location	Šanhaja
+location	Šatrija
+location	Šaukota
+location	Šauķēnis
+location	Šaulēnis
+location	Šauļs
+location	Šauļs rajons
+location	Šauše
+location	Ščecina
+location	Ščolkova
+location	Šēdere
+location	Šēfilde
+location	Šeimena
+location	Šeduva
+location	Šelda
+location	Šenjana
+location	Šepeta
+location	Šerbūra
+location	Šerksnne
+location	Šeškine
+location	Šešoļs
+location	Šeštoks
+location	Šešupe
+location	Šešuve
+location	Šēta
+location	Šetlenda sala
+location	Šilale
+location	Šilale rajons
+location	Šilute
+location	Šilute rajons
+location	Šiluva
+location	Šiluva tīrelis
+location	Šimone
+location	Širnēva ezers
+location	Širvinta
+location	Širvinta
+location	Širvints rajons
+location	Šīša
+location	Šķaune
+location	Šķaune ezers
+location	Šķēde
+location	Šķibe
+location	Šķilbēni
+location	Šlavanta ezers
+location	Šlēsviga-holsteina
+location	Šlīna
+location	Šlokenberga
+location	Šnipišķe
+location	Šoja
+location	Šona
+location	Špicbergena
+location	Špoģi
+location	Špre
+location	Šrilanka
+location	Šropšīra
+location	Šrūsbers
+location	Štrālzunde
+location	Štutgarte
+location	Šumava
+location	Šumska
+location	Šunija
+location	Šuste
+location	Švābija
+location	Švarzvalde
+location	Šveice
+location	Šveice Konfederācija
+location	Švēkšna
+location	Šnevčone
+location	Švenčonēļs
+location	Švenčone rajons
+location	Šventa ezers
+location	Šventoja
+location	Šventupe
+location	Šverina
+location	Švīca
+location	Tadžikija
+location	Tadžikija Padome Sociālistiska Republika
+location	Taganroga
+location	Tahiti
+location	Tahs
+location	Taimira
+location	Taimira nacionāls apvidus
+location	Taiti
+location	Taivana
+location	Taiza
+location	Taizeme
+location	Taizeme Karaliste
+location	Taklamakans
+location	Taklamakans tuksnesis
+location	Tāls Austrumi
+location	Tallina
+location	Talsi
+location	Talsi rajons
+location	Tamaņa pussala
+location	Tambova
+location	Tambova apgabals
+location	Tammerforsa
+location	Tampere
+location	Tanganjika ezers
+location	Tandžera
+location	Tanganjiks
+location	Tanganjika ezers
+location	Tanzānija
+location	Tanžera
+location	Tapeļs ezers
+location	Tara
+location	Tarents
+location	Tarts
+location	Tasmāna jūra
+location	Tasmānija
+location	Tašauza
+location	Tašauza apgabals
+location	Taškenta
+location	Taškenta apgabals
+location	Tāši ezers
+location	Tatārija
+location	Tatārija Autonoma Padome Sociālistiska Republika
+location	Tatrs
+location	Tatula
+location	Taujēni
+location	Taunusa
+location	Taurangs ezers
+location	Tauragnis
+location	Tauraģe
+location	Taurage rajons
+location	Taurkalne
+location	Taurs
+location	Taurupe
+location	Tausals ezers
+location	Tbilisi
+location	Tēba
+location	Tebra
+location	Tebriza
+location	Tegusigalps
+location	Teherāna
+location	Teksasa
+location	Telaviva
+location	Telšs
+location	Telšs rajons
+location	Temza
+location	Tenena
+location	Tenerife
+location	Tenesi
+location	Tenesija
+location	Tereka
+location	Termeza
+location	Ternopole
+location	Ternopole apgabals
+location	Tērvete
+location	Tesālija
+location	Tibeta
+location	Tibra
+location	Tigra
+location	Tilzīte
+location	Tilža
+location	Timora
+location	Timps
+location	Tiņģere
+location	Tirāna
+location	Tiraspole
+location	Tīreļpurvs
+location	Tirēns jūra
+location	Tīringa
+location	Tirkšļs
+location	Tirole
+location	Tīruļs
+location	Tirza
+location	Tisa
+location	Tiskāds ezers
+location	Tiskādi
+location	Tisa
+location	Titikaka
+location	Titikaka ezers
+location	Tītuvēni
+location	Tītuvēns tīrelis
+location	Tjandzina
+location	Tjanšaņs
+location	Tjanšaņa apgabals
+location	Tjumeņa
+location	Tjumeņa apgabals
+location	Tobags
+location	Tobola
+location	Toboļska
+location	Tobruka
+location	Toce
+location	Togo
+location	Togo Republika
+location	Tokija
+location	Toleds
+location	Toljati
+location	Tomska
+location	Tomska apgabals
+location	Tombuka
+location	Tonga
+location	Torkis
+location	Toronts
+location	Toskaņa
+location	Tosmare
+location	Totnema
+location	Tožas
+location	Trafalgara rags
+location	Transvāla
+location	Traķs
+location	Traķs rajons
+location	Traķs Voķe
+location	Transilvānija
+location	Transilvānija Alpi
+location	Trapene
+location	Trenta
+location	Trieste
+location	Trinidads un Tobags
+location	Trikāta
+location	Tripole
+location	Tripolitānija
+location	Trīra
+location	Trīsciems
+location	Trīšķs
+location	Trūškūnis
+location	Trumpe
+location	Tulona
+location	Trupe
+location	Tuamots sala
+location	Tuapse
+location	Tukums rajons
+location	Tukums
+location	Tula
+location	Tula apgabals
+location	Tulona
+location	Tulūza
+location	Tume
+location	Tunisa
+location	Tunisija
+location	Tunisija Republika
+location	Turaida
+location	Turcija
+location	Turcija Republika
+location	Turģeļs
+location	Turīna
+location	Turkestāns
+location	Turkmēnija
+location	Turkmēnijass Padome Sociālistiska Republika
+location	Turks
+location	Turmanta
+location	Tutiņs
+location	Tuva
+location	Tuva Autonoma Padome Sociālistiska Republika
+location	Tuvs Austrumi
+location	Tvera
+location	Tvereča
+location	Tvīda
+location	Tviknema
+location	Udmrtija
+location	Udmurtija Autonoma Padome Sociālistiska Republika
+location	Ūdrlande
+location	Ufa
+location	Ugāle
+location	Uganda
+location	Ugunszeme
+location	Ūģe
+location	Uhaņa
+location	Ukmerģe
+location	Ukmerģe rajons
+location	Ukoja ezers
+location	Ukraina
+location	Ukraina Padome Sociālistiska Republika
+location	Ūla
+location	Ulanbators
+location	Ulanude
+location	Ulbroka
+location	Uļjanovska
+location	Uļjānovska apgabals
+location	Umurga
+location	Ungārija
+location	Ungārija Tauta Republika
+location	Upe
+location	Upesciems
+location	Upesgrīva
+location	Upīna
+location	Upīte
+location	Upmaļs
+location	Upsala
+location	Urāla
+location	Urālis
+location	Uraļska
+location	Uraļska apgabals
+location	Urga
+location	Urgenča
+location	Urugvaja
+location	Usma ezers
+location	Usatjordinska Burjats nacionāls apvidus
+location	Ustrone
+location	Ūsas ezers
+location	Usumbura
+location	Usūrs
+location	Usurijska
+location	Ušurs ezers
+location	Utena rajons
+location	Utrehta
+location	Uzbekija
+location	Uzbekijas Padome Sociālistiska Republika
+location	Užava
+location	Užgoroda
+location	Užpaļs
+location	Užuņs ezers
+location	Užupe
+location	Užvente
+location	Vabalninka
+location	Vabole
+location	Vācija
+location	Vācija Demokrātiska Republika
+location	Vācija Federatīva Republika
+location	Vadakste
+location	Vaduca
+location	Vadokļs
+location	Vagadugs
+location	Vahša
+location	Vaidava
+location	Vaigača
+location	Vaiguva
+location	Vainuta
+location	Vaiņode
+location	Vaiominga
+location	Vaivars
+location	Vajons ezers
+location	Valakampjs
+location	Valdaja augstiene
+location	Valdeķi
+location	Valdemārpils
+location	Valdlauči
+location	Valensija
+location	Valgalciems
+location	Valgunde
+location	Valka
+location	Valka rajons
+location	Valmiera
+location	Valmiera rajons
+location	Valleta
+location	Valparaiss
+location	Vaļķininks
+location	Vans ezers
+location	Vanags
+location	Vandzene
+location	Vāne
+location	Vankūvers
+location	Varakļāni
+location	Varanasis
+location	Vardura
+location	Vardura
+location	Varēna
+location	Varēna rajons
+location	Variņi
+location	Varšava
+location	Varta
+location	Vartāja
+location	Vašingtona
+location	Vašks
+location	Vaterls
+location	Vatikāns
+location	VDR
+location	Vecbilska
+location	Vecpiebalga
+location	Vecrikava
+location	Vecsaule
+location	Vecslabada
+location	Vecums
+location	Vecumnieki
+location	Veģers
+location	Veimāra
+location	Veisieja ezers
+location	Veišs
+location	Veivirža
+location	Vējiņš
+location	Veldze
+location	Velingtona
+location	Velsa
+location	Veļikije Luks
+location	Veļona
+location	Venēcija
+location	Venecuēla
+location	Veners
+location	Venta
+location	Ventspils
+location	Verakrusa
+location	Verdena
+location	Vermonta
+location	Verkne
+location	Verona
+location	Versaļa
+location	Verseka
+location	Veršvis
+location	Veseta
+location	Vepris
+location	Vestiena
+location	Vestende
+location	Vestlotjana
+location	Vestsaseksa
+location	Vestminsters
+location	Veterns
+location	Vezuvs
+location	VFR
+location	Vībiņi
+location	Vīborga
+location	Vičunis
+location	Vidauja
+location	Vidējs Austrumi
+location	Vidusāzija
+location	Vidišķs
+location	Vidriži
+location	Vidukle
+location	Vidusjūra
+location	Vidzeme
+location	Viekšņs
+location	Viesīte
+location	Viesīte ezers
+location	Viešinta ezers
+location	Vietalva
+location	Vija
+location	Viktorija
+location	Viktorija ezers
+location	Vilgale
+location	Vilgale ezers
+location	Vilijampole
+location	vilkaviški
+location	Vilkavišķs rajons
+location	Viltšīra
+location	Viļaka
+location	Viļaka rajons
+location	Viļāni
+location	Vilkišķs
+location	Viļņa
+location	Vindhuka
+location	Vtndzora
+location	Vīne
+location	Vinipega
+location	Viņģis
+location	Virdžīnija
+location	Viņņica
+location	Virčuve
+location	Viringa
+location	Virdžīnija
+location	Virtenberga
+location	Virvīte
+location	Visaģins ezers
+location	Viskonsina
+location	Vismāra
+location	Visla
+location	Višis
+location	Vjetnama
+location	Vjetnama Sociālistiska Republika
+location	Vladivostoka
+location	Vladimmirs
+location	Vladimira apgabals
+location	Volga
+location	Volgograda
+location	Volgograda apgabals
+location	Volīnija
+location	Volīnija apgabals
+location	Vorkuta
+location	Vrangels sala
+location	Vroclava
+location	Vusteršīrs
+location	Vorikšīrs
+location	Zagreba
+location	Zabolotje purvs
+location	Zaira
+location	Zaira Republika
+location	Zagreba
+location	Zālamans sala
+location	Zalcburga
+location	Zaļš Rags Sala
+location	Zambezs
+location	Zambija
+location	Zanzibārs
+location	Zāra
+location	Zāra apgabals
+location	Zarass ezers
+location	Zēlande
+location	Zelts Krasts
+location	Zeltiņš
+location	Zemgale
+location	Zemgale zemiene
+location	Zemīte
+location	Zemmerings
+location	Zentene
+location	Ziemeļamerika
+location	Ziemeļdakota
+location	Ziemeļīrija
+location	Ziemeļosetija Autonoma Padome Sociālistiska Republika
+location	Ziemelis Ledus okeāns
+location	Ziloņkauls Krasts
+location	Zimbabve
+location	Zilaiskalns
+location	Ziloņkauls Krasts Republika
+location	Ziloņkauls Krasts
+location	Zilupe
+location	Zunds šaurums
+location	Zlatousa
+location	Zosna
+location	Zūras
+location	Zvejniekciems
+location	Zviedrija
+location	Žagare
+location	Žaltīšs ezers
+location	Žarēnis
+location	Žašļs
+location	Žeimele
+location	Žeimena
+location	Žeimeņs ezers
+location	Žeimjs
+location	Žeļeznovodska
+location	Želva
+location	Žemale
+location	Ženēva
+location	Židiks
+location	Žiežmars
+location	Žigulis
+location	Žīguri
+location	Žirmūnis
+location	Žirnajs ezers
+location	Žitomira
+location	Žitomira apgabals
+location	Žižma
+location	Žuvinta ezers
+location	Žuvinta tīrelis
+location	Žvelsa
+location	Žvērīna
+location	Žverns ezers

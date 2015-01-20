@@ -1,0 +1,14 @@
+exclude	Ik
+exclude	SIA
+exclude	Ltd
+exclude	GmbH
+exclude	IU
+exclude	AS
+exclude	A/s
+exclude	ZS
+exclude	ZvS
+exclude	BO Vas Kus
+exclude	BO Vas
+exclude	BO
+exclude	VSIA
+exclude	Inc
