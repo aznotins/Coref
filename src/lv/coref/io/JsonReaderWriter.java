@@ -190,7 +190,9 @@ public class JsonReaderWriter extends ReaderWriter {
 		if (json == null)
 			System.err.println("Writing json == null");
 		else
+			{
 			out.println(json.toString());
+			}
 		out.flush();
 	}
 
@@ -258,8 +260,8 @@ public class JsonReaderWriter extends ReaderWriter {
 				JSONArray jsonTokens = (JSONArray) jsonSentence.get("tokens");
 				Sentence sentence = sentences.get(iSent);
 				for (int iTok = 0; iTok < jsonTokens.size(); iTok++) {
-					Token t = sentence.get(iTok);
 					JSONObject jsonToken = (JSONObject) jsonTokens.get(iTok);
+					Token t = sentence.get(iTok);
 
 					if (jsonToken.containsKey("mentions"))
 						jsonToken.remove("mentions");

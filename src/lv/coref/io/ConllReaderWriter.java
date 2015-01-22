@@ -134,6 +134,7 @@ public class ConllReaderWriter extends ReaderWriter {
 						List<String> categories = new ArrayList<>();
 
 						for (int iTok = 0; iTok < sent.size(); iTok++) {
+							System.err.println(sent.get(iTok));
 							List<String> tok = sent.get(iTok);
 							String idString = tok.get(CONLL_COREF);
 							if (!idString.equals("_"))
@@ -306,6 +307,7 @@ public class ConllReaderWriter extends ReaderWriter {
 		int emptyLines = 0;
 		String line;
 		while ((line = in.readLine()) != null) {
+			//System.err.println(line);
 			line = line.trim();
 			if (line.length() > 0) {
 				if (line.startsWith("#end document")) {
@@ -524,7 +526,7 @@ public class ConllReaderWriter extends ReaderWriter {
 			}
 			out.println();
 		}
-
+		out.println();
 		if (type.equals(TYPE.CONLL))
 			out.println("#end document");
 		out.flush();

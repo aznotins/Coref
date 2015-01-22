@@ -18,7 +18,9 @@
 package lv.coref.io;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 import lv.coref.data.Text;
 import lv.coref.mf.MentionFinder;
@@ -28,7 +30,8 @@ public class CorefPipe {
 	public static enum FORMAT {
 		CONLL, JSON
 	};
-
+	private InputStream inStream = System.in;
+	private OutputStream outStream = System.out;
 	private FORMAT input = FORMAT.CONLL;
 	private FORMAT output = FORMAT.CONLL;
 	private boolean solve = true;
@@ -43,10 +46,10 @@ public class CorefPipe {
 		System.out.println("\t--solve [yes, no]: resolve mentions and coreferences");
 	}
 
-	CorefPipe() {
+	public CorefPipe() {
 	}
 
-	CorefPipe(FORMAT input, FORMAT output) {
+	public CorefPipe(FORMAT input, FORMAT output) {
 		this.input = input;
 		this.output = output;
 	}
@@ -72,12 +75,20 @@ public class CorefPipe {
 			}
 		}
 	}
+	
+	public void setInputStream(InputStream inStream) {
+		this.inStream = inStream;
+	}
+	
+	public void setOutputStream(OutputStream outStream) {
+		this.outStream = outStream;
+	}
 
 	public Text read(ReaderWriter rw) {
 		Text text = null;
 		try {
 			BufferedReader in = new BufferedReader(new InputStreamReader(
-					System.in, "UTF8"));
+					inStream, "UTF8"));
 			text = rw.read(in);
 
 		} catch (Exception e) {
@@ -88,7 +99,7 @@ public class CorefPipe {
 
 	public void write(ReaderWriter rw, Text text) {
 		try {
-			rw.write(System.out, text);
+			rw.write(outStream, text, false);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -97,21 +108,22 @@ public class CorefPipe {
 	public void run() {
 		ReaderWriter in = null;
 		ReaderWriter out = null;
-		if (input.equals(FORMAT.JSON))
-			in = new JsonReaderWriter();
-		else if (input.equals(FORMAT.CONLL))
-			in = new ConllReaderWriter(ConllReaderWriter.TYPE.LETA);
-		if (input.equals(output))
-			out = in;
-		else {
-			if (output.equals(FORMAT.JSON))
-				out = new JsonReaderWriter();
-			else if (output.equals(FORMAT.CONLL))
-				out = new ConllReaderWriter(ConllReaderWriter.TYPE.LETA);
-		}
-
 		while (true) {
+			if (input.equals(FORMAT.JSON))
+				in = new JsonReaderWriter();
+			else if (input.equals(FORMAT.CONLL))
+				in = new ConllReaderWriter(ConllReaderWriter.TYPE.LETA);
+			if (input.equals(output))
+				out = in;
+			else {
+				if (output.equals(FORMAT.JSON))
+					out = new JsonReaderWriter();
+				else if (output.equals(FORMAT.CONLL))
+					out = new ConllReaderWriter(ConllReaderWriter.TYPE.LETA);
+			}			
+			
 			Text text = read(in);
+			// System.err.println("TEXT:\n" + text);
 			if (text == null || text.isEmpty())
 				break;
 			if (solve) {
@@ -121,7 +133,8 @@ public class CorefPipe {
 			}
 			write(out, text);
 		}
-
+		in.close();
+		out.close();
 	}
 
 	public static void main(String args[]) {

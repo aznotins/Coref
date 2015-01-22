@@ -21,6 +21,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
@@ -32,6 +34,10 @@ public abstract class ReaderWriter {
 	private String fileID;
 
 	private boolean readingCoreferences = true;
+	
+	private InputStream inputStream;
+	
+	private OutputStream outputStream;	
 
 	public abstract Text read(BufferedReader in) throws Exception;
 
@@ -55,8 +61,9 @@ public abstract class ReaderWriter {
 		fos.close();
 	}
 	
-	private void write(OutputStream out, Text t, boolean close) throws Exception {
+	public void write(OutputStream out, Text t, boolean close) throws Exception {		
 		PrintStream ps = new PrintStream(out, true, "UTF-8");
+		this.outputStream = ps;
 		write(ps, t);
 		if (close) ps.close();
 	}
@@ -72,6 +79,21 @@ public abstract class ReaderWriter {
 			write(ps, t, false);
 		}
 		ps.close();
+	}
+	
+	public void close() {
+		if (inputStream != null)
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		if (outputStream != null)
+			try {
+				outputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 
 	public String getFileID() {
