@@ -29,8 +29,8 @@ import java.util.Vector;
 
 import lv.coref.data.Text;
 import lv.coref.io.ConllReaderWriter;
+import lv.coref.io.CorefConfig.FORMAT;
 import lv.coref.io.CorefPipe;
-import lv.coref.io.CorefPipe.FORMAT;
 import lv.coref.io.JsonReaderWriter;
 import lv.coref.io.ReaderWriter;
 import lv.coref.mf.MentionFinder;
@@ -66,7 +66,7 @@ public class Test {
 	}
 
 	public static void main(String[] args) throws Exception {
-		//singleTest();
+//		singleTest();
 		pipeTest();
 	}
 }

@@ -18,32 +18,34 @@
 package lv.coref.io;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import lv.coref.data.Text;
+import lv.coref.io.CorefConfig.FORMAT;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
 
 public class CorefPipe {
-	public static enum FORMAT {
-		CONLL, JSON
-	};
 	private InputStream inStream = System.in;
 	private OutputStream outStream = System.out;
 	private FORMAT input = FORMAT.CONLL;
 	private FORMAT output = FORMAT.CONLL;
-	private boolean solve = true;
+	
+	private CorefConfig cc = new CorefConfig();
+	
+	public CorefConfig getCorefConfig() {
+		return cc;
+	}
 
 	public static void help() {
 		System.out.println("=== LVCoref v2.0 ===");
-		System.out.println("INPUT:");
-		System.out.println("\t--input [CONLL, JSON]");
-		System.out.println("OUTPUT:");
-		System.out.println("\t--input [CONLL, JSON]");
-		System.out.println("OPTIONS:");
-		System.out.println("\t--solve [yes, no]: resolve mentions and coreferences");
+		System.out.println(new CorefConfig());
 	}
 
 	public CorefPipe() {
@@ -53,26 +55,34 @@ public class CorefPipe {
 		this.input = input;
 		this.output = output;
 	}
+	
+	public CorefPipe(CorefConfig cc) {
+		this.cc = cc;
+		this.input = cc.getINPUT();
+		this.output = cc.getOUTPUT();
+	}
 
 	public void configure(String args[]) {
+		// Check if user asked for help
 		for (int i = 0; i < args.length; i++) {
 			String a = args[i];
-			try {
-				if (a.equalsIgnoreCase("--input"))
-					input = FORMAT.valueOf(args[i + 1].toUpperCase());
-				else if (a.equalsIgnoreCase("--output"))
-					output = FORMAT.valueOf(args[i + 1].toUpperCase());
-				else if (a.equalsIgnoreCase("--solve") && args[i + 1].equalsIgnoreCase("no"))
-					solve = false;
-				else if (a.equalsIgnoreCase("--help")
-						|| a.equalsIgnoreCase("-h")) {
-					help();
-					System.exit(0);
-				}
-			} catch (Exception e) {
-				System.err.println("Error while configuring");
-				e.printStackTrace();
+			if (a.equalsIgnoreCase("--help")
+					|| a.equalsIgnoreCase("-h")) {
+				help();
+				System.exit(0);
 			}
+		}
+		cc.load(args);
+		// Setup logger configuration from properties file
+		try {
+			Logger root = Logger.getLogger("");
+			FileInputStream fis = new FileInputStream(cc.get("prop"));
+			LogManager.getLogManager().readConfiguration(fis);
+			//root.addHandler(new java.util.logging.ConsoleHandler());
+			//root.setUseParentHandlers(false);
+			fis.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -126,7 +136,8 @@ public class CorefPipe {
 			// System.err.println("TEXT:\n" + text);
 			if (text == null || text.isEmpty())
 				break;
-			if (solve) {
+
+			if (cc.getSOLVE()) {
 				new MentionFinder().findMentions(text);
 				new Ruler().resolve(text);
 				text.removeCommonUnknownSingletons();
