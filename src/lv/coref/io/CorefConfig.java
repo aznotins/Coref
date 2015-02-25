@@ -1,3 +1,20 @@
+/*******************************************************************************
+ * Copyright 2014,2015 Institute of Mathematics and Computer Science, University of Latvia
+ * Author: Artūrs Znotiņš
+ * 
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ * 
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ * 
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *******************************************************************************/
 package lv.coref.io;
 
 import java.io.FileInputStream;
@@ -10,8 +27,10 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.util.Properties;
 import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 public class CorefConfig {
+	private final static Logger log = Logger.getLogger(CorefConfig.class.getName());
 
 	private Properties props = new Properties();
 
@@ -38,13 +57,12 @@ public class CorefConfig {
 			}
 		}
 	}
-	
+
 	public static void logConfig(String filename) {
 		try {
-			LogManager.getLogManager().reset();
 			FileInputStream fis = new FileInputStream(filename);
 			LogManager.getLogManager().readConfiguration(fis);
-			fis.close();
+			fis.close();			
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
@@ -142,7 +160,14 @@ public class CorefConfig {
 	public String getKNB_PASSWORD() {
 		return props.getProperty(PROP_KNB_PASSWORD, "password");
 	}
+	
+	@Property(descr = "Preprocessing pipeline webservice (produces conll with ner and syntax from text)", def = "http://localhost:8182/nertagger")
+	private static String PROP_PREPROCESS_WEBSERVICE = "web.pipe";
 
+	public String getPREPROCESS_WEBSERVICE() {
+		return props.getProperty(PROP_PREPROCESS_WEBSERVICE, "http://localhost:8182/nertagger");
+	}
+	
 	public static void main(String[] args) {
 		CorefConfig cc = new CorefConfig();
 		System.err.println(cc);

@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,6 +45,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class MmaxReaderWriter extends ReaderWriter {
+	private final static Logger log = Logger.getLogger(MmaxReaderWriter.class.getName());
 	
 	private List<String> words;
 
@@ -141,7 +144,7 @@ public class MmaxReaderWriter extends ReaderWriter {
 			}
 		}
 		if (heads.size() == 0) {
-			System.err.println("Didn't found head, use last token as head: headString=\"" + headString +"\" tokens=" + tokens);
+			log.warning("Didn't found head, use last token as head: headString=\"" + headString +"\" tokens=" + tokens);
 			heads.add(tokens.get(tokens.size()-1));
 		}
 		return heads;
@@ -212,7 +215,7 @@ public class MmaxReaderWriter extends ReaderWriter {
 				words.add(word);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.log(Level.SEVERE, "Error reading " + fileName, e);
 		}
 	}
 	
@@ -267,7 +270,7 @@ public class MmaxReaderWriter extends ReaderWriter {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.log(Level.SEVERE, "Error reading " + fileName, e);
 		}
 	}
 

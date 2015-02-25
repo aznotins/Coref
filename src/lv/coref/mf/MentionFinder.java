@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lv.coref.data.Mention;
 import lv.coref.data.MentionChain;
@@ -41,8 +43,7 @@ import lv.coref.lv.MorphoUtils;
 import lv.coref.tests.CorefTest;
 
 public class MentionFinder {
-
-	public static final boolean VERBOSE = false;
+	private final static Logger log = Logger.getLogger(MentionFinder.class.getName());
 
 	public void findMentions(Text text) {
 		for (Paragraph p : text) {
@@ -53,7 +54,7 @@ public class MentionFinder {
 	}
 
 	public void findMentionInSentence(Sentence sentence) {
-//		 addNounMentions(sentence);
+		// addNounMentions(sentence);
 		// addNounPhraseMentions(sentence);
 		// addCoordinationsFlat(sentence);
 
@@ -66,7 +67,7 @@ public class MentionFinder {
 		MentionCleaner.cleanSentenceMentions(sentence);
 		updateMentionHeads(sentence);
 		updateMentionBoundaries(sentence);
-//		 addCoordinationsFlat(sentence);
+		// addCoordinationsFlat(sentence);
 		removeAbstractMentions(sentence);
 		removeNestedMentions(sentence); // last step
 
@@ -87,8 +88,7 @@ public class MentionFinder {
 				remove = true;
 
 			if (remove) {
-				if (VERBOSE)
-					System.err.println("REMOVE ABSTRACT: " + m);
+				log.log(Level.INFO, "Remove abstract {0}", m);
 				sentence.removeMention(m);
 			}
 		}
@@ -106,8 +106,7 @@ public class MentionFinder {
 			// sentence.get(end));
 			if (sentence.get(start).isQuote() && sentence.get(end).isQuote()) {
 				m.setTokens(sentence.subList(start, end + 1));
-				if (VERBOSE)
-					System.err.println("QUOTES ADDED to mention " + m);
+				log.log(Level.INFO, "Added quotes to {0}", m);
 			}
 		}
 		List<String> introducers = Arrays.asList("valsts SIA", "SIA");
@@ -125,8 +124,7 @@ public class MentionFinder {
 				m.setTokens(tokens);
 				m.setType(Type.NE);
 				m.setCategory(Category.organization);
-				if (VERBOSE)
-					System.err.println("INTRODUCER ADDED " + s + " " + m);
+				log.log(Level.INFO, "Added introducer {0} to {1}", new Object[] { s, m });
 			}
 		}
 
@@ -143,8 +141,7 @@ public class MentionFinder {
 					tokens.addAll(max.getTokens());
 					tokens.addAll(m.getTokens());
 					m.setTokens(tokens);
-					if (VERBOSE)
-						System.err.println("ADDED GENITIVE MENTION " + max + " TO " + m);
+					log.log(Level.INFO, "Added genitive mention {0} to {1}", new Object[] { max, m });
 				}
 			}
 		}
@@ -175,8 +172,7 @@ public class MentionFinder {
 
 			}
 			if (remove) {
-				if (VERBOSE)
-					System.err.println("REMOVE NESTED: " + mention);
+				log.log(Level.INFO, "Removed nested mention {0}", mention);
 				sentence.removeMention(mention);
 			}
 		}
@@ -199,8 +195,7 @@ public class MentionFinder {
 			} else {
 				m.setType(Type.NP);
 			}
-			if (VERBOSE)
-				System.err.println("NER named entity " + m);
+			log.log(Level.INFO, "Added NER mention {0}", m);
 		}
 	}
 
@@ -210,6 +205,7 @@ public class MentionFinder {
 				Mention m = new Mention(sent.getText().getNextMentionID(), t);
 				sent.addMention(m);
 				sent.getText().addMentionChain(new MentionChain(m));
+				log.log(Level.INFO, "Added Noun [tag=n] mention {0}", m);
 			}
 		}
 	}
@@ -221,8 +217,7 @@ public class MentionFinder {
 				sent.addMention(m);
 				sent.getText().addMentionChain(new MentionChain(m));
 				m.setType(Type.NE);
-				if (VERBOSE)
-					System.err.println("ACRONYM mention " + m);
+				log.log(Level.INFO, "Added acronym mention {0}", m);
 			}
 		}
 	}
@@ -257,8 +252,7 @@ public class MentionFinder {
 						m.setType(Type.NP);
 					sent.addMention(m);
 					sent.getText().addMentionChain(new MentionChain(m));
-					if (VERBOSE)
-						System.err.println("QUOTE mention " + m);
+					log.log(Level.INFO, "Added quote mention {0}", m);
 					break;
 				}
 			}
@@ -307,8 +301,7 @@ public class MentionFinder {
 				continue;
 			// Collections.reverse(mentions);
 			Mention mention2 = mentions.get(0);
-			if (VERBOSE)
-				System.err.println("Coordination candidate " + mention + mention2);
+			log.log(Level.INFO, "Coordination candidate: {0} {1}", new Object[] { mention, mention2 });
 
 			List<Token> tokens = new ArrayList<>();
 			List<Token> heads = new ArrayList<>();
@@ -320,8 +313,7 @@ public class MentionFinder {
 			sent.addMention(m);
 			sent.getText().addMentionChain(new MentionChain(m));
 			m.setType(Type.CONJ);
-			if (VERBOSE)
-				System.err.println("MENTION COORDINATION: " + m);
+			log.log(Level.INFO, "Added flat coordination {0}", m);
 		}
 	}
 
@@ -340,8 +332,7 @@ public class MentionFinder {
 					sent.addMention(m);
 					sent.getText().addMentionChain(new MentionChain(m));
 					m.setType(Type.CONJ);
-					if (VERBOSE)
-						System.err.println("MENTION COORDINATION: " + m);
+					log.log(Level.INFO, "Added coordination {0}", m);
 				}
 			} else {
 				addCoordinations(sent, child);
@@ -361,8 +352,7 @@ public class MentionFinder {
 				m.setType(Type.PRON);
 				m.getLastHeadToken().setPronounType(MorphoUtils.getPronounType(m.getLastHeadToken().getTag()));
 				m.getLastHeadToken().setPerson(MorphoUtils.getPerson(m.getLastHeadToken().getTag()));
-				if (VERBOSE)
-					System.err.println("PRONNOUN MENTION: " + m);
+				log.log(Level.INFO, "Added pronoun mention {0}", m);
 			}
 		}
 	}
@@ -428,17 +418,18 @@ public class MentionFinder {
 					m.setType(Type.NE);
 				m.setCategory(Dictionaries.getCategory(m.getLemmaString()));
 
-				if (VERBOSE)
-					System.err.println("NP mention " + m);
+				log.log(Level.INFO, "Added NP mention {0}", m);
 			}
 		}
 	}
 
 	public static void main(String[] args) throws IOException {
+		log.info("test");
 		CorefTest.test("MENTIONS",
 				"Kopš 2001. gada viņš strādājis dažādos amatos valsts SIA \" Psihiatrijas centrs \" ,"
 						+ " Garīgās veselības valsts aģentūrā un valsts SIA \" Rīgas Psihiatrijas un narkoloģijas "
 						+ "centrs \" , bijis arī docents RSU un vadījis lekcijas Latvijas Universitātē .");
+		log.info("test");
 	}
 
 }

@@ -19,6 +19,8 @@ package lv.coref.rules;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lv.coref.data.Mention;
 import lv.coref.data.MentionChain;
@@ -28,16 +30,28 @@ import lv.coref.data.Text;
 import lv.coref.tests.CorefTest;
 import lv.coref.util.Pair;
 
-public class Ruler {
-	public static final boolean VERBOSE = false;
-	public static final boolean POST_PROCESS = false;
+public class Ruler {	
+	private final static Logger log = Logger.getLogger(Ruler.class.getName());
+	
+	private boolean POST_PROCESS = false;
+	
 	private List<Rule> rules = new ArrayList<>();
-
-	public Ruler resolve(Text t) {
-		List<Rule> rules = new ArrayList<>();
+	
+	public Ruler() {
+		initRules();
+	}
+	
+	public Ruler(boolean postProcess) {
+		POST_PROCESS = postProcess;
+		initRules();
+	}
+	
+	public void initRules() {
+		rules = new ArrayList<>();
+		
 		// rules.add(new AllInOne());
-//		rules.add(new HeadMatch());
-
+		// rules.add(new HeadMatch());
+		
 		rules.add(new ExactMatch());
 		rules.add(new Appositive());
 		rules.add(new Predicate());
@@ -45,7 +59,9 @@ public class Ruler {
 		rules.add(new StrictHeadMatch());
 		rules.add(new SubClause());
 		rules.add(new Pronoun());
+	}
 
+	public Ruler resolve(Text t) {
 		for (Rule r : rules) {
 			List<Pair<Mention, Mention>> merge = new ArrayList<>();
 			for (Paragraph p : t) {
@@ -57,8 +73,7 @@ public class Ruler {
 							// MentionChain mc = m.getMentionChain();
 							// a.getMentionChain().add(mc);
 							// t.dropMentionChain(mc);
-							if (VERBOSE)
-								getDescription(r, m, a);
+							getDescription(r, m, a);
 						}
 					}
 				}
@@ -71,7 +86,6 @@ public class Ruler {
 				a.getMentionChain().add(mc);
 				t.dropMentionChain(mc);
 			}
-
 		}
 		if (POST_PROCESS) postProcess(t);
 		return this;
@@ -89,8 +103,7 @@ public class Ruler {
 				Mention a = appositive.getFirst(m);
 				if (a == null)
 					continue;
-				if (VERBOSE)
-					getDescription(appositive, m, a);
+				getDescription(appositive, m, a);
 				MentionChain mc = m.getMentionChain();
 				a.getMentionChain().add(mc);
 				t.dropMentionChain(mc);
@@ -134,8 +147,7 @@ public class Ruler {
 			if (a.getSentence() != m.getSentence() && a.getSentence().getPairedSentence() != null)
 				sb.append("\n\t").append(a.getSentence().getPairedSentence());
 		}
-		if (VERBOSE)
-			System.err.println(sb.toString());
+		log.log(Level.INFO, "{0}", sb.toString());
 	}
 
 	public static void main(String[] args) {

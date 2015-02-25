@@ -20,6 +20,8 @@ package lv.coref.mf;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lv.coref.data.Mention;
 import lv.coref.data.Sentence;
@@ -27,8 +29,7 @@ import lv.coref.lv.Constants.Category;
 import lv.coref.lv.Constants.Type;
 
 public class MentionCleaner {
-
-	public static final boolean VERBOSE = false;
+	private final static Logger log = Logger.getLogger(MentionCleaner.class.getName());
 
 	public static void cleanSentenceMentions(Sentence sentence) {
 		List<Mention> mentions = sentence.getOrderedMentions();
@@ -40,8 +41,7 @@ public class MentionCleaner {
 				Mention m2 = mentions.get(j);
 
 				Mention lessImportantMention = getLessImportantMention(m1, m2);
-				Mention moreImportantMention = m1 == lessImportantMention ? m2
-						: m1;
+				Mention moreImportantMention = m1 == lessImportantMention ? m2 : m1;
 				if (true || m2.getType() == Type.NE) {
 					// System.err.println(m1 + " " + m2);
 				}
@@ -49,10 +49,8 @@ public class MentionCleaner {
 				// same mention borders
 				if (m1.getTokens().equals(m2.getTokens())) {
 					unnecessaryMentions.add(lessImportantMention);
-					if (VERBOSE)
-						System.err.println("CLEAN Same borders: " + m1 + ", "
-								+ m2 + ":    "
-								+ getLessImportantMention(m1, m2) + " removed");
+					log.log(Level.INFO, "Same borders {0}, {1}: {2} removed", new Object[] { m1, m2,
+							lessImportantMention });
 					continue;
 				}
 
@@ -72,10 +70,8 @@ public class MentionCleaner {
 						// }
 						// if (!isConj) {}
 						unnecessaryMentions.add(lessImportantMention);
-						if (VERBOSE)
-							System.err.println("CLEAN Same heads: " + m1 + ", "
-									+ m2 + ":    " + lessImportantMention
-									+ " removed");
+						log.log(Level.INFO, "Same heads {0}, {1}: {2} removed", new Object[] { m1, m2,
+								lessImportantMention });
 						continue;
 					}
 				}
@@ -84,10 +80,8 @@ public class MentionCleaner {
 				if (m1.getHeads().isEmpty() && !m2.getHeads().isEmpty()) {
 					if (m2.getHeads().equals(m1.getHeads())) {
 						unnecessaryMentions.add(lessImportantMention);
-						if (VERBOSE)
-							System.err.println("CLEAN head is other mention: "
-									+ m1 + ", " + m2 + " : "
-									+ lessImportantMention + " removed");
+						log.log(Level.INFO, "Head is other mention {0}, {1}: {2} removed", new Object[] { m1, m2,
+								lessImportantMention });
 						continue;
 					}
 				}
@@ -96,45 +90,42 @@ public class MentionCleaner {
 				if (!m2.getHeads().isEmpty() && !m1.getHeads().isEmpty()) {
 					if (m1.getHeads().equals(m2.getHeads())) {
 						unnecessaryMentions.add(lessImportantMention);
-						if (VERBOSE)
-							System.err.println("CLEAN head is other mention: "
-									+ m1 + ", " + m2 + " : "
-									+ lessImportantMention + " removed");
+						log.log(Level.INFO, "Head is other mention {0}, {1}: {2} removed", new Object[] { m1, m2,
+								lessImportantMention });
 						continue;
 
 					}
 				}
 
 				// intersection
-				
+
 				boolean intersect = m1.intersects(m2);
-//				boolean intersect = false;
-//				Set<Token> notInM1 = new HashSet<Token>(m2.getTokens());
-//				notInM1.removeAll(m1.getTokens());
-//				if (notInM1.size() < m2.getTokens().size())
-//					intersect = true;
-//				Set<Token> notInM2 = new HashSet<Token>(m1.getTokens());
-//				notInM2.removeAll(m2.getTokens());
-//				if (notInM2.size() < m1.getTokens().size())
-//					intersect = true;
-//				if (intersect && !notInM1.isEmpty() && !notInM2.isEmpty())
+				// boolean intersect = false;
+				// Set<Token> notInM1 = new HashSet<Token>(m2.getTokens());
+				// notInM1.removeAll(m1.getTokens());
+				// if (notInM1.size() < m2.getTokens().size())
+				// intersect = true;
+				// Set<Token> notInM2 = new HashSet<Token>(m1.getTokens());
+				// notInM2.removeAll(m2.getTokens());
+				// if (notInM2.size() < m1.getTokens().size())
+				// intersect = true;
+				// if (intersect && !notInM1.isEmpty() && !notInM2.isEmpty())
 
 				if (intersect) {
 					unnecessaryMentions.add(lessImportantMention);
-					if (VERBOSE)
-						System.err.println("CLEAN intersection!" + m1 + ", "
-								+ m2 + ":    "
-								+ getLessImportantMention(m1, m2) + " removed");
+					log.log(Level.INFO, "Intersection {0}, {1}: {2} removed", new Object[] { m1, m2,
+							lessImportantMention });
 					continue;
 				}
 
 				// Nested in Named Enitity
-//				if (intersect && notInM1.isEmpty() && m1.getType() == Type.NE) {
-//					unnecessaryMentions.add(m2);
-//					if (VERBOSE)
-//						System.err.println("CLEAN Nested in NE!" + m1 + ", "
-//								+ m2 + ":    " + m2 + " removed");
-//				}
+				// if (intersect && notInM1.isEmpty() && m1.getType() ==
+				// Type.NE) {
+				// unnecessaryMentions.add(m2);
+				// if (VERBOSE)
+				// System.err.println("CLEAN Nested in NE!" + m1 + ", "
+				// + m2 + ":    " + m2 + " removed");
+				// }
 				// if (intersect && notInM2.isEmpty() && m2.getType() ==
 				// Type.NE) {
 				// unnecessaryMentions.add(m1);
@@ -155,25 +146,25 @@ public class MentionCleaner {
 		} else if (!m2.isFinal() && m1.isFinal()) {
 			return m2;
 		}
-		
+
 		if (m2.isProperMention() && !m1.isProperMention()) {
 			return m1;
 		} else if (!m2.isProperMention() && m1.isProperMention()) {
 			return m2;
 		}
-		
+
 		if (m1.getTokens().size() > m2.getTokens().size()) {
 			return m2;
 		} else if (m1.getTokens().size() < m2.getTokens().size()) {
 			return m1;
 		}
-		
+
 		if (!m2.getCategory().equals(Category.unknown) && m1.getCategory().equals(Category.unknown)) {
 			return m1;
 		} else if (!m2.getCategory().equals(Category.unknown) && m1.getCategory().equals(Category.unknown)) {
 			return m2;
 		}
-		
+
 		return m2;
 	}
 }

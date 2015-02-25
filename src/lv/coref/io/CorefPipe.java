@@ -32,6 +32,8 @@ import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
 
 public class CorefPipe {
+	private final static Logger log = Logger.getLogger(CorefPipe.class.getName()); 
+	
 	private InputStream inStream = System.in;
 	private OutputStream outStream = System.out;
 	private FORMAT input = FORMAT.CONLL;

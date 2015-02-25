@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
+import java.util.logging.Logger;
 
 import lv.coref.data.Mention;
 import lv.coref.data.Paragraph;
@@ -35,6 +36,7 @@ import lv.coref.rules.Ruler;
 import lv.coref.util.Triple;
 
 public class ConllReaderWriter extends ReaderWriter {
+	private final static Logger log = Logger.getLogger(ConllReaderWriter.class.getName()); 
 
 	public static enum TYPE {
 		CONLL, LETA
@@ -134,7 +136,6 @@ public class ConllReaderWriter extends ReaderWriter {
 						List<String> categories = new ArrayList<>();
 
 						for (int iTok = 0; iTok < sent.size(); iTok++) {
-							System.err.println(sent.get(iTok));
 							List<String> tok = sent.get(iTok);
 							String idString = tok.get(CONLL_COREF);
 							if (!idString.equals("_"))
@@ -448,7 +449,7 @@ public class ConllReaderWriter extends ReaderWriter {
 				List<List<String>> sen = par.get(iSen);
 				Sentence sentence = paragraph.get(iSen);
 				if (sentence.size() != sen.size())
-					System.err.println("Not equal size "
+					log.severe("Not equal size "
 							+ sentence.getTextString() + "\n" + sen);
 				for (int iTok = 0; iTok < sen.size(); iTok++) {
 					List<String> tok = sen.get(iTok);
@@ -535,16 +536,10 @@ public class ConllReaderWriter extends ReaderWriter {
 	public static void main(String[] args) throws Exception {
 		Text t;
 		ReaderWriter rw = new ConllReaderWriter(TYPE.CONLL);
-		// t = rw.getText("data/test.corefconll");
 		t = rw.read("data/test.conll");
-
 		new MentionFinder().findMentions(t);
 		new Ruler().resolve(t);
-		//rw.write(System.out, t);
+//		rw.write(System.out, t);		
 		System.out.println(t);
-		// for (MentionChain mc : t.getMentionChains()) {
-		// if (mc.size() > 1)
-		// System.out.println(mc);
-		// }
 	}
 }

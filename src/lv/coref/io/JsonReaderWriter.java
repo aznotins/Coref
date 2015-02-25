@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lv.coref.data.Mention;
 import lv.coref.data.MentionChain;
@@ -47,6 +49,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 public class JsonReaderWriter extends ReaderWriter {
+	private final static Logger log = Logger.getLogger(JsonReaderWriter.class.getName());
 
 	private JSONObject json; // original JSON
 
@@ -65,8 +68,8 @@ public class JsonReaderWriter extends ReaderWriter {
 			builder.append(line).append("\n");
 		}
 		json = (JSONObject) JSONValue.parse(builder.toString());
-//		if (json == null)
-//			System.err.println("Empty document");
+		// if (json == null)
+		// System.err.println("Empty document");
 		return json;
 	}
 
@@ -90,23 +93,17 @@ public class JsonReaderWriter extends ReaderWriter {
 				List<Pair<Triple<Integer, Integer, String>, String>> sentenceMentions = new ArrayList<>();
 				for (int iTok = 0; iTok < tokens.size(); iTok++) {
 					JSONObject jsonToken = (JSONObject) tokens.get(iTok);
-					String word = jsonToken.containsKey("form") ? jsonToken
-							.get("form").toString() : "_";
-					String lemma = jsonToken.containsKey("lemma") ? jsonToken
-							.get("lemma").toString() : "_";
-					String tag = jsonToken.containsKey("tag") ? jsonToken.get(
-							"tag").toString() : "_";
-					String pos = jsonToken.containsKey("pos") ? jsonToken.get(
-							"pos").toString() : tag.substring(0, 1);
-					String morphoFeatures = jsonToken.containsKey("features") ? jsonToken
-							.get("features").toString() : "_";
+					String word = jsonToken.containsKey("form") ? jsonToken.get("form").toString() : "_";
+					String lemma = jsonToken.containsKey("lemma") ? jsonToken.get("lemma").toString() : "_";
+					String tag = jsonToken.containsKey("tag") ? jsonToken.get("tag").toString() : "_";
+					String pos = jsonToken.containsKey("pos") ? jsonToken.get("pos").toString() : tag.substring(0, 1);
+					String morphoFeatures = jsonToken.containsKey("features") ? jsonToken.get("features").toString()
+							: "_";
 					// Integer position = jsonToken.containsKey("index") ?
 					// Integer
 					// .parseInt(jsonToken.get("index").toString()) : -1;
-					Integer parentPosition = jsonToken
-							.containsKey("parentIndex") ? Integer
-							.parseInt(jsonToken.get("parentIndex").toString())
-							: -1;
+					Integer parentPosition = jsonToken.containsKey("parentIndex") ? Integer.parseInt(jsonToken.get(
+							"parentIndex").toString()) : -1;
 					String ner = "O";
 					if (jsonToken.containsKey("namedEntityType")) {
 						ner = (String) jsonToken.get("namedEntityType");
@@ -117,26 +114,18 @@ public class JsonReaderWriter extends ReaderWriter {
 					}
 
 					if (jsonToken.containsKey("mentions")) {
-						JSONArray jsonMentions = (JSONArray) jsonToken
-								.get("mentions");
+						JSONArray jsonMentions = (JSONArray) jsonToken.get("mentions");
 						for (int iMent = 0; iMent < jsonMentions.size(); iMent++) {
-							JSONObject jsonMention = (JSONObject) jsonMentions
-									.get(iMent);
-							Integer start = jsonMention.containsKey("start") ? Integer
-									.parseInt(jsonMention.get("start")
-											.toString()) - 1 : iTok;
-							Integer end = jsonMention.containsKey("start") ? Integer
-									.parseInt(jsonMention.get("end").toString()) - 1
-									: iTok;
-							String id = jsonMention.containsKey("id") ? jsonMention
-									.get("id").toString() : null;
-							String type = jsonMention.containsKey("type") ? jsonMention
-									.get("type").toString() : null;
+							JSONObject jsonMention = (JSONObject) jsonMentions.get(iMent);
+							Integer start = jsonMention.containsKey("start") ? Integer.parseInt(jsonMention
+									.get("start").toString()) - 1 : iTok;
+							Integer end = jsonMention.containsKey("start") ? Integer.parseInt(jsonMention.get("end")
+									.toString()) - 1 : iTok;
+							String id = jsonMention.containsKey("id") ? jsonMention.get("id").toString() : null;
+							String type = jsonMention.containsKey("type") ? jsonMention.get("type").toString() : null;
 
-							sentenceMentions
-									.add(new Pair<Triple<Integer, Integer, String>, String>(
-											new Triple<Integer, Integer, String>(
-													start, end, id), type));
+							sentenceMentions.add(new Pair<Triple<Integer, Integer, String>, String>(
+									new Triple<Integer, Integer, String>(start, end, id), type));
 						}
 					}
 					Token token = new Token(word, lemma, tag);
@@ -153,19 +142,17 @@ public class JsonReaderWriter extends ReaderWriter {
 				sentence.initializeNodeTree();
 				sentence.initializeNamedEntities(getClassSpans(sentenceNer, "O"));
 
-
 			}
 
 			// initializeBaseCoreference();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.log(Level.SEVERE, "Error reading json file", e);
 		}
 		return text;
 	}
 
-	public List<Triple<Integer, Integer, String>> getClassSpans(
-			List<String> tokens, String defaultMarker) {
+	public List<Triple<Integer, Integer, String>> getClassSpans(List<String> tokens, String defaultMarker) {
 		List<Triple<Integer, Integer, String>> spans = new ArrayList<Triple<Integer, Integer, String>>();
 		String prev = defaultMarker;
 		int prevStart = 0;
@@ -188,11 +175,10 @@ public class JsonReaderWriter extends ReaderWriter {
 	public void write(PrintStream out, Text text) throws IOException {
 		initialize(text);
 		if (json == null)
-			System.err.println("Writing json == null");
-		else
-			{
+			log.warning("Writing json == null");
+		else {
 			out.println(json.toString());
-			}
+		}
 		out.flush();
 	}
 
@@ -226,8 +212,7 @@ public class JsonReaderWriter extends ReaderWriter {
 				if (token.getDependency() != null)
 					jsonToken.put("dependencyLabel", token.getDependency());
 				if (token.getNamedEntity() != null)
-					jsonToken.put("namedEntityType", token.getNamedEntity()
-							.getLabel());
+					jsonToken.put("namedEntityType", token.getNamedEntity().getLabel());
 				jsonTokens.add(jsonToken);
 			}
 			jsonSentence.put("tokens", jsonTokens);
@@ -279,14 +264,11 @@ public class JsonReaderWriter extends ReaderWriter {
 							// System.err.println("Head mention " + t + " " +
 							// m);
 							JSONObject jsonMention = new JSONObject();
-							jsonMention.put("end", m.getLastToken()
-									.getPosition() + 1);
-							jsonMention.put("start", m.getFirstToken()
-									.getPosition() + 1);
+							jsonMention.put("end", m.getLastToken().getPosition() + 1);
+							jsonMention.put("start", m.getFirstToken().getPosition() + 1);
 							jsonMention.put("id", m.getMentionChain().getID());
 							if (!m.getCategory().equals(Category.unknown))
-								jsonMention.put("type", m.getCategory()
-										.toString());
+								jsonMention.put("type", m.getCategory().toString());
 							jsonMentions.add(jsonMention);
 						}
 						jsonToken.put("mentions", jsonMentions);
@@ -294,8 +276,7 @@ public class JsonReaderWriter extends ReaderWriter {
 				}
 			}
 		} catch (Exception e) {
-			System.err.println("ERROR while updating tokens");
-			e.printStackTrace();
+			log.log(Level.SEVERE, "ERROR while updating tokens", e);
 		}
 	}
 
@@ -320,15 +301,14 @@ public class JsonReaderWriter extends ReaderWriter {
 						continue; // Vietniekvārdus aliasos neliekam
 					Expression e;
 					try {
-						e = new Expression(m.getString(), m.getCategory()
-								.toString(), false);
+						e = new Expression(m.getString(), m.getCategory().toString(), false);
 						String normalised = e.inflect("Nominatīvs");
 						if (normalised != null)
 							aliases.add(normalised);
 						else
 							aliases.add(m.getString());
 					} catch (Exception e1) {
-						e1.printStackTrace();
+						log.log(Level.WARNING, "Error inflecting: " + m.getString(), e1);
 					}
 					// System.err.printf("head:%s ner:%s\n", m.headString,
 					// m.nerString);
@@ -341,15 +321,12 @@ public class JsonReaderWriter extends ReaderWriter {
 				// if (category == null)
 				// System.err.println("Empty cluster category " +
 				// cluster.representative);
-				if (mc.getRepresentative() != null
-						&& mc.getRepresentative().getType().equals(Type.NE))
+				if (mc.getRepresentative() != null && mc.getRepresentative().getType().equals(Type.NE))
 					jsonNE.put("isTitle", 1);
 				JSONObject oInflections = new JSONObject();
-				String representativeString = mc.getRepresentative()
-						.getString();
+				String representativeString = mc.getRepresentative().getString();
 				try {
-					Expression e = new Expression(representativeString, mc
-							.getCategory().toString(), false);
+					Expression e = new Expression(representativeString, mc.getCategory().toString(), false);
 					Map<String, String> inflections = e.getInflections();
 					// System.err.printf("Saucam getInflections vārdam '%s' ar kategoriju '%s'\n",
 					// cluster.representative.nerString,
@@ -362,7 +339,7 @@ public class JsonReaderWriter extends ReaderWriter {
 					// cluster.representative.nerString,
 					// cluster.firstMention.category, representative);
 				} catch (Exception e) {
-					e.printStackTrace();
+					log.log(Level.WARNING, "Error inflecting: " + representativeString, e);
 				}
 				if (representativeString == null)
 					representativeString = mc.getRepresentative().getString();
@@ -371,8 +348,7 @@ public class JsonReaderWriter extends ReaderWriter {
 				jsonNEs.put(mc.getID(), jsonNE);
 			}
 		} catch (Exception e) {
-			System.err.println("ERROR while updating json named entities");
-			e.printStackTrace(System.err);
+			log.log(Level.SEVERE, "ERROR while updating json named entities", e);
 		}
 	}
 
@@ -465,7 +441,7 @@ public class JsonReaderWriter extends ReaderWriter {
 		}
 
 		new JsonReaderWriter().write(System.out, t);
-		//new JsonReaderWriter().write("test3.json", t);
+		// new JsonReaderWriter().write("test3.json", t);
 
 		// System.out.println(t);
 		// for (MentionChain mc : t.getMentionChains()) {
