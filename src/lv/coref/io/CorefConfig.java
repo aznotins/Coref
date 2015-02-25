@@ -20,6 +20,7 @@ package lv.coref.io;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -87,7 +88,13 @@ public class CorefConfig {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (Field field : this.getClass().getDeclaredFields()) {
-			Property descr = field.getDeclaredAnnotation(Property.class);
+			Property descr = null;
+			for (Annotation a : field.getAnnotations()) {
+				if (Property.class.isAssignableFrom(a.getClass())) {
+					descr = (Property) a;
+					break;
+				}
+			}
 			if (!field.getName().startsWith("PROP"))
 				continue;
 			try {
