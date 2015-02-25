@@ -38,6 +38,7 @@ public class MentionChain extends HashSet<Mention> {
 	private Mention representative;
 	private Mention first;
 	private String id;
+	private String uid;
 
 	public MentionChain(String id) {
 		this.id = id;
@@ -62,10 +63,8 @@ public class MentionChain extends HashSet<Mention> {
 	// }
 
 	public Category getCategory() {
-		for (Mention m : this) {
-			if (!m.getCategory().equals(Category.unknown))
-				return m.getCategory();
-		}
+		if (representative != null) return representative.getCategory();
+		if (first != null) return first.getCategory();
 		return Category.unknown;
 	}
 
@@ -167,6 +166,14 @@ public class MentionChain extends HashSet<Mention> {
 
 	public void setRepresentative() {
 		representative = null;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
 	public List<Mention> getOrderedMentions() {
