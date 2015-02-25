@@ -1,0 +1,24 @@
+###############################################################################
+## LVCoref configuration
+###############################################################################
+
+## Copy and rename removing "_template"
+
+## Input, output [json, conll, mmax]
+input = conll
+output = conll
+solve = yes
+
+knb.url = jdbc:postgresql://localhost:5432/knb
+knb.user = user
+knb.password = password
+
+## Logging
+## Levels are [ SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, OFF, ALL ]
+.level = ALL
+
+handlers = java.util.logging.ConsoleHandler
+
+java.util.logging.ConsoleHandler.level = SEVERE
+java.util.logging.ConsoleHandler.formatter = java.util.logging.SimpleFormatter
+java.util.logging.SimpleFormatter.format=%1$tH:%1$tM:%1$tS %4$s %2$s	%5$s%6$s%n

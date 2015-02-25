@@ -60,8 +60,6 @@ public class CorefPipe {
 	
 	public CorefPipe(CorefConfig cc) {
 		this.cc = cc;
-		this.input = cc.getINPUT();
-		this.output = cc.getOUTPUT();
 	}
 
 	public void configure(String args[]) {
@@ -75,6 +73,8 @@ public class CorefPipe {
 			}
 		}
 		cc.load(args);
+		this.input = cc.getINPUT();
+		this.output = cc.getOUTPUT();
 		// Setup logger configuration from properties file
 		try {
 			Logger root = Logger.getLogger("");
