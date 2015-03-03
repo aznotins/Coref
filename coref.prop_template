@@ -6,7 +6,7 @@
 
 ## Input, output [json, conll, mmax]
 input = conll
-output = conll
+output = json
 solve = yes
 
 knb.url = jdbc:postgresql://localhost:5432/knb
