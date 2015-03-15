@@ -27,7 +27,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import lv.coref.data.Text;
-import lv.coref.io.CorefConfig.FORMAT;
+import lv.coref.io.Config.FORMAT;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
 
@@ -39,15 +39,15 @@ public class CorefPipe {
 	private FORMAT input = FORMAT.CONLL;
 	private FORMAT output = FORMAT.CONLL;
 	
-	private CorefConfig cc = new CorefConfig();
+	private Config cc = new Config();
 	
-	public CorefConfig getCorefConfig() {
+	public Config getCorefConfig() {
 		return cc;
 	}
 
 	public static void help() {
 		System.out.println("=== LVCoref v2.0 ===");
-		System.out.println(new CorefConfig());
+		System.out.println(new Config());
 	}
 
 	public CorefPipe() {
@@ -58,7 +58,7 @@ public class CorefPipe {
 		this.output = output;
 	}
 	
-	public CorefPipe(CorefConfig cc) {
+	public CorefPipe(Config cc) {
 		this.cc = cc;
 	}
 
@@ -132,7 +132,7 @@ public class CorefPipe {
 					out = new JsonReaderWriter();
 				else if (output.equals(FORMAT.CONLL))
 					out = new ConllReaderWriter(ConllReaderWriter.TYPE.LETA);
-			}			
+			}
 			
 			Text text = read(in);
 			// System.err.println("TEXT:\n" + text);

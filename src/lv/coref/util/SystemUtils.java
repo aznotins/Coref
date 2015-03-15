@@ -85,8 +85,7 @@ public class SystemUtils {
 			int result = process.waitFor();
 			if (result != 0) {
 				String msg = "process %s exited with value %d";
-				throw new ProcessException(String.format(msg,
-						builder.command(), result));
+				throw new ProcessException(String.format(msg, builder.command(), result));
 			}
 		} catch (InterruptedException e) {
 			throw new ProcessException(e);
@@ -108,18 +107,16 @@ public class SystemUtils {
 	 * @param errorWriter
 	 *            Where to write error output. If null, System.err is used.
 	 */
-	private static void consume(Process process, Writer outputWriter,
-			Writer errorWriter) throws IOException, InterruptedException {
+	private static void consume(Process process, Writer outputWriter, Writer errorWriter) throws IOException,
+			InterruptedException {
 		if (outputWriter == null) {
 			outputWriter = new OutputStreamWriter(System.out);
 		}
 		if (errorWriter == null) {
 			errorWriter = new OutputStreamWriter(System.err);
 		}
-		WriterThread outputThread = new WriterThread(process.getInputStream(),
-				outputWriter);
-		WriterThread errorThread = new WriterThread(process.getErrorStream(),
-				errorWriter);
+		WriterThread outputThread = new WriterThread(process.getInputStream(), outputWriter);
+		WriterThread errorThread = new WriterThread(process.getErrorStream(), errorWriter);
 		outputThread.start();
 		errorThread.start();
 		outputThread.join();
@@ -168,27 +165,22 @@ public class SystemUtils {
 		private Thread errWriterThread;
 
 		public ProcessOutputStream(String[] cmd) throws IOException {
-			this(new ProcessBuilder(cmd), new PrintWriter(System.out),
-					new PrintWriter(System.err));
+			this(new ProcessBuilder(cmd), new PrintWriter(System.out), new PrintWriter(System.err));
 		}
 
-		public ProcessOutputStream(String[] cmd, Writer writer)
-				throws IOException {
+		public ProcessOutputStream(String[] cmd, Writer writer) throws IOException {
 			this(new ProcessBuilder(cmd), writer, writer);
 		}
 
-		public ProcessOutputStream(String[] cmd, Writer output, Writer error)
-				throws IOException {
+		public ProcessOutputStream(String[] cmd, Writer output, Writer error) throws IOException {
 			this(new ProcessBuilder(cmd), output, error);
 		}
 
-		public ProcessOutputStream(ProcessBuilder builder, Writer output,
-				Writer error) throws IOException {
+		public ProcessOutputStream(ProcessBuilder builder, Writer output, Writer error) throws IOException {
 			this.process = builder.start();
 
 			errWriterThread = new StreamGobbler(process.getErrorStream(), error);
-			outWriterThread = new StreamGobbler(process.getInputStream(),
-					output);
+			outWriterThread = new StreamGobbler(process.getInputStream(), output);
 			errWriterThread.start();
 			outWriterThread.start();
 		}
@@ -218,20 +210,18 @@ public class SystemUtils {
 	 * the given <code>String</code> array. If there is any regular output or
 	 * error output, it is appended to the given <code>StringBuilder</code>s.
 	 */
-	public static void runShellCommand(String[] cmd, StringBuilder outputLines,
-			StringBuilder errorLines) throws IOException {
+	public static void runShellCommand(String[] cmd, StringBuilder outputLines, StringBuilder errorLines)
+			throws IOException {
 		Process p = Runtime.getRuntime().exec(cmd);
 		if (outputLines != null) {
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					p.getInputStream()));
+			BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line;
 			while ((line = in.readLine()) != null) {
 				outputLines.append(line);
 			}
 		}
 		if (errorLines != null) {
-			BufferedReader err = new BufferedReader(new InputStreamReader(
-					p.getErrorStream()));
+			BufferedReader err = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 			String line;
 			while ((line = err.readLine()) != null) {
 				errorLines.append(line);
@@ -244,8 +234,8 @@ public class SystemUtils {
 	 * the given <code>String</code>. If there is any regular output or error
 	 * output, it is appended to the given <code>StringBuilder</code>s.
 	 */
-	public static void runShellCommand(String cmd, StringBuilder outputLines,
-			StringBuilder errorLines) throws IOException {
+	public static void runShellCommand(String cmd, StringBuilder outputLines, StringBuilder errorLines)
+			throws IOException {
 		runShellCommand(new String[] { cmd }, outputLines, errorLines);
 	}
 
@@ -255,8 +245,7 @@ public class SystemUtils {
 	 * is appended to the given <code>StringBuilder</code>. If there is any
 	 * error output, it is swallowed (!).
 	 */
-	public static void runShellCommand(String[] cmd, StringBuilder outputLines)
-			throws IOException {
+	public static void runShellCommand(String[] cmd, StringBuilder outputLines) throws IOException {
 		runShellCommand(cmd, outputLines, null);
 	}
 
@@ -266,8 +255,7 @@ public class SystemUtils {
 	 * appended to the given <code>StringBuilder</code>. If there is any error
 	 * output, it is swallowed (!).
 	 */
-	public static void runShellCommand(String cmd, StringBuilder outputLines)
-			throws IOException {
+	public static void runShellCommand(String cmd, StringBuilder outputLines) throws IOException {
 		runShellCommand(new String[] { cmd }, outputLines, null);
 	}
 
@@ -294,8 +282,7 @@ public class SystemUtils {
 	 */
 	public static int getPID() throws IOException {
 		// note that we ask Perl for "ppid" -- process ID of parent -- that's us
-		String[] cmd = new String[] { "perl", "-e",
-				"print getppid() . \"\\n\";" };
+		String[] cmd = new String[] { "perl", "-e", "print getppid() . \"\\n\";" };
 		StringBuilder out = new StringBuilder();
 		runShellCommand(cmd, out);
 		return Integer.parseInt(out.toString());

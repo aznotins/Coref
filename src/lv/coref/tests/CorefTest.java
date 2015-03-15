@@ -20,23 +20,31 @@ package lv.coref.tests;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Logger;
 
 import lv.coref.data.Mention;
 import lv.coref.data.Sentence;
 import lv.coref.data.Text;
-import lv.coref.io.Pipe;
+import lv.coref.io.Config;
+import lv.coref.io.PipeClient;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
 import lv.coref.util.FileUtils;
 import lv.coref.util.StringUtils;
 
 public class CorefTest {
+	private final static Logger log = Logger.getLogger(CorefTest.class.getName());
 
-	private static Pipe pipe = new Pipe();
-
+	private static PipeClient pipe;
+	
 	public static void main(String[] args) {
+		Config.logInit();
 		appositiveTests();
 		mentionTests();
+	}
+	
+	public static void init() {
+		pipe = new PipeClient();
 	}
 
 	public static void appositiveTests() {
@@ -137,6 +145,7 @@ public class CorefTest {
 	}
 
 	public static Text test(String descr, String... strings) {
+		log.info("CorefTest test");
 		System.err.println("===== " + descr + " TEST ======");
 		Text t = solve(strings);
 		debug(t);
@@ -157,6 +166,7 @@ public class CorefTest {
 	}
 
 	public static Text solve(String... strings) {
+		if (pipe == null) init();
 		String stringText = StringUtils.join(strings, "\n");
 		Text t = pipe.getText(stringText);
 		new MentionFinder().findMentions(t);

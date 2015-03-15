@@ -33,19 +33,28 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Protocol;
 
-public class Pipe {
-	private final static Logger log = Logger.getLogger(Pipe.class.getName());
+public class PipeClient {
+	private final static Logger log = Logger.getLogger(PipeClient.class.getName());
 
-	public static String SERVICE = "http://localhost:8182/nertagger";
+	public static String SERVICE = "http://localhost:8183/pipe";
 
 	private Client client;
 	private String service;
 
-	public Pipe() {
+	public PipeClient() {
 		this(SERVICE);
 	}
 
-	public Pipe(String service) {
+	private static PipeClient pipe;
+
+	public static PipeClient getInstance() {
+		if (pipe == null) {
+			pipe = new PipeClient();
+		}
+		return pipe;
+	}
+
+	public PipeClient(String service) {
 		log.log(Level.FINE, "Init pipe");
 		this.service = service;
 		client = new Client(Protocol.HTTP);
@@ -62,7 +71,9 @@ public class Pipe {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-		log.log(Level.SEVERE, "Init pipe");
+		// FIXME restlet traucē logošanai, jāpārlādē konfigurācija
+		Config.logInit();
+		log.log(Level.INFO, "Init pipe");
 	}
 
 	public void close() {
@@ -74,19 +85,17 @@ public class Pipe {
 	}
 
 	public Text getText(String text) {
-		// try {
-		// text = URLEncoder.encode(text, "UTF8");
-		// } catch (UnsupportedEncodingException e1) {
-		// e1.printStackTrace();
-		// }
 		Text t = null;
 		Request r = new Request();
 		r.setResourceRef(service);
 		r.setMethod(Method.POST);
 		r.setEntity(text, MediaType.TEXT_PLAIN);
 		try {
+
 			String result = client.handle(r).getEntityAsText();
-			// System.err.println(result);
+			if (result == null) {
+				throw new Exception("Null in response");
+			}
 			StringReader sr = new StringReader(result);
 			t = new ConllReaderWriter().read(new BufferedReader(sr));
 		} catch (Exception e) {
@@ -97,11 +106,6 @@ public class Pipe {
 	}
 
 	public Text getTextGet(String text) {
-		// try {
-		// text = URLEncoder.encode(text, "UTF8");
-		// } catch (UnsupportedEncodingException e1) {
-		// e1.printStackTrace();
-		// }
 		Text t = null;
 		Request r = new Request();
 		r.setResourceRef(service + "/" + text);
@@ -124,10 +128,11 @@ public class Pipe {
 	}
 
 	public static void main(String[] args) {
-		CorefConfig.logConfig("coref.prop");
-		Pipe p = new Pipe();
-		System.out.println(p.getText("Jānis Kalniņš devās mājup.\n\nAsta vista."));
-		// System.out.println(p.getTextGet("Jānis Kalniņš devās mājup.\n\n\nAsta vista."));
+		Config.logInit();
+		PipeClient p = new PipeClient();
+		System.out.println(p.getText("Jānis Kalniņš devās mājup.\n\nAlta vista."));
+		System.out.println(p.getTextGet("Jānis Kalniņš devās mājup.\n\n\nAsta vista."));
+		log.severe("Test logging");
 		p.close();
 	}
 }

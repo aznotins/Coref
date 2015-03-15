@@ -36,7 +36,7 @@ public class MentionMarker extends Marker {
 	public MentionMarker(String text, TextMapping textMapping, Mention mention) {
 		super(text, textMapping);
 		this.mention = mention;
-		
+
 		setForeground(ViewerUtils.getMentionClusterColor(mention));
 		if (mention.getSentence().getPairedSentence() != null) {
 			if (mention.getMention(true) == null) {
@@ -46,14 +46,14 @@ public class MentionMarker extends Marker {
 				setForeground(Color.MAGENTA);
 			}
 		}
-		
+
 		addMouseListener(new MouseInputAdapter() {
 
 			@Override
 			public void mouseEntered(final MouseEvent e) {
 				highlight(true);
 				// showCoreferences(true);
-				
+
 				System.err.println(" @ " + MentionMarker.this.mention);
 				System.err.println("   " + MentionMarker.this.mention.toParamString());
 
@@ -61,9 +61,10 @@ public class MentionMarker extends Marker {
 
 			@Override
 			public void mouseExited(final MouseEvent e) {
-				if (!clicked) highlight(false);
+				if (!clicked)
+					highlight(false);
 			}
-			
+
 			@Override
 			public void mouseClicked(final MouseEvent e) {
 				System.err.println(MentionMarker.this.mention.getSentence());
@@ -77,11 +78,10 @@ public class MentionMarker extends Marker {
 		if (highlight) {
 			for (Mention m : mention.getMentionChain()) {
 				for (Token t : m.getTokens()) {
-					TokenMarker tokenMarker = (TokenMarker) textMapping
-							.getTokenMarker(t);
+					TokenMarker tokenMarker = (TokenMarker) textMapping.getTokenMarker(t);
 					if (tokenMarker == null)
 						continue;
-					//tokenMarker.highlight(highlight);
+					// tokenMarker.highlight(highlight);
 					tokenMarker.setBackground(Color.LIGHT_GRAY);
 					tokenMarker.setOpaque(true);
 				}
@@ -91,11 +91,10 @@ public class MentionMarker extends Marker {
 		} else {
 			for (Mention m : mention.getMentionChain()) {
 				for (Token t : m.getTokens()) {
-					TokenMarker tokenMarker = (TokenMarker) textMapping
-							.getTokenMarker(t);
+					TokenMarker tokenMarker = (TokenMarker) textMapping.getTokenMarker(t);
 					if (tokenMarker == null)
 						continue;
-					//tokenMarker.highlight(highlight);
+					// tokenMarker.highlight(highlight);
 					tokenMarker.setBackground(Color.RED);
 					tokenMarker.setOpaque(false);
 				}
@@ -112,14 +111,12 @@ public class MentionMarker extends Marker {
 	public void showCoreferences(boolean showCoref) {
 		if (showCoref) {
 			Graphics g = getGraphics();
-			List<Mention> mentions = mention.getMentionChain()
-					.getOrderedMentions();
+			List<Mention> mentions = mention.getMentionChain().getOrderedMentions();
 			MentionMarker prev = null;
 			for (Mention m : mentions) {
 				g.drawOval(100, 100, 200, 300);
 				if (prev != null) {
-					g.drawLine(this.getX(), this.getY(), prev.getX(),
-							prev.getY());
+					g.drawLine(this.getX(), this.getY(), prev.getX(), prev.getY());
 				}
 				prev = (MentionMarker) textMapping.getMentionMarker(m);
 			}

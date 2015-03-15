@@ -53,7 +53,7 @@ public class Sentence extends ArrayList<Token> {
 		for (int i = 0; i < this.size(); i++) {
 			boolean ok = true;
 			for (int j = 0; j < bits.length; j++ ) {
-				if (j + i > size()) { ok = false; break; }
+				if (j + i >= size()) { ok = false; break; }
 				if (!get(i + j).getWord().equals(bits[j])) { ok = false; break; }
 			}
 			if (ok) {

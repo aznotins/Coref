@@ -124,7 +124,7 @@ public class CorefCorpus {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		//prepare_mkTest_2015Jan();
-		evaluate_mkTest_2015Jan();
+		prepare_mkTest_2015Jan();
+//		evaluate_mkTest_2015Jan();
 	}
 }

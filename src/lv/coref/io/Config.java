@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright 2014,2015 Institute of Mathematics and Computer Science, University of Latvia
- * Author: Artūrs Znotiņš
+ * Author: ArtÅ«rs ZnotiÅ†Å�
  * 
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -26,14 +26,38 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-public class CorefConfig {
-	private final static Logger log = Logger.getLogger(CorefConfig.class.getName());
+public class Config {
+	private final static Logger log = Logger.getLogger(Config.class.getName());
+
+	public static final String DEFAULT_CONFIG_FILE = "coref.prop";
+	
+	public static String PROP_CONFIG_FILE = "config.file";
+	
+	private static Config config = null;
+	
+	public static Config getInstance() {
+		if (config == null) {
+			config = new Config();
+			config.load(DEFAULT_CONFIG_FILE);
+		}
+		return config;
+	}
 
 	private Properties props = new Properties();
+	
+	public void load(String filename) {
+		try {
+			props.load(new FileInputStream(filename));
+			props.setProperty(PROP_CONFIG_FILE, filename);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void load(String[] args) {
 		// props = StringUtils.argsToProperties(args);
@@ -47,23 +71,24 @@ public class CorefConfig {
 				if (i < args.length) {
 					String value = args[i + 1];
 					if (key.equalsIgnoreCase(PROP)) {
-						try {
-							props.load(new FileInputStream(value));
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
+						load(value);
 					}
 					props.setProperty(key, value);
 				}
 			}
 		}
 	}
-
-	public static void logConfig(String filename) {
-		try {
-			FileInputStream fis = new FileInputStream(filename);
+	
+	public static void logInit() {
+		String logConfigFile = DEFAULT_CONFIG_FILE;
+		if (getInstance().props.contains(PROP_CONFIG_FILE)) {
+			logConfigFile = getInstance().props.getProperty(PROP_CONFIG_FILE);
+		}
+		LogManager.getLogManager().reset();
+		try {			
+			FileInputStream fis = new FileInputStream(logConfigFile);
 			LogManager.getLogManager().readConfiguration(fis);
-			fis.close();			
+			fis.close();
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
@@ -71,6 +96,22 @@ public class CorefConfig {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public Properties filter(String prefix) {
+		return filter(props, prefix);
+	}
+
+	public static Properties filter(Properties prop, String prefix) {
+		Properties res = new Properties();
+		for (Entry<Object, Object> entry : prop.entrySet()) {
+			String key = (String) entry.getKey();
+			String value = (String) entry.getValue();
+			if (key.startsWith(prefix)) {
+				res.setProperty(key, value);
+			}
+		}
+		return res;
 	}
 
 	public void set(String key, String value) {
@@ -139,46 +180,40 @@ public class CorefConfig {
 		String value = props.getProperty(PROP_SOLVE, "true");
 		return value.equalsIgnoreCase("yes");
 	}
-
-	@Property(descr = "Knowledge base driver", def = "org.postgresql.Driver", type = "String")
-	private static String PROP_KNB_DRIVER = "knb.driver";
-
-	public String getKNB_DRIVER() {
-		return props.getProperty(PROP_KNB_DRIVER, "org.postgresql.Driver");
-	}
+	
+	public static final String PREFIX_KNB = "knb.";
 
 	@Property(descr = "Knowledge base url", def = "jdbc:postgresql://localhost:5432/knb", type = "String")
-	private static String PROP_KNB_URL = "knb.url";
+	public static String PROP_KNB_URL = "knb.url";
 
 	public String getKNB_URL() {
 		return props.getProperty(PROP_KNB_URL, "jdbc:postgresql://localhost:5432/knb");
 	}
 
 	@Property(descr = "Knowledge base user", def = "user", type = "String")
-	private static String PROP_KNB_USER = "knb.user";
+	public static String PROP_KNB_USER = "knb.user";
 
 	public String getKNB_USER() {
 		return props.getProperty(PROP_KNB_USER, "postgres");
 	}
 
 	@Property(descr = "Knowledge base user password", def = "password", type = "String")
-	private static String PROP_KNB_PASSWORD = "knb.password";
+	public static String PROP_KNB_PASSWORD = "knb.password";
 
 	public String getKNB_PASSWORD() {
 		return props.getProperty(PROP_KNB_PASSWORD, "password");
 	}
-	
+
 	@Property(descr = "Preprocessing pipeline webservice (produces conll with ner and syntax from text)", def = "http://localhost:8182/nertagger")
-	private static String PROP_PREPROCESS_WEBSERVICE = "web.pipe";
+	public static String PROP_PREPROCESS_WEBSERVICE = "web.pipe";
 
 	public String getPREPROCESS_WEBSERVICE() {
 		return props.getProperty(PROP_PREPROCESS_WEBSERVICE, "http://localhost:8182/nertagger");
 	}
-	
-	public static void main(String[] args) {
-		CorefConfig cc = new CorefConfig();
-		System.err.println(cc);
 
+	public static void main(String[] args) {
+		Config cc = new Config();
+		System.err.println(cc);
 	}
 }
 

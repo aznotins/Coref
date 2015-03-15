@@ -39,5 +39,4 @@ class Marker extends JLabel {
 			setOpaque(false);
 		}
 	}
-
 }

@@ -25,8 +25,8 @@ import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.data.Token;
 import lv.coref.io.ConllReaderWriter;
+import lv.coref.io.PipeClient;
 import lv.coref.io.ConllReaderWriter.TYPE;
-import lv.coref.io.Pipe;
 import lv.coref.tests.TextCorpus.Query.QueryResult;
 import lv.coref.util.FileUtils;
 import lv.coref.util.Pair;
@@ -137,12 +137,11 @@ public class TextCorpus {
 	}
 	
 	public void create(List<String> filePaths, String outputDir) {
-		Pipe p = new Pipe();
 		for (String filePath : filePaths) {
 			try {
 				File file = new File(filePath);
 				String name = StringUtils.getBaseName(file.getName(), ".txt");
-				Text text = p.read(filePath);
+				Text text = PipeClient.getInstance().read(filePath);
 				String outFile = outputDir + name + ".conll";
 				new ConllReaderWriter(TYPE.CONLL).write(outFile, text);
 			} catch (Exception e) {

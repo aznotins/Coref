@@ -238,6 +238,8 @@ public class MentionFinder {
 				// TODO all uppercase letters means that this mention is proper
 				if (jt.isQuote()) {
 					List<Token> tokens = sent.subList(iTok + 1, jTok);
+					if (tokens.size() == 0)
+						break; // Piemēram " „ Tas , kas
 					if (tokens.get(0).getTag().equals("zc"))
 						break; // comma
 					if (tokens.get(0).getTag().equals("ccs"))
