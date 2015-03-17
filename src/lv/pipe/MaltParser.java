@@ -60,7 +60,7 @@ public class MaltParser implements PipeTool {
 			params.append(" -w ").append(prop.getProperty("malt.workingDir", "."));
 			params.append(" ").append(prop.getProperty("malt.extraParams", ""));
 			System.err.println("MaltParser " + params);
-			
+
 			maltServ.initializeParserModel(params.toString().trim());
 			System.err.println("MaltParser loaded.");
 		} catch (Exception e) {
@@ -159,6 +159,8 @@ public class MaltParser implements PipeTool {
 			}
 			// System.err.println(label);
 			String label = labelBuilder.toString().replaceAll("#false#", "_");
+			if (label.length() > 1 && label.endsWith("_"))
+				label = label.substring(0, label.length() - 1);
 			tLabels.get(i - 1).set(LabelDependency.class, label);
 		}
 		return sentence;
@@ -166,9 +168,10 @@ public class MaltParser implements PipeTool {
 
 	public static void main(String[] args) throws MaltChainedException, IOException {
 		Tokenizer tok = Tokenizer.getInstance();
-		Annotation doc = tok.process("Uzņēmuma SIA \"Cirvis\" prezidents Jānis Bērziņš. Viņš uzņēmumu vada no 2015. gada.");
-		
-		MorphoTagger morpho = MorphoTagger.getInstance();		
+		Annotation doc = tok
+				.process("Uzņēmuma SIA \"Cirvis\" prezidents Jānis Bērziņš. Viņš uzņēmumu vada no 2015. gada.");
+
+		MorphoTagger morpho = MorphoTagger.getInstance();
 		Properties morphoProp = new Properties();
 		morphoProp.setProperty("morpho.classifierPath", "models/lv-morpho-model.ser.gz");
 		morphoProp.setProperty("malt.workingDir", "./models");
@@ -181,7 +184,7 @@ public class MaltParser implements PipeTool {
 		nerProp.load(new FileReader("lv-ner-tagger.prop"));
 		ner.init(nerProp);
 		ner.process(doc);
-		
+
 		MaltParser malt = MaltParser.getInstance();
 		Properties maltParserProp = new Properties();
 		maltParserProp.setProperty("malt.modelName", "langModel-pos-corpus");
@@ -189,7 +192,7 @@ public class MaltParser implements PipeTool {
 		maltParserProp.setProperty("malt.extraParams", "-m parse -lfi parser.log");
 		malt.init(maltParserProp);
 		malt.process(doc);
-		
+
 		System.out.println(doc.toStringPretty());
 
 	}

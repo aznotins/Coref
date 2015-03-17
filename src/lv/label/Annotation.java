@@ -28,6 +28,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import lv.coref.data.Paragraph;
+import lv.coref.data.Sentence;
+import lv.coref.data.Text;
+import lv.coref.data.Token;
+import lv.coref.util.Triple;
 import lv.label.Labels.LabelDependency;
 import lv.label.Labels.LabelIndex;
 import lv.label.Labels.LabelLemma;
@@ -194,6 +199,64 @@ public class Annotation extends SimpleTypeSafeMap {
 			}
 		}
 		return s.toString();
+	}
+
+	public static Text makeText(Annotation a) {
+		Text text = new Text();
+		if (a.has(LabelParagraphs.class)) {
+			for (Annotation p : a.get(LabelParagraphs.class)) {
+				Paragraph par = new Paragraph();
+				if (!p.has(LabelSentences.class))
+					continue;
+				for (Annotation s : p.get(LabelSentences.class)) {
+					if (!s.has(LabelTokens.class))
+						continue;
+					Sentence sent = new Sentence();
+					for (Annotation t : s.get(LabelTokens.class)) {
+						Token tok = new Token(t.get(LabelText.class), t.get(LabelLemma.class), t.get(LabelPosTag.class));
+						tok.setPos(t.get(LabelPosTagSimple.class));
+						tok.setMorphoFeatures(t.get(LabelMorphoFeatures.class));
+						tok.setDependency(t.get(LabelDependency.class));
+						tok.setParent(t.get(LabelParent.class));
+						sent.add(tok);
+					}
+					sent.initializeNodeTree();
+					sent.initializeNamedEntities(getNerSpans(s, "O"));
+					par.add(sent);
+				}
+				text.add(par);
+			}
+		}
+		return text;
+	}
+
+	/**
+	 * Enclosed using simple categories ( o x x o y y )
+	 */
+	public static List<Triple<Integer, Integer, String>> getNerSpans(Annotation sentence, String defaultMarker) {
+		List<Triple<Integer, Integer, String>> spans = new ArrayList<Triple<Integer, Integer, String>>();
+		if (!sentence.has(LabelTokens.class))
+			return spans;
+		String prev = defaultMarker;
+		int prevStart = 0;
+		int wordPos = 0;
+		for (Annotation t : sentence.get(LabelTokens.class)) {
+			String val = t.get(LabelNer.class);
+			if (val == null)
+				val = defaultMarker;
+			if (!prev.equals(val)) {
+				if (!defaultMarker.equals(prev)) {
+					spans.add(Triple.makeTriple(prevStart, wordPos - 1, prev));
+				}
+				prev = val;
+				prevStart = wordPos;
+			}
+			wordPos++;
+		}
+		if (!defaultMarker.equals(prev)) {
+			spans.add(Triple.makeTriple(prevStart, wordPos - 1, prev));
+		}
+		return spans;
 	}
 
 	public static void main(String[] args) {

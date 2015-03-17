@@ -56,6 +56,14 @@ public class Labels {
 
 	public static class LabelNer implements Label<String> {
 	}
+	
+	public static class LabelDocumentId implements Label<String> {
+	}
+	
+	public static class LabelDocumentDate implements Label<String> {
+	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	public static <T> T uncheckedCast(Object o) {

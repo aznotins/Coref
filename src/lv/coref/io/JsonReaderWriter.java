@@ -39,6 +39,7 @@ import lv.coref.lv.Constants.Category;
 import lv.coref.lv.Constants.Type;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
+import lv.coref.semantic.Entity;
 import lv.coref.util.Pair;
 import lv.coref.util.Triple;
 //import lv.lumii.expressions.Expression;
@@ -143,7 +144,12 @@ public class JsonReaderWriter extends ReaderWriter {
 				sentence.initializeNamedEntities(getClassSpans(sentenceNer, "O"));
 
 			}
-
+			
+			if (json.containsKey("document"))
+				text.setId((String) json.get("document"));
+			if (json.containsKey("date"))
+				text.setDate((String) json.get("date"));
+			
 			// initializeBaseCoreference();
 
 		} catch (Exception e) {
@@ -222,7 +228,10 @@ public class JsonReaderWriter extends ReaderWriter {
 			jsonSentences.add(jsonSentence);
 		}
 		JSONObject jsonDocument = new JSONObject();
-		jsonDocument.put("document", new JSONObject());
+		if (text.getId() != null)
+			jsonDocument.put("document", text.getId());
+		if (text.getDate() != null)
+			jsonDocument.put("date", text.getDate());
 		jsonDocument.put("sentences", jsonSentences);
 		json = jsonDocument;
 	}
@@ -345,7 +354,12 @@ public class JsonReaderWriter extends ReaderWriter {
 					representativeString = mc.getRepresentative().getString();
 				jsonNE.put("inflections", oInflections);
 				jsonNE.put("representative", representativeString);
+				Entity entity = mc.getEntity();
+				if (entity != null) {
+					jsonNE.put("globalId", entity.getId());
+				}
 				jsonNEs.put(mc.getID(), jsonNE);
+				
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "ERROR while updating json named entities", e);

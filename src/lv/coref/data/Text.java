@@ -33,6 +33,7 @@ public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
 	private Map<String, MentionChain> mentionChains = new HashMap<>();
 	private Text pairedText;
 	private int nextMentionID = 1;
+	private String date;
 
 	public Text() {
 	}
@@ -210,6 +211,14 @@ public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
 
 	public void setPairedText(Text pairedText) {
 		this.pairedText = pairedText;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
 	}
 
 }

@@ -19,7 +19,6 @@ package lv.pipe;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Properties;
 
 import lv.label.Annotation;
 
@@ -34,9 +33,9 @@ public class PipeResource extends ServerResource {
 
 	private static Pipe pipe = Pipe.getInstance();
 
-	static {
-		pipe.init(new Properties());
-	}
+//	static {
+//		pipe.init();
+//	}
 
 	@Get
 	public String retrieve() {

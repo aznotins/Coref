@@ -37,13 +37,11 @@ public class Coref implements PipeTool {
 
 	@Override
 	public Annotation processParagraph(Annotation paragraph) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Annotation processSentence(Annotation sentence) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -32,17 +32,45 @@ import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
 
 public class CorefPipe {
-	private final static Logger log = Logger.getLogger(CorefPipe.class.getName()); 
-	
+	private final static Logger log = Logger.getLogger(CorefPipe.class.getName());
+
 	private InputStream inStream = System.in;
 	private OutputStream outStream = System.out;
 	private FORMAT input = FORMAT.CONLL;
 	private FORMAT output = FORMAT.CONLL;
-	
-	private Config cc = new Config();
-	
-	public Config getCorefConfig() {
-		return cc;
+
+	private static CorefPipe corefPipe = null;
+
+	public static CorefPipe getInstance() {
+		if (corefPipe == null) {
+			corefPipe = new CorefPipe();
+		}
+		return corefPipe;
+	}
+
+	public void init(String args[]) {
+		// Check if user asked for help
+		for (int i = 0; i < args.length; i++) {
+			String a = args[i];
+			if (a.equalsIgnoreCase("--help") || a.equalsIgnoreCase("-h")) {
+				help();
+				System.exit(0);
+			}
+		}
+		if (args.length == 0) {
+			Config.getInstance(); // loads default configuration
+			return;
+		}
+		Config.init(args);
+		this.input = Config.getInstance().getINPUT();
+		this.output = Config.getInstance().getOUTPUT();
+		try {
+			FileInputStream fis = new FileInputStream(Config.getInstance().get("prop"));
+			LogManager.getLogManager().readConfiguration(fis);
+			fis.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void help() {
@@ -57,41 +85,11 @@ public class CorefPipe {
 		this.input = input;
 		this.output = output;
 	}
-	
-	public CorefPipe(Config cc) {
-		this.cc = cc;
-	}
 
-	public void configure(String args[]) {
-		// Check if user asked for help
-		for (int i = 0; i < args.length; i++) {
-			String a = args[i];
-			if (a.equalsIgnoreCase("--help")
-					|| a.equalsIgnoreCase("-h")) {
-				help();
-				System.exit(0);
-			}
-		}
-		cc.load(args);
-		this.input = cc.getINPUT();
-		this.output = cc.getOUTPUT();
-		// Setup logger configuration from properties file
-		try {
-			Logger root = Logger.getLogger("");
-			FileInputStream fis = new FileInputStream(cc.get("prop"));
-			LogManager.getLogManager().readConfiguration(fis);
-			//root.addHandler(new java.util.logging.ConsoleHandler());
-			//root.setUseParentHandlers(false);
-			fis.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	public void setInputStream(InputStream inStream) {
 		this.inStream = inStream;
 	}
-	
+
 	public void setOutputStream(OutputStream outStream) {
 		this.outStream = outStream;
 	}
@@ -99,8 +97,7 @@ public class CorefPipe {
 	public Text read(ReaderWriter rw) {
 		Text text = null;
 		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					inStream, "UTF8"));
+			BufferedReader in = new BufferedReader(new InputStreamReader(inStream, "UTF8"));
 			text = rw.read(in);
 
 		} catch (Exception e) {
@@ -133,16 +130,14 @@ public class CorefPipe {
 				else if (output.equals(FORMAT.CONLL))
 					out = new ConllReaderWriter(ConllReaderWriter.TYPE.LETA);
 			}
-			
+
 			Text text = read(in);
 			// System.err.println("TEXT:\n" + text);
 			if (text == null || text.isEmpty())
 				break;
 
-			if (cc.getSOLVE()) {
-				new MentionFinder().findMentions(text);
-				new Ruler().resolve(text);
-				text.removeCommonUnknownSingletons();
+			if (Config.getInstance().getSOLVE()) {
+				process(text);
 			}
 			write(out, text);
 		}
@@ -150,9 +145,15 @@ public class CorefPipe {
 		out.close();
 	}
 
+	public void process(Text text) {
+		new MentionFinder().findMentions(text);
+		new Ruler().resolve(text);
+		text.removeCommonUnknownSingletons();
+	}
+
 	public static void main(String args[]) {
-		CorefPipe pipe = new CorefPipe();
-		pipe.configure(args);
+		CorefPipe pipe = CorefPipe.getInstance();
+		pipe.init(args);
 		pipe.run();
 	}
 }
