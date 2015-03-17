@@ -201,12 +201,13 @@ public class Pipe {
 	public static void main(String[] args) {
 		CorefPipe.getInstance().init(args);
 		Config.logInit();
-		// Pipe.getInstance().run();
-		try {
-			Text t = Pipe.getInstance().processFile("test_taube.txt");
-			new JsonReaderWriter().write("_test_tauble.json", t);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		Pipe.getInstance().run();
+		
+		// try {
+		// Text t = Pipe.getInstance().processFile("test_taube.txt");
+		// new JsonReaderWriter().write("_test_tauble.json", t);
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
 	}
 }
