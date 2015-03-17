@@ -47,6 +47,11 @@ public class Config {
 		}
 		return config;
 	}
+	
+	public static void init(String[] args) {
+		config = new Config();
+		config.load(args);
+	}
 
 	private Properties props = new Properties();
 	
@@ -125,6 +130,13 @@ public class Config {
 	public String get(String key) {
 		return props.getProperty(key);
 	}
+	
+	public boolean isTrue(String key) {
+		String value = props.getProperty(key);
+		if (value != null && value.equalsIgnoreCase("true"))
+			return true;
+		return false;
+	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -186,31 +198,26 @@ public class Config {
 	@Property(descr = "Knowledge base url", def = "jdbc:postgresql://localhost:5432/knb", type = "String")
 	public static String PROP_KNB_URL = "knb.url";
 
-	public String getKNB_URL() {
-		return props.getProperty(PROP_KNB_URL, "jdbc:postgresql://localhost:5432/knb");
-	}
-
 	@Property(descr = "Knowledge base user", def = "user", type = "String")
 	public static String PROP_KNB_USER = "knb.user";
 
-	public String getKNB_USER() {
-		return props.getProperty(PROP_KNB_USER, "postgres");
-	}
-
 	@Property(descr = "Knowledge base user password", def = "password", type = "String")
 	public static String PROP_KNB_PASSWORD = "knb.password";
-
-	public String getKNB_PASSWORD() {
-		return props.getProperty(PROP_KNB_PASSWORD, "password");
-	}
+	
+	@Property(descr = "Use database for NEL [true,false]", def = "true")
+	public static String PROP_KNB_ENABLE = "knb.enable";
 
 	@Property(descr = "Preprocessing pipeline webservice (produces conll with ner and syntax from text)", def = "http://localhost:8182/nertagger")
 	public static String PROP_PREPROCESS_WEBSERVICE = "web.pipe";
-
-	public String getPREPROCESS_WEBSERVICE() {
-		return props.getProperty(PROP_PREPROCESS_WEBSERVICE, "http://localhost:8182/nertagger");
-	}
-
+	
+	public static final String PREFIX_NEL = "nel.";
+	
+	@Property(descr = "Prints disambiguation decisions to std.err [true,false]", def = "false")
+	public static String PROP_NEL_SHOW_DISAMBIGUATION = "nel.showDisambiguation";
+	
+	@Property(descr = "Synchronize entities with database during Named Entity Linking [true,false]", def = "false")
+	public static String PROP_NEL_UPLOAD = "nel.upload";
+	
 	public static void main(String[] args) {
 		Config cc = new Config();
 		System.err.println(cc);

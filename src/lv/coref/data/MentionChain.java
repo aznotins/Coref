@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import lv.coref.lv.Constants.Category;
+import lv.coref.semantic.Entity;
 
 /**
  * Adding mention, changes mention (sets mentionChain to current)
@@ -38,7 +39,7 @@ public class MentionChain extends HashSet<Mention> {
 	private Mention representative;
 	private Mention first;
 	private String id;
-	private String uid;
+	private Entity entity;	
 
 	public MentionChain(String id) {
 		this.id = id;
@@ -168,12 +169,12 @@ public class MentionChain extends HashSet<Mention> {
 		representative = null;
 	}
 
-	public String getUid() {
-		return uid;
+	public Entity getEntity() {
+		return entity;
 	}
 
-	public void setUid(String uid) {
-		this.uid = uid;
+	public void setEntity(Entity entity) {
+		this.entity = entity;
 	}
 
 	public List<Mention> getOrderedMentions() {
