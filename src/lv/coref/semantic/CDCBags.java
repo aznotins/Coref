@@ -47,11 +47,11 @@ public class CDCBags {
 	public CDCBags(String jsonString) {
 		JSONObject json = (JSONObject) JSONValue.parse(jsonString);
 		if (json.containsKey("mentionbag"))
-			mentionBag.putAll((Map<String, Integer>) json.get("mentionbag"));
+			mentionBag.putAll((Map<String, Long>) json.get("mentionbag"));
 		if (json.containsKey("namebag"))
-			nameBag.putAll((Map<String, Integer>) json.get("namebag"));
+			nameBag.putAll((Map<String, Long>) json.get("namebag"));
 		if (json.containsKey("contextbag"))
-			contextBag.putAll((Map<String, Integer>) json.get("contextbag"));
+			contextBag.putAll((Map<String, Long>) json.get("contextbag"));
 	}
 
 	public static Bag makeNameBag(Entity entity) {
@@ -60,7 +60,7 @@ public class CDCBags {
 			bag.add(alias.split("\\s+"));
 		}
 		for (String titleWord : entity.getTitle().split("\\s+"))
-			bag.put(titleWord, 0);
+			bag.put(titleWord, 0l);
 		return bag;
 	}
 
@@ -112,16 +112,16 @@ public class CDCBags {
 	}
 
 	public static double cosineSimilarity(Bag a, Bag b) {
-		int numerator = 0;
+		long numerator = 0;
 		for (String w : a.keySet()) {
 			if (!b.containsKey(w))
 				continue;
 			numerator += a.get(w) * b.get(w);
 		}
 		int sumA = 0, sumB = 0;
-		for (int x : a.values())
+		for (long x : a.values())
 			sumA += x * x;
-		for (int x : b.values())
+		for (long x : b.values())
 			sumB += x * x;
 		double denominator = Math.sqrt(sumA) * Math.sqrt(sumB);
 		if (denominator == 0)
@@ -144,7 +144,7 @@ public class CDCBags {
 
 }
 
-class Bag extends HashMap<String, Integer> {
+class Bag extends HashMap<String, Long> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -158,12 +158,12 @@ class Bag extends HashMap<String, Integer> {
 
 	public void add(String word) {
 		if (!containsKey(word))
-			put(word, 1);
+			put(word, 1l);
 		else
 			put(word, get(word) + 1);
 	}
 
-	public void set(String word, int value) {
+	public void set(String word, long value) {
 		put(word, value);
 	}
 }
