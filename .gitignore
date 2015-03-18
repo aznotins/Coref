@@ -4,3 +4,4 @@ dist/**
 bin/**
 data/**
 tmp/**
+.DS_Store

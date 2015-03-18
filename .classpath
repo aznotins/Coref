@@ -13,6 +13,7 @@
 	<classpathentry kind="lib" path="lib/log4j.jar"/>
 	<classpathentry kind="lib" path="lib/liblinear-1.8.jar"/>
 	<classpathentry kind="lib" path="lib/libsvm.jar"/>
+	<classpathentry kind="lib" path="lib/anna-3.61.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/LVTagger"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/morphology"/>
 	<classpathentry kind="output" path="bin"/>
