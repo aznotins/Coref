@@ -33,10 +33,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lv.coref.io.Config;
+import lv.coref.lv.Constants;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.restlet.engine.connector.ConnectionState;
 
 public class KNB {
 
@@ -326,6 +328,8 @@ public class KNB {
 		System.err.println(knb.getEntityTextFacts("2203874"));
 
 		System.err.println(NEL.makeGlobalEntityBags("2203874"));
+		
+//		System.err.println(knb.getCDCBags("2203874").nameBag.values().iterator().next().getClass());
 
 		KNB.getInstance().close();
 	}

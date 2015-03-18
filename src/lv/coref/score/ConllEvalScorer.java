@@ -31,8 +31,8 @@ import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.data.Token;
 import lv.coref.io.ConllReaderWriter;
-import lv.coref.util.StringOutputStream;
-import lv.coref.util.SystemUtils;
+import lv.util.StringOutputStream;
+import lv.util.SystemUtils;
 
 public class ConllEvalScorer {
 

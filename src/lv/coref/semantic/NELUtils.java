@@ -27,6 +27,8 @@ import lv.coref.lv.Constants.Category;
 import lv.lumii.expressions.Expression;
 
 public class NELUtils {
+	
+	//public 
 
 	private final static Logger log = Logger.getLogger(NELUtils.class.getName());
 
@@ -84,23 +86,6 @@ public class NELUtils {
 		name = name.replaceAll(" /$", "");
 		name = name.replaceAll("_", " ");
 		return name;		
-	}
-
-	/**
-	 * Pārveido frāzi uz nominatīvu
-	 * @param name
-	 * @param category
-	 * @return
-	 */
-	public static String normalize(String name, Category category) {
-		try {
-			Expression expr = new Expression(name, category.toString(), false);
-			String normalised = expr.inflect("Nominatīvs");
-			return normalised;
-		} catch (Exception e) {
-			log.log(Level.WARNING, "Error inflecting: " + name, e);
-		}
-		return null;
 	}
 
 	public static String clearOrgName(String name) {

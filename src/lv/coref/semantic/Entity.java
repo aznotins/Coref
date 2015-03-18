@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 
 import lv.coref.data.Mention;
 import lv.coref.data.MentionChain;
+import lv.coref.lv.AnalyzerUtils;
 import lv.coref.lv.Constants.Category;
 import lv.coref.lv.Constants.Type;
 
@@ -131,7 +132,7 @@ public class Entity {
 		Category cat = mc.getCategory();
 		if (cat.isUnkown())
 			return null;
-		String title = NELUtils.normalize(titleMention.getString(), cat);
+		String title = AnalyzerUtils.normalize(titleMention.getString(), cat.toString());
 		Entity entity = new Entity(title);
 		boolean needNewTitle = false;
 		if (!NELUtils.goodName(cat, title)) {
@@ -141,7 +142,7 @@ public class Entity {
 		for (Mention m : mc) {
 			if (m.isPronoun())
 				continue;
-			String str = NELUtils.normalize(m.getString(), cat);
+			String str = AnalyzerUtils.normalize(m.getString(), cat.toString());
 			if (!NELUtils.goodName(cat, str))
 				continue;
 			entity.addAlias(str);

@@ -37,10 +37,10 @@ import lv.coref.io.CorefPipe;
 import lv.coref.io.JsonReaderWriter;
 import lv.coref.io.ReaderWriter;
 import lv.coref.semantic.NEL;
-import lv.coref.util.FileUtils;
 import lv.label.Annotation;
 import lv.label.Labels.LabelDocumentDate;
 import lv.label.Labels.LabelDocumentId;
+import lv.util.FileUtils;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;

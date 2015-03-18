@@ -33,7 +33,7 @@ import lv.coref.data.Text;
 import lv.coref.data.Token;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
-import lv.coref.util.Triple;
+import lv.util.Triple;
 
 public class ConllReaderWriter extends ReaderWriter {
 	private final static Logger log = Logger.getLogger(ConllReaderWriter.class.getName()); 

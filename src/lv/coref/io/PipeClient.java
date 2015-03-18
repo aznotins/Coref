@@ -25,7 +25,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import lv.coref.data.Text;
-import lv.coref.util.FileUtils;
+import lv.util.FileUtils;
 
 import org.restlet.Client;
 import org.restlet.Request;

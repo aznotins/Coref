@@ -37,7 +37,7 @@ import lv.coref.io.PipeClient;
 import lv.coref.lv.Constants.Category;
 import lv.coref.semantic.KNB.EntityData;
 import lv.coref.semantic.KNB.FrameData;
-import lv.coref.util.Pair;
+import lv.util.Pair;
 
 public class NEL {
 
@@ -351,5 +351,6 @@ public class NEL {
 		System.err.println(text);
 		NEL.getInstance().link(text);
 		KNB.getInstance().close();
+		log.warning("hello");
 	}
 }

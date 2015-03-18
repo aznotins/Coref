@@ -36,8 +36,8 @@ import lv.coref.data.Text;
 import lv.coref.data.Token;
 import lv.coref.io.ConllReaderWriter.TYPE;
 import lv.coref.lv.Constants;
-import lv.coref.util.Pair;
-import lv.coref.util.StringUtils;
+import lv.util.Pair;
+import lv.util.StringUtils;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.w3c.dom.Document;

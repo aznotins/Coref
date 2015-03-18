@@ -28,7 +28,7 @@ import lv.coref.data.Paragraph;
 import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.tests.CorefTest;
-import lv.coref.util.Pair;
+import lv.util.Pair;
 
 public class Ruler {	
 	private final static Logger log = Logger.getLogger(Ruler.class.getName());

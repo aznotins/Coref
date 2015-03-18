@@ -40,10 +40,10 @@ import lv.coref.lv.Constants.Type;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
 import lv.coref.semantic.Entity;
-import lv.coref.util.Pair;
-import lv.coref.util.Triple;
 //import lv.lumii.expressions.Expression;
 import lv.lumii.expressions.Expression;
+import lv.util.Pair;
+import lv.util.Triple;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

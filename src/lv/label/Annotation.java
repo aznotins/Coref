@@ -32,7 +32,6 @@ import lv.coref.data.Paragraph;
 import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.data.Token;
-import lv.coref.util.Triple;
 import lv.label.Labels.LabelDependency;
 import lv.label.Labels.LabelIndex;
 import lv.label.Labels.LabelLemma;
@@ -47,6 +46,7 @@ import lv.label.Labels.LabelSentences;
 import lv.label.Labels.LabelText;
 import lv.label.Labels.LabelTokens;
 import lv.util.SimpleTypeSafeMap;
+import lv.util.Triple;
 
 public class Annotation extends SimpleTypeSafeMap {
 

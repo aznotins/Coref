@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import lv.coref.util.Triple;
+import lv.util.Triple;
 
 public class Sentence extends ArrayList<Token> {
 
