@@ -88,6 +88,9 @@ public class Pipe {
 		maltParserProp.setProperty("malt.workingDir", "./models");
 		maltParserProp.setProperty("malt.extraParams", "-m parse -lfi parser.log");
 		malt.init(maltParserProp);
+		
+		MateTools mate = MateTools.getInstance();
+		mate.init(new Properties());
 	}
 
 	public void setInputStream(InputStream inStream) {
@@ -108,6 +111,7 @@ public class Pipe {
 		MorphoTagger.getInstance().process(doc);
 		NerTagger.getInstance().process(doc);
 		MaltParser.getInstance().process(doc);
+		MateTools.getInstance().process(doc);
 		// System.err.println("Processed annotation: " + doc.toStringPretty());
 		return doc;
 	}
@@ -117,6 +121,7 @@ public class Pipe {
 		MorphoTagger.getInstance().process(doc);
 		NerTagger.getInstance().process(doc);
 		MaltParser.getInstance().process(doc);
+		MateTools.getInstance().process(doc);
 		// TODO Add coreference annotation
 		Text text = Annotation.makeText(doc);
 		text.setId(doc.get(LabelDocumentId.class));
@@ -196,18 +201,25 @@ public class Pipe {
 			write(text, out);
 		}
 		log.log(Level.SEVERE, "Pipe has ended");
+		
+		// Mate tools paliek parsera threadi karājamies, kurus viņš nesatīra
+		is2.parser.Pipe.executerService.shutdown();
+		System.exit(0);
 	}
 
 	public static void main(String[] args) {
 		CorefPipe.getInstance().init(args);
 		Config.logInit();
-		Pipe.getInstance().run();
+//		Pipe.getInstance().run();
 		
-		// try {
-		// Text t = Pipe.getInstance().processFile("test_taube.txt");
-		// new JsonReaderWriter().write("_test_tauble.json", t);
-		// } catch (Exception e) {
-		// e.printStackTrace();
-		// }
+		 try {
+		 Text t = Pipe.getInstance().processFile("test_taube.txt");
+		 new JsonReaderWriter().write("_test_taube.json", t);
+		 } catch (Exception e) {
+		 e.printStackTrace();
+		 }
+		// Mate tools paliek parsera threadi karājamies, kurus viņš nesatīra
+		is2.parser.Pipe.executerService.shutdown();
+		System.exit(0);
 	}
 }

@@ -63,6 +63,12 @@ public class Labels {
 	public static class LabelDocumentDate implements Label<String> {
 	}
 	
+	public static class LabelSDP implements Label<List<Annotation>> {		
+	}
+	public static class LabelSDPTarget implements Label<Integer> {		
+	}
+	public static class LabelSDPLabel implements Label<String> {		
+	}
 	
 
 	@SuppressWarnings("unchecked")
