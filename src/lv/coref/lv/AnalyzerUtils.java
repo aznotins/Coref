@@ -73,7 +73,7 @@ public class AnalyzerUtils {
 
 			Map<String, String> inflections = e.getInflections();
 
-			System.err.println(e.category + " " + e.gender);
+			// System.err.println(e.category + " " + e.gender);
 			if (e.category.equals(lv.lumii.expressions.Expression.Category.hum)) {
 				if (e.gender == Gender.masculine)
 					inflections.put(AttributeNames.i_Gender, AttributeNames.v_Masculine);
