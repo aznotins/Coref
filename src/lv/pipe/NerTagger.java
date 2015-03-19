@@ -136,7 +136,8 @@ public class NerTagger implements PipeTool {
 			if (answer == null) {
 				answer = wi.get(AnswerAnnotation.class);
 			}
-			a.setNer(answer);
+			if (answer != "O")
+				a.setNer(answer);
 
 			// Add extra gazetier features used by NER
 			String morphoFeats = a.get(LabelMorphoFeatures.class, "").trim();
@@ -172,9 +173,10 @@ public class NerTagger implements PipeTool {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		Tokenizer tok = Tokenizer.getInstance();
-		Annotation doc = tok.process("Uzņēmuma SIA \"Cirvis\" prezidents Jānis Bērziņš. Viņš uzņēmumu vada no 2015. gada.");
-		
-		MorphoTagger morpho = MorphoTagger.getInstance();		
+		Annotation doc = tok
+				.process("Uzņēmuma SIA \"Cirvis\" prezidents Jānis Bērziņš. Viņš uzņēmumu vada no 2015. gada.");
+
+		MorphoTagger morpho = MorphoTagger.getInstance();
 		Properties morphoProp = new Properties();
 		morphoProp.setProperty("morpho.classifierPath", "models/lv-morpho-model.ser.gz");
 		morphoProp.setProperty("malt.workingDir", "./models");

@@ -29,8 +29,8 @@ import junit.framework.Assert;
 import lv.coref.data.Text;
 import lv.coref.io.Config;
 import lv.coref.io.JsonReaderWriter;
-import lv.coref.util.FileUtils;
 import lv.label.Annotation;
+import lv.util.FileUtils;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;

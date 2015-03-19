@@ -25,12 +25,12 @@ import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.data.Token;
 import lv.coref.io.ConllReaderWriter;
-import lv.coref.io.PipeClient;
 import lv.coref.io.ConllReaderWriter.TYPE;
+import lv.coref.io.PipeClient;
 import lv.coref.tests.TextCorpus.Query.QueryResult;
-import lv.coref.util.FileUtils;
-import lv.coref.util.Pair;
-import lv.coref.util.StringUtils;
+import lv.util.FileUtils;
+import lv.util.Pair;
+import lv.util.StringUtils;
 
 public class TextCorpus {
 	

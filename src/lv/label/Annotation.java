@@ -22,33 +22,62 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import lv.coref.data.Mention;
+import lv.coref.data.MentionChain;
 import lv.coref.data.Paragraph;
 import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.data.Token;
+import lv.coref.io.JsonReaderWriter;
+import lv.coref.lv.AnalyzerUtils;
+import lv.coref.lv.Constants.Type;
+import lv.coref.semantic.Entity;
+import lv.label.Labels.LabelAliases;
 import lv.label.Labels.LabelDependency;
+import lv.label.Labels.LabelDocumentDate;
+import lv.label.Labels.LabelDocumentId;
+import lv.label.Labels.LabelEntities;
+import lv.label.Labels.LabelEntityIsTitle;
+import lv.label.Labels.LabelId;
+import lv.label.Labels.LabelIdGlobal;
+import lv.label.Labels.LabelIdxEnd;
+import lv.label.Labels.LabelIdxStart;
 import lv.label.Labels.LabelIndex;
+import lv.label.Labels.LabelInflections;
 import lv.label.Labels.LabelLemma;
 import lv.label.Labels.LabelList;
+import lv.label.Labels.LabelMentions;
 import lv.label.Labels.LabelMorphoFeatures;
 import lv.label.Labels.LabelNer;
 import lv.label.Labels.LabelParagraphs;
 import lv.label.Labels.LabelParent;
 import lv.label.Labels.LabelPosTag;
 import lv.label.Labels.LabelPosTagSimple;
+import lv.label.Labels.LabelSDP;
+import lv.label.Labels.LabelSDPLabel;
+import lv.label.Labels.LabelSDPTarget;
 import lv.label.Labels.LabelSentences;
 import lv.label.Labels.LabelText;
 import lv.label.Labels.LabelTokens;
+import lv.label.Labels.LabelType;
 import lv.util.SimpleTypeSafeMap;
 import lv.util.Triple;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 public class Annotation extends SimpleTypeSafeMap {
+
+	private final static Logger log = Logger.getLogger(JsonReaderWriter.class.getName());
 
 	private static final long serialVersionUID = 1L;
 
@@ -228,6 +257,184 @@ public class Annotation extends SimpleTypeSafeMap {
 			}
 		}
 		return text;
+	}
+
+	public static Annotation makeAnnotationFromText(Annotation doc, Text text) {
+		if (!doc.has(LabelParagraphs.class)) {
+			// initialize annotation from text
+		}
+		List<Annotation> entities = new ArrayList<>(text.getMentionChains().size());
+
+		List<Annotation> pars = doc.get(LabelParagraphs.class);
+		for (int iPar = 0; iPar < text.size(); iPar++) {
+			Paragraph p = text.get(iPar);
+			List<Annotation> setences = pars.get(iPar).get(LabelSentences.class);
+			for (int iSent = 0; iSent < p.size(); iSent++) {
+				Sentence s = p.get(iSent);
+				List<Annotation> tokens = setences.get(iSent).get(LabelTokens.class);
+
+				for (int iTok = 0; iTok < s.size(); iTok++) {
+					Token t = s.get(iTok);
+					Annotation token = tokens.get(iTok);
+
+					Collection<Mention> headMentions = t.getMentions();
+					if (headMentions.size() > 0) {
+						List<Annotation> mentions = new ArrayList<>(headMentions.size());
+						for (Mention m : t.getHeadMentions()) {
+							Annotation ma = new Annotation();
+							ma.set(LabelId.class, m.getID());
+							ma.set(LabelIdxStart.class, m.getFirstToken().getPosition());
+							ma.set(LabelIdxEnd.class, m.getLastToken().getPosition());
+							if (!m.getCategory().isUnkown())
+								ma.set(LabelType.class, m.getCategory().toString());
+							mentions.add(ma);
+						}
+						token.set(LabelMentions.class, mentions);
+					}
+				}
+			}
+		}
+
+		for (MentionChain mc : text.getMentionChains()) {
+			Annotation mce = new Annotation();
+			mce.set(LabelId.class, mc.getID());
+			if (!mc.getCategory().isUnkown())
+				mce.set(LabelType.class, mc.getCategory().toString());
+			Entity e = mc.getEntity();
+			String title = null;
+			if (e != null) {
+				title = e.getTitle();
+				if (e != null && e.getUid() != null)
+					mce.set(LabelIdGlobal.class, e.getUid());
+			} else {
+				title = AnalyzerUtils.normalize(mc.getRepresentative().getString(), mc.getCategory().toString());
+			}
+			if (title != null) {
+				if (mc.getRepresentative().getType().equals(Type.NE))
+					mce.set(LabelEntityIsTitle.class, true);
+				mce.set(LabelInflections.class, AnalyzerUtils.inflect(title, mc.getCategory().toString()));
+			}
+
+			List<String> aliases = new ArrayList<>();
+			for (Mention m : mc) {
+				if (m.getType().equals(Type.PRON))
+					continue; // Vietniekvārdus aliasos neliekam
+				String alias = AnalyzerUtils.normalize(m.getString(), mc.getCategory().toString());
+				aliases.add(alias);
+			}
+			mce.set(LabelAliases.class, aliases);
+
+			entities.add(mce);
+		}
+		doc.set(LabelEntities.class, entities);
+		return doc;
+	}
+
+	public void printJson(PrintStream out) {
+		JSONObject json = toJson();
+		out.println(json.toJSONString());
+		out.flush();
+	}
+
+	@SuppressWarnings("unchecked")
+	public JSONObject toJson() {
+		Annotation doc = this;
+		JSONObject jsonDocument = new JSONObject();
+		try {
+			if (doc.has(LabelDocumentId.class))
+				jsonDocument.put("document", doc.get(LabelDocumentId.class));
+			if (doc.has(LabelDocumentDate.class))
+				jsonDocument.put("date", doc.get(LabelDocumentDate.class));
+			JSONArray jsonSentences = new JSONArray();
+			jsonDocument.put("sentences", jsonSentences);
+			if (doc.has(LabelParagraphs.class)) {
+				for (Annotation p : doc.get(LabelParagraphs.class)) {
+					if (!p.has(LabelSentences.class))
+						continue;
+					for (Annotation s : p.get(LabelSentences.class)) {
+						if (!s.has(LabelTokens.class))
+							continue;
+						JSONObject jsonSentence = new JSONObject();
+						JSONArray jsonTokens = new JSONArray();
+						for (Annotation t : s.get(LabelTokens.class)) {
+							JSONObject jsonToken = new JSONObject();
+							jsonToken.put("index", t.get(LabelIndex.class));
+							jsonToken.put("form", t.getText());
+							jsonToken.put("lemma", t.getLemma());
+							jsonToken.put("pos", t.get(LabelPosTag.class));
+							jsonToken.put("tag", t.get(LabelPosTagSimple.class));
+							jsonToken.put("features", t.get(LabelMorphoFeatures.class));
+							jsonToken.put("parentIndex", t.get(LabelParent.class));
+							jsonToken.put("dependencyLabel", t.get(LabelDependency.class));
+							String ner = t.get(LabelNer.class);
+							if (ner != null)
+								jsonToken.put("namedEntityType", ner);
+							List<Annotation> mentions = t.get(LabelMentions.class);
+							if (mentions != null && mentions.size() > 0) {
+								JSONArray jsonMentions = new JSONArray();
+								for (Annotation m : mentions) {
+									JSONObject jsonMention = new JSONObject();
+									jsonMention.put("end", m.get(LabelIdxEnd.class) + 1);
+									jsonMention.put("start", m.get(LabelIdxStart.class) + 1);
+									jsonMention.put("id", m.get(LabelId.class));
+									if (m.has(LabelType.class))
+										jsonMention.put("type", m.get(LabelType.class));
+									jsonMentions.add(jsonMention);
+								}
+								jsonToken.put("mentions", jsonMentions);
+							}
+
+							JSONArray sdps = new JSONArray();
+							for (Annotation sdpLabel : t.get(LabelSDP.class)) {
+								JSONObject sdp = new JSONObject();
+								sdp.put("label", sdpLabel.get(LabelSDPLabel.class));
+								sdp.put("target", sdpLabel.get(LabelSDPTarget.class));
+								sdps.add(sdp);
+							}
+							jsonToken.put("sdp", sdps);
+
+							jsonTokens.add(jsonToken);
+						}
+						jsonSentence.put("tokens", jsonTokens);
+						jsonSentence.put("text", s.getText());
+						jsonSentences.add(jsonSentence);
+					}
+				}
+			}
+			JSONObject jsonNEs = new JSONObject();
+			jsonDocument.put("namedEntities", jsonNEs);
+			if (doc.has(LabelEntities.class)) {
+				for (Annotation e : doc.get(LabelEntities.class)) {
+					JSONObject jsonNE = new JSONObject();
+					String id = e.get(LabelId.class);
+					jsonNE.put("id", id);
+					jsonNE.put("representative", e.get(LabelText.class));
+					JSONArray jsonAliases = new JSONArray();
+					jsonAliases.addAll(e.get(LabelAliases.class));
+					jsonNE.put("aliases", jsonAliases);
+					if (e.has(LabelType.class))
+						jsonNE.put("type", e.get(LabelType.class));
+					if (e.has(LabelEntityIsTitle.class))
+						jsonNE.put("isTitle", e.get(LabelEntityIsTitle.class));
+					if (e.has(LabelIdGlobal.class)) {
+						jsonNE.put("globalId", e.get(LabelIdGlobal.class));
+					}
+					JSONObject oInflections = new JSONObject();
+					if (e.has(LabelInflections.class)) {
+						Map<String, String> inflections = e.get(LabelInflections.class);
+						for (String i_case : inflections.keySet()) {
+							oInflections.put(i_case, inflections.get(i_case));
+						}
+					}
+					jsonNE.put("inflections", oInflections);
+					jsonNEs.put(id, jsonNE);
+				}
+			}
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "ERROR while creating json from annotation", e);
+			jsonDocument = new JSONObject();
+		}
+		return jsonDocument;
 	}
 
 	/**

@@ -37,9 +37,9 @@ public class Tokenizer implements PipeTool {
 	private static int SENTENCE_LENGTH_CAP = Splitting.DEFAULT_SENTENCE_LENGTH_CAP;
 
 	private Analyzer analyzer;
-	
+
 	private static Tokenizer instance = null;
-	
+
 	public static Tokenizer getInstance() {
 		if (instance == null)
 			instance = new Tokenizer();
@@ -49,11 +49,11 @@ public class Tokenizer implements PipeTool {
 		}
 		return instance;
 	}
-	
+
 	@Override
 	public void init(Properties prop) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public Annotation process(String text) {
@@ -91,19 +91,23 @@ public class Tokenizer implements PipeTool {
 		List<Annotation> sLabels = new ArrayList<>();
 		for (LinkedList<Word> sentence : sentences) {
 			List<Annotation> tLabels = new ArrayList<>();
+			// TODO preserve original spacings
+			StringBuilder sentStr = new StringBuilder();
 			for (Word w : sentence) {
 				Annotation tLabel = new Annotation();
 				tLabel.set(LabelText.class, w.getToken());
 				tLabels.add(tLabel);
+				sentStr.append(w.getToken()).append(" ");
 			}
 			Annotation sLabel = new Annotation();
 			sLabel.set(LabelTokens.class, tLabels);
+			sLabel.set(LabelText.class, sentStr.toString().trim());
 			sLabels.add(sLabel);
 		}
 		paragraph.set(LabelSentences.class, sLabels);
 		return paragraph;
 	}
-	
+
 	@Override
 	public Annotation processSentence(Annotation sentence) {
 		// TODO Auto-generated method stub
@@ -112,8 +116,9 @@ public class Tokenizer implements PipeTool {
 
 	public static void main(String[] args) {
 		Tokenizer tok = Tokenizer.getInstance();
-		Annotation doc = tok.process("Uzņēmuma SIA \"Cirvis\" prezidents Jānis Bērziņš. Viņš uzņēmumu vada no 2015. gada.");
+		Annotation doc = tok
+				.process("Uzņēmuma SIA \"Cirvis\" prezidents Jānis Bērziņš. Viņš uzņēmumu vada no 2015. gada.");
 		System.out.println(doc.toStringPretty());
 	}
-	
+
 }

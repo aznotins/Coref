@@ -18,6 +18,7 @@
 package lv.label;
 
 import java.util.List;
+import java.util.Map;
 
 public class Labels {
 
@@ -56,20 +57,54 @@ public class Labels {
 
 	public static class LabelNer implements Label<String> {
 	}
-	
+
 	public static class LabelDocumentId implements Label<String> {
 	}
-	
+
 	public static class LabelDocumentDate implements Label<String> {
 	}
-	
-	public static class LabelSDP implements Label<List<Annotation>> {		
+
+	public static class LabelSDP implements Label<List<Annotation>> {
 	}
-	public static class LabelSDPTarget implements Label<Integer> {		
+
+	public static class LabelSDPTarget implements Label<Integer> {
 	}
-	public static class LabelSDPLabel implements Label<String> {		
+
+	public static class LabelSDPLabel implements Label<String> {
 	}
-	
+
+	public static class LabelCoreferences implements Label<Annotation> {
+	}
+
+	public static class LabelEntities implements Label<List<Annotation>> {
+	}
+
+	public static class LabelEntityIsTitle implements Label<Boolean> {
+	}
+
+	public static class LabelAliases implements Label<List<String>> {
+	}
+
+	public static class LabelInflections implements Label<Map<String, String>> {
+	}
+
+	public static class LabelMentions implements Label<List<Annotation>> {
+	}
+
+	public static class LabelId implements Label<String> {
+	}
+
+	public static class LabelIdGlobal implements Label<String> {
+	}
+
+	public static class LabelIdxStart implements Label<Integer> {
+	}
+
+	public static class LabelIdxEnd implements Label<Integer> {
+	}
+
+	public static class LabelType implements Label<String> {
+	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T uncheckedCast(Object o) {

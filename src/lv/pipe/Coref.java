@@ -17,22 +17,37 @@
  *******************************************************************************/
 package lv.pipe;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Properties;
 
+import lv.coref.data.Text;
+import lv.coref.io.Config;
+import lv.coref.io.CorefPipe;
 import lv.label.Annotation;
 
 public class Coref implements PipeTool {
 
+	private static Coref instance;
+
+	public static Coref getInstance() {
+		if (instance == null)
+			instance = new Coref();
+		return instance;
+	}
+
 	@Override
 	public void init(Properties prop) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public Annotation process(Annotation doc) {
-		// TODO Auto-generated method stub
-		return null;
+		Text text = Annotation.makeText(doc);
+		CorefPipe.getInstance().process(text);
+		Annotation.makeAnnotationFromText(doc, text);
+		return doc;
 	}
 
 	@Override
@@ -45,8 +60,45 @@ public class Coref implements PipeTool {
 		return null;
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException, IOException {
+		Config.logInit();
+		Tokenizer tok = Tokenizer.getInstance();
+		Annotation doc = tok
+				.process("Uzņēmuma SIA \"Cirvis\" prezidents Jānis Bērziņš. Viņš uzņēmumu vada no 2015. gada.");
 
+		MorphoTagger morpho = MorphoTagger.getInstance();
+		Properties morphoProp = new Properties();
+		morphoProp.setProperty("morpho.classifierPath", "models/lv-morpho-model.ser.gz");
+		morphoProp.setProperty("malt.workingDir", "./models");
+		morphoProp.setProperty("malt.extraParams", "-m parse -lfi parser.log");
+		morpho.init(morphoProp);
+		morpho.process(doc);
+
+		NerTagger ner = NerTagger.getInstance();
+		Properties nerProp = new Properties();
+		nerProp.load(new FileReader("lv-ner-tagger.prop"));
+		ner.init(nerProp);
+		ner.process(doc);
+
+		MaltParser malt = MaltParser.getInstance();
+		Properties maltParserProp = new Properties();
+		maltParserProp.setProperty("malt.modelName", "langModel-pos-corpus");
+		maltParserProp.setProperty("malt.workingDir", "./models");
+		maltParserProp.setProperty("malt.extraParams", "-m parse -lfi parser.log");
+		malt.init(maltParserProp);
+		malt.process(doc);
+
+		MateTools mate = MateTools.getInstance();
+		mate.init(new Properties());
+		mate.process(doc);
+		is2.parser.Pipe.executerService.shutdown();
+
+		Coref coref = Coref.getInstance();
+		coref.process(doc);
+
+		System.out.println(doc.toStringPretty());
+
+		System.exit(0);
 	}
 
 }

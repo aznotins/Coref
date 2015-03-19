@@ -30,7 +30,7 @@ import lv.coref.io.ReaderWriter;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
 import lv.coref.score.SummaryScorer;
-import lv.coref.util.StringUtils;
+import lv.util.StringUtils;
 
 public class CorefCorpus {
 		

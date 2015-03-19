@@ -28,11 +28,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Vector;
 
 import lv.coref.data.Text;
+import lv.coref.io.Config.FORMAT;
 import lv.coref.io.ConllReaderWriter;
 import lv.coref.io.CorefPipe;
 import lv.coref.io.JsonReaderWriter;
 import lv.coref.io.ReaderWriter;
-import lv.coref.io.Config.FORMAT;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
 

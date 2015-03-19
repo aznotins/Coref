@@ -29,8 +29,8 @@ import lv.coref.io.Config;
 import lv.coref.io.PipeClient;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
-import lv.coref.util.FileUtils;
-import lv.coref.util.StringUtils;
+import lv.util.FileUtils;
+import lv.util.StringUtils;
 
 public class CorefTest {
 	private final static Logger log = Logger.getLogger(CorefTest.class.getName());
@@ -41,6 +41,10 @@ public class CorefTest {
 		Config.logInit();
 		appositiveTests();
 		mentionTests();
+		
+//		System.err.println(solve("Šodien preses sekretāre Inga Liepiņa."));
+//		System.err.println(solve("Šodien preses sekretāre sociālajos jautājumos Inga Liepiņa."));
+//		System.err.println(solve("Šodien veselības ministrs Jānis Bērziņš."));
 	}
 	
 	public static void init() {
@@ -81,6 +85,10 @@ public class CorefTest {
 
 	public static void tests() {
 
+		
+		
+		
+		
 		// stringTest("Kopš 2001. gada viņš strādājis dažādos amatos valsts SIA \" Psihiatrijas centrs \" ,"
 		// +
 		// " Garīgās veselības valsts aģentūrā un valsts SIA \" Rīgas Psihiatrijas un narkoloģijas "

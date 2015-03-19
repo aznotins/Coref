@@ -35,6 +35,8 @@ public class Entity {
 
 	public static boolean SHOW_DISAMBIGUATION = true;
 
+	public static String VAGUE_ENITY = "_VAGUE_ENTITY_";
+
 	private String title;
 
 	private Set<String> aliases = new HashSet<>();
@@ -171,5 +173,5 @@ public class Entity {
 		s.append("}");
 		return s.toString();
 	}
-	
+
 }

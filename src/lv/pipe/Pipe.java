@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -88,7 +89,7 @@ public class Pipe {
 		maltParserProp.setProperty("malt.workingDir", "./models");
 		maltParserProp.setProperty("malt.extraParams", "-m parse -lfi parser.log");
 		malt.init(maltParserProp);
-		
+
 		MateTools mate = MateTools.getInstance();
 		mate.init(new Properties());
 	}
@@ -104,16 +105,6 @@ public class Pipe {
 	public Annotation process(String text) {
 		Annotation doc = new Annotation(text);
 		return process(doc);
-	}
-
-	public Annotation process(Annotation doc) {
-		Tokenizer.getInstance().process(doc);
-		MorphoTagger.getInstance().process(doc);
-		NerTagger.getInstance().process(doc);
-		MaltParser.getInstance().process(doc);
-		MateTools.getInstance().process(doc);
-		// System.err.println("Processed annotation: " + doc.toStringPretty());
-		return doc;
 	}
 
 	public Text processText(Annotation doc) {
@@ -132,16 +123,20 @@ public class Pipe {
 		return text;
 	}
 
+	public Annotation process(Annotation doc) {
+		Tokenizer.getInstance().process(doc);
+		MorphoTagger.getInstance().process(doc);
+		NerTagger.getInstance().process(doc);
+		MaltParser.getInstance().process(doc);
+		MateTools.getInstance().process(doc);
+		Coref.getInstance().process(doc);
+		return doc;
+	}
+
 	public Annotation read(String filename) throws IOException {
 		String textString = FileUtils.readFile(filename);
 		Annotation doc = process(textString);
 		return doc;
-	}
-
-	public Text processFile(String filename) throws IOException {
-		String textString = FileUtils.readFile(filename);
-		Annotation doc = new Annotation(textString);
-		return processText(doc);
 	}
 
 	public Annotation readJson(BufferedReader in) {
@@ -170,16 +165,24 @@ public class Pipe {
 		return doc;
 	}
 
-	public void write(Text text, OutputStream out) {
-		ReaderWriter rw = null;
-		if (Config.getInstance().getOUTPUT().equals(Config.FORMAT.JSON))
-			rw = new JsonReaderWriter();
-		else if (Config.getInstance().getOUTPUT().equals(Config.FORMAT.CONLL))
-			rw = new ConllReaderWriter(TYPE.LETA);
+	// public void write(Text text, OutputStream out) {
+	// ReaderWriter rw = null;
+	// if (Config.getInstance().getOUTPUT().equals(Config.FORMAT.JSON))
+	// rw = new JsonReaderWriter();
+	// else if (Config.getInstance().getOUTPUT().equals(Config.FORMAT.CONLL))
+	// rw = new ConllReaderWriter(TYPE.LETA);
+	// try {
+	// rw.write(out, text, false);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
+
+	public void write(Annotation doc, OutputStream out) {
 		try {
-			rw.write(out, text, false);
-		} catch (Exception e) {
-			e.printStackTrace();
+			doc.printJson(new PrintStream(out, true, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			log.log(Level.SEVERE, "Unable to write json: " + doc.get(LabelDocumentId.class), e);
 		}
 	}
 
@@ -197,29 +200,32 @@ public class Pipe {
 				break;
 			}
 			// System.err.println("ID " + doc.get(LabelDocumentId.class));
-			Text text = pipe.processText(doc);
-			write(text, out);
+			pipe.process(doc);
+			write(doc, out);
 		}
 		log.log(Level.SEVERE, "Pipe has ended");
-		
-		// Mate tools paliek parsera threadi karājamies, kurus viņš nesatīra
-		is2.parser.Pipe.executerService.shutdown();
-		System.exit(0);
+	}
+
+	public static void close() {
+		MateTools.close();
+		if (pipe != null) {
+			// Mate tools paliek parsera threadi karājamies, kurus viņš nesatīra
+			is2.parser.Pipe.executerService.shutdown();
+		}
 	}
 
 	public static void main(String[] args) {
 		CorefPipe.getInstance().init(args);
 		Config.logInit();
-//		Pipe.getInstance().run();
-		
-		 try {
-		 Text t = Pipe.getInstance().processFile("test_taube.txt");
-		 new JsonReaderWriter().write("_test_taube.json", t);
-		 } catch (Exception e) {
-		 e.printStackTrace();
-		 }
-		// Mate tools paliek parsera threadi karājamies, kurus viņš nesatīra
-		is2.parser.Pipe.executerService.shutdown();
+		 Pipe.getInstance().run();
+
+//		Annotation a = Pipe.getInstance().process(
+//				"Uzņēmuma SIA \"Cirvis\" prezidents Jānis Bērziņš. Viņš uzņēmumu vada no 2015. gada.");
+//		// Annotation a = Pipe.getInstance().read("test_taube.txt")
+//		System.out.println(a.toStringPretty());
+//		a.printJson(System.out);
+
+		Pipe.close();
 		System.exit(0);
 	}
 }
