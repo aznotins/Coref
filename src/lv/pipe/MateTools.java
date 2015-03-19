@@ -196,12 +196,19 @@ public class MateTools implements PipeTool {
 				while (parentlevel > 0) {
 					try {
 						Annotation direct_edge = edges.get(ancestor).get(0);
-						ancestor = direct_edge.get(LabelSDPTarget.class) - 1;
+						int potential_ancestor = direct_edge.get(LabelSDPTarget.class) - 1;
+						if (potential_ancestor>=0) ancestor = potential_ancestor;
 					} catch (IndexOutOfBoundsException e) {
 						break; // nav tāda ancestora
 					}
 					parentlevel -= 1;
 				}
+				try {
+					List<Annotation> e = edges.get(ancestor);
+				} catch (IndexOutOfBoundsException e) {
+					ancestor = node; // ja ancestors slikts
+				}				
+				
 				String newlabel = labels[i].substring(3);
 				if (!newlabel.endsWith("~R")) { // normal order
 					List<Annotation> edge = edges.get(node);
