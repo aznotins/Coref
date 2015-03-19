@@ -30,6 +30,7 @@ import lv.coref.data.Text;
 import lv.coref.io.Config.FORMAT;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
+import lv.coref.semantic.NEL;
 
 public class CorefPipe {
 	private final static Logger log = Logger.getLogger(CorefPipe.class.getName());
@@ -149,6 +150,8 @@ public class CorefPipe {
 		new MentionFinder().findMentions(text);
 		new Ruler().resolve(text);
 		text.removeCommonUnknownSingletons();
+		if (Config.getInstance().isTrue(Config.PROP_KNB_ENABLE))
+			NEL.getInstance().link(text);
 	}
 
 	public static void main(String args[]) {

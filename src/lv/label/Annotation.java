@@ -192,13 +192,18 @@ public class Annotation extends SimpleTypeSafeMap {
 		StringBuilder s = new StringBuilder();
 		for (Map.Entry<Class<?>, Object> x : entrySet()) {
 			String key = x.getKey().getSimpleName();
-			String type = x.getValue().getClass().getSimpleName();
-			Object oVal = x.getValue();
-			String value = x.getValue().toString();
+			Object oVal = x.getValue();			
+			String type = oVal != null ? oVal.getClass().getSimpleName() : null;
+			String value = oVal != null ? oVal.toString() : null;
 
 			for (int i = 0; i < level; i++)
 				s.append(PRETTY_SEPERATOR);
 			s.append(key).append(": ");
+			
+			if (oVal == null) {
+				s.append("null").append("\n");
+				continue;
+			}
 
 			if ((Collection.class).isAssignableFrom(x.getValue().getClass())) {
 				try {
@@ -304,8 +309,8 @@ public class Annotation extends SimpleTypeSafeMap {
 			String title = null;
 			if (e != null) {
 				title = e.getTitle();
-				if (e != null && e.getUid() != null)
-					mce.set(LabelIdGlobal.class, e.getUid());
+				if (e.getId() != null)
+					mce.set(LabelIdGlobal.class, e.getId());
 			} else {
 				title = AnalyzerUtils.normalize(mc.getRepresentative().getString(), mc.getCategory().toString());
 			}

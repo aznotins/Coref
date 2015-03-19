@@ -185,16 +185,17 @@ public class NEL {
 				log.log(Level.INFO, "Make global entity bags for {0}", new Object[] { candidateId });
 				bags = NEL.makeGlobalEntityBags(candidateId);
 			}
+//			bags = NEL.makeGlobalEntityBags(candidateId);
 
 			if (SHOW_DISAMBUGATION) {
 				EntityData ed = KNB.getInstance().getEntityData(candidateId, false);
 				System.err.printf("Candidate: #%s %s\n", candidateId, ed.name);
 				System.err.printf("%.6f name match %s\n", CDCBags.cosineSimilarity(eBags.nameBag, bags.nameBag),
-						eBags.nameBag);
+						bags.nameBag);
 				System.err.printf("%.6f mention match %s\n",
-						CDCBags.cosineSimilarity(eBags.mentionBag, bags.mentionBag), eBags.mentionBag);
+						CDCBags.cosineSimilarity(eBags.mentionBag, bags.mentionBag), bags.mentionBag);
 				System.err.printf("%.6f context match %s\n",
-						CDCBags.cosineSimilarity(eBags.contextBag, bags.contextBag), eBags.contextBag);
+						CDCBags.cosineSimilarity(eBags.contextBag, bags.contextBag), bags.contextBag);
 			}
 
 			double sim = CDCBags.cosineSimilarity(bags, eBags);

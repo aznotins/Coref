@@ -32,11 +32,7 @@ import java.util.logging.Logger;
 
 import lv.coref.data.Text;
 import lv.coref.io.Config;
-import lv.coref.io.ConllReaderWriter;
-import lv.coref.io.ConllReaderWriter.TYPE;
 import lv.coref.io.CorefPipe;
-import lv.coref.io.JsonReaderWriter;
-import lv.coref.io.ReaderWriter;
 import lv.coref.semantic.NEL;
 import lv.label.Annotation;
 import lv.label.Labels.LabelDocumentDate;
@@ -118,8 +114,6 @@ public class Pipe {
 		text.setId(doc.get(LabelDocumentId.class));
 		text.setDate(doc.get(LabelDocumentDate.class));
 		CorefPipe.getInstance().process(text);
-		if (Config.getInstance().isTrue(Config.PROP_KNB_ENABLE))
-			NEL.getInstance().link(text);
 		return text;
 	}
 
@@ -217,13 +211,15 @@ public class Pipe {
 	public static void main(String[] args) {
 		CorefPipe.getInstance().init(args);
 		Config.logInit();
-		 Pipe.getInstance().run();
-
-//		Annotation a = Pipe.getInstance().process(
-//				"Uzņēmuma SIA \"Cirvis\" prezidents Jānis Bērziņš. Viņš uzņēmumu vada no 2015. gada.");
-//		// Annotation a = Pipe.getInstance().read("test_taube.txt")
-//		System.out.println(a.toStringPretty());
-//		a.printJson(System.out);
+		Pipe.getInstance().run();
+		
+		// Annotation a =
+		// Pipe.getInstance().process("Finanšu ministrs Andris Vilks devās bekot.");
+		// Annotation a = Pipe.getInstance().process(
+		// "Uzņēmuma SIA \"Cirvis\" prezidents Jānis Bērziņš. Viņš uzņēmumu vada no 2015. gada.");
+		// Annotation a = Pipe.getInstance().read("test_taube.txt")
+		// System.out.println(a.toStringPretty());
+		// a.printJson(System.out);
 
 		Pipe.close();
 		System.exit(0);
