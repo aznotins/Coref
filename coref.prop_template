@@ -9,6 +9,10 @@ input = conll
 output = json
 solve = yes
 
+coref.remSingletons = false
+coref.remCommonUnknownSingletons = true
+coref.remDescriptors = true
+
 knb.enable = true
 knb.url = jdbc:postgresql://localhost:5432/knb
 knb.user = user

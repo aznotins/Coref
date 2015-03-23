@@ -151,7 +151,7 @@ public class Config {
 			if (!field.getName().startsWith("PROP"))
 				continue;
 			try {
-				sb.append(String.format("-%-20s\t%-20s\t%s\n", field.get(this), descr != null ? descr.def() : "null",
+				sb.append(String.format("-%-20s\t%-20s\t%-20s\t%s\n", field.get(this), props.getProperty(field.get(this).toString()), descr != null ? descr.def() : "null",
 						descr != null ? descr.descr() : "null"));
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
@@ -192,6 +192,15 @@ public class Config {
 		String value = props.getProperty(PROP_SOLVE, "true");
 		return value.equalsIgnoreCase("yes");
 	}
+	
+	@Property(descr = "Remove singletons during postprocessing", def = "false")
+	public static final String PROP_COREF_REMOVE_SINGLETONS = "coref.remSingletons";
+	
+	@Property(descr = "Remove common unknown category singletons during postprocessing", def = "false")
+	public static final String PROP_COREF_REMOVE_COMMON_UKNOWN_SINGLETONS = "coref.remCommonUnknownSingletons";
+	
+	@Property(descr = "Remove descriptor mentions for professions", def = "false")
+	public static final String PROP_COREF_REMOVE_DESCRIPTOR_MENTIONS = "coref.remDescriptors";
 	
 	public static final String PREFIX_KNB = "knb.";
 

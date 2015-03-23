@@ -141,6 +141,7 @@ public class MentionFinder {
 					tokens.addAll(max.getTokens());
 					tokens.addAll(m.getTokens());
 					m.setTokens(tokens);
+					m.addDescriptorMention(max);
 					log.log(Level.INFO, "Added genitive mention {0} to {1}", new Object[] { max, m });
 				}
 			}

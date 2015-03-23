@@ -149,7 +149,12 @@ public class CorefPipe {
 	public void process(Text text) {
 		new MentionFinder().findMentions(text);
 		new Ruler().resolve(text);
-		text.removeCommonUnknownSingletons();
+		if (Config.getInstance().isTrue(Config.PROP_COREF_REMOVE_COMMON_UKNOWN_SINGLETONS))	
+			text.removeCommonUnknownSingletons();
+		if (Config.getInstance().isTrue(Config.PROP_COREF_REMOVE_SINGLETONS))	
+			text.removeSingletons();
+		if (Config.getInstance().isTrue(Config.PROP_COREF_REMOVE_DESCRIPTOR_MENTIONS))	
+			text.removeDescriptorMentionTokens();
 		if (Config.getInstance().isTrue(Config.PROP_KNB_ENABLE))
 			NEL.getInstance().link(text);
 	}

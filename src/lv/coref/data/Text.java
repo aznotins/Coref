@@ -22,11 +22,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lv.coref.lv.Constants.Category;
 import lv.coref.lv.Constants.Type;
 
 public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
+	private final static Logger log = Logger.getLogger(Text.class.getName());
 
 	private static final long serialVersionUID = -5828501273010235785L;
 	private String id;
@@ -128,6 +131,28 @@ public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
 			if (m.isPronoun() && m.getCategory().equals(Category.person)) continue;
 			if (m.getMentionChain().size() < 2 && !m.getType().equals(Type.NE) && m.getCategory().equals(Category.unknown)) {
 				removeMentionChain(m.getMentionChain());
+			}
+		}
+	}
+	
+	public void removeDescriptorMentionTokens() {
+		for (Mention m : getMentions()) {
+			if (m.getCategory().equals(Category.profession)) {
+				if (m.getDescriptorMentions() == null) continue;
+				log.log(Level.SEVERE, "Remove descriptors {0} from {1}", new Object[]{m.getDescriptorMentions(), m});
+				
+				List<Token> newTokens = new ArrayList<>();
+				for (Token t : m.getTokens()) {
+					boolean ok = true;
+					for (Mention dm : m.getDescriptorMentions()) {
+						if (dm.getTokens() != null && dm.getTokens().contains(t)) {
+							ok = false;
+							break;
+						}
+					}
+					if (ok) newTokens.add(t);
+				}
+				m.setTokens(newTokens);				
 			}
 		}
 	}

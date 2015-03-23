@@ -33,7 +33,6 @@ import java.util.logging.Logger;
 import lv.coref.data.Text;
 import lv.coref.io.Config;
 import lv.coref.io.CorefPipe;
-import lv.coref.semantic.NEL;
 import lv.label.Annotation;
 import lv.label.Labels.LabelDocumentDate;
 import lv.label.Labels.LabelDocumentId;
@@ -53,6 +52,7 @@ public class Pipe {
 
 	public static Pipe getInstance() {
 		if (pipe == null) {
+			System.err.println(Config.getInstance().toString());
 			pipe = new Pipe();
 			pipe.init();
 		}

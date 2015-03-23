@@ -47,6 +47,7 @@ public class Mention implements Comparable<Mention> {
 	private Node parent;
 	private String text;
 	private String normalizedText;
+	private List<Mention> descriptorMentions;
 
 	private Boolean isFinal = null; // mention must be kept during processing
 
@@ -408,6 +409,15 @@ public class Mention implements Comparable<Mention> {
 
 	public void setType(Type type) {
 		this.type = type;
+	}
+
+	public List<Mention> getDescriptorMentions() {
+		return descriptorMentions;
+	}
+
+	public void addDescriptorMention(Mention descriptorMention) {
+		if (descriptorMentions == null) descriptorMentions = new ArrayList<>();
+		this.descriptorMentions.add(descriptorMention);
 	}
 
 	public String getString() {
