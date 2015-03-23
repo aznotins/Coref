@@ -25,6 +25,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import lv.coref.data.Text;
+import lv.label.Annotation;
 import lv.util.FileUtils;
 
 import org.restlet.Client;
@@ -104,7 +105,27 @@ public class PipeClient {
 
 		return t;
 	}
-
+	
+	public Annotation getAnnotation(String text) {
+		Annotation a = null;
+		Request r = new Request();
+		r.setResourceRef(service);
+		r.setMethod(Method.POST);
+		r.setEntity(text, MediaType.TEXT_PLAIN);
+		try {
+			String result = client.handle(r).getEntityAsText();
+			if (result == null) {
+				throw new Exception("Null in response");
+			}
+			StringReader sr = new StringReader(result);
+			Text t = new ConllReaderWriter().read(new BufferedReader(sr));
+			a = Annotation.makeAnnotationFromText(new Annotation(), t);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Unable to get POST response", e);
+		}
+		return a;
+	}
+	
 	public Text getTextGet(String text) {
 		Text t = null;
 		Request r = new Request();

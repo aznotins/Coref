@@ -47,8 +47,9 @@ public class Mention implements Comparable<Mention> {
 	private Node parent;
 	private String text;
 	private String normalizedText;
-	private List<Mention> descriptorMentions;
 
+	private List<Mention> descriptorMentions;
+	private String comment = "";
 	private Boolean isFinal = null; // mention must be kept during processing
 
 	// private Mention mainMention = false;
@@ -80,7 +81,8 @@ public class Mention implements Comparable<Mention> {
 	// }
 	//
 	public boolean isFinal() {
-		if (isFinal != null && isFinal) return true;
+		if (isFinal != null && isFinal)
+			return true;
 		return false;
 	}
 
@@ -416,8 +418,23 @@ public class Mention implements Comparable<Mention> {
 	}
 
 	public void addDescriptorMention(Mention descriptorMention) {
-		if (descriptorMentions == null) descriptorMentions = new ArrayList<>();
+		if (descriptorMentions == null)
+			descriptorMentions = new ArrayList<>();
 		this.descriptorMentions.add(descriptorMention);
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public void addComment(String comment) {
+		if (this.comment.length() > 0)
+			this.comment += "|";
+		this.comment += comment;
 	}
 
 	public String getString() {
@@ -484,15 +501,15 @@ public class Mention implements Comparable<Mention> {
 		}
 		return properTokens;
 	}
-	
+
 	public Set<String> getAttributeTokens() {
 		Set<String> attributeTokens = new HashSet<>();
-		//if (isProperMention()) {
+		// if (isProperMention()) {
 		for (Token t : getTokens()) {
 			if (t.getPosTag().equals(PosTag.ADJ) || t.getPosTag().equals(PosTag.N) || t.getPosTag().equals(PosTag.X))
 				attributeTokens.add(t.getLemma().toLowerCase());
 		}
-		//}
+		// }
 		return attributeTokens;
 	}
 
@@ -643,6 +660,8 @@ public class Mention implements Comparable<Mention> {
 		sb.append("|").append(getGender());
 		sb.append("|").append(getNumber());
 		sb.append("|").append(getCase());
+		if (comment.length() > 0)
+			sb.append("|").append(getComment());
 		sb.append("]");
 		// sb.append(toParamString());
 		return sb.toString();

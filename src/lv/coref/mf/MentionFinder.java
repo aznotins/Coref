@@ -106,6 +106,7 @@ public class MentionFinder {
 			// sentence.get(end));
 			if (sentence.get(start).isQuote() && sentence.get(end).isQuote()) {
 				m.setTokens(sentence.subList(start, end + 1));
+				m.addComment("add quotes");
 				log.log(Level.INFO, "Added quotes to {0}", m);
 			}
 		}
@@ -124,6 +125,7 @@ public class MentionFinder {
 				m.setTokens(tokens);
 				m.setType(Type.NE);
 				m.setCategory(Category.organization);
+				m.addComment("add introducers");
 				log.log(Level.INFO, "Added introducer {0} to {1}", new Object[] { s, m });
 			}
 		}
@@ -142,6 +144,7 @@ public class MentionFinder {
 					tokens.addAll(m.getTokens());
 					m.setTokens(tokens);
 					m.addDescriptorMention(max);
+					m.addComment("added descriptor mention");
 					log.log(Level.INFO, "Added genitive mention {0} to {1}", new Object[] { max, m });
 				}
 			}
@@ -196,6 +199,7 @@ public class MentionFinder {
 			} else {
 				m.setType(Type.NP);
 			}
+			m.addComment("coref:ner");
 			log.log(Level.INFO, "Added NER mention {0}", m);
 		}
 	}
@@ -206,6 +210,7 @@ public class MentionFinder {
 				Mention m = new Mention(sent.getText().getNextMentionID(), t);
 				sent.addMention(m);
 				sent.getText().addMentionChain(new MentionChain(m));
+				m.addComment("coref:np head");
 				log.log(Level.INFO, "Added Noun [tag=n] mention {0}", m);
 			}
 		}
@@ -218,6 +223,7 @@ public class MentionFinder {
 				sent.addMention(m);
 				sent.getText().addMentionChain(new MentionChain(m));
 				m.setType(Type.NE);
+				m.addComment("coref:acronym");
 				log.log(Level.INFO, "Added acronym mention {0}", m);
 			}
 		}
@@ -255,6 +261,7 @@ public class MentionFinder {
 						m.setType(Type.NP);
 					sent.addMention(m);
 					sent.getText().addMentionChain(new MentionChain(m));
+					m.addComment("coref:quotes");
 					log.log(Level.INFO, "Added quote mention {0}", m);
 					break;
 				}
@@ -316,6 +323,7 @@ public class MentionFinder {
 			sent.addMention(m);
 			sent.getText().addMentionChain(new MentionChain(m));
 			m.setType(Type.CONJ);
+			m.addComment("coref:coord flat");
 			log.log(Level.INFO, "Added flat coordination {0}", m);
 		}
 	}
@@ -335,6 +343,7 @@ public class MentionFinder {
 					sent.addMention(m);
 					sent.getText().addMentionChain(new MentionChain(m));
 					m.setType(Type.CONJ);
+					m.addComment("coref:coord");
 					log.log(Level.INFO, "Added coordination {0}", m);
 				}
 			} else {
@@ -355,17 +364,8 @@ public class MentionFinder {
 				m.setType(Type.PRON);
 				m.getLastHeadToken().setPronounType(MorphoUtils.getPronounType(m.getLastHeadToken().getTag()));
 				m.getLastHeadToken().setPerson(MorphoUtils.getPerson(m.getLastHeadToken().getTag()));
+				m.addComment("coref:pron");
 				log.log(Level.INFO, "Added pronoun mention {0}", m);
-			}
-		}
-	}
-
-	private void addNounPhraseMentions(Sentence sent) {
-		for (Node n : sent.getNodes(false)) {
-			if (n.getHeads().get(0).getPosTag() == PosTag.N) {
-				Mention m = new Mention(sent.getText().getNextMentionID(), n.getTokens(), n.getHeads());
-				sent.addMention(m);
-				sent.getText().addMentionChain(new MentionChain(m));
 			}
 		}
 	}
@@ -420,7 +420,7 @@ public class MentionFinder {
 				if (m.getFirstToken().isProper())
 					m.setType(Type.NE);
 				m.setCategory(Dictionaries.getCategory(m.getLemmaString()));
-
+				m.addComment("coref:np");
 				log.log(Level.INFO, "Added NP mention {0}", m);
 			}
 		}

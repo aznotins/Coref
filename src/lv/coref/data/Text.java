@@ -139,7 +139,8 @@ public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
 		for (Mention m : getMentions()) {
 			if (m.getCategory().equals(Category.profession)) {
 				if (m.getDescriptorMentions() == null) continue;
-				log.log(Level.SEVERE, "Remove descriptors {0} from {1}", new Object[]{m.getDescriptorMentions(), m});
+				m.addComment("remove descriptor mention");
+				log.log(Level.INFO, "Remove descriptors {0} from {1}", new Object[]{m.getDescriptorMentions(), m});
 				
 				List<Token> newTokens = new ArrayList<>();
 				for (Token t : m.getTokens()) {
@@ -223,6 +224,15 @@ public class Text extends ArrayList<Paragraph> implements Comparable<Text> {
 		StringBuffer sb = new StringBuffer();
 		for (Paragraph par : this)
 			sb.append(par.toString() + "\n");
+		return sb.toString();
+	}
+	
+	public String getTextString() {
+		StringBuilder sb = new StringBuilder();
+		for (Paragraph p : this) {
+			sb.append(p.getTextString());
+			sb.append("\n");
+		}
 		return sb.toString();
 	}
 

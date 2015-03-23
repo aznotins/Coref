@@ -382,6 +382,8 @@ public class Sentence extends ArrayList<Token> {
 				sb.append("|").append(m.getType());
 				if (m.getMentionChain() != null)
 					sb.append("|").append(m.getMentionChain().getID());
+				if (m.getComment().length() > 0)
+					sb.append("|").append(m.getComment());
 				// sb.append("|").append(m.getID());
 				// sb.append(" ").append(m.toParamString());
 				sb.append("]");

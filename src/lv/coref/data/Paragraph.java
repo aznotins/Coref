@@ -70,5 +70,14 @@ public class Paragraph extends ArrayList<Sentence> {
 			sb.append(sentence.toString()).append("\n");
 		return sb.toString();
 	}
+	
+	public String getTextString() {
+		StringBuilder sb = new StringBuilder();
+		for (Sentence s : this) {
+			sb.append(s.getTextString());
+			sb.append(" ");
+		}
+		return sb.toString();
+	}
 
 }

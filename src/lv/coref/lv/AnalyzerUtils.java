@@ -1,5 +1,11 @@
 package lv.coref.lv;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,6 +95,23 @@ public class AnalyzerUtils {
 		}
 		return null;
 	}
+	
+	public static void inflectFileContents(String infile, String outfile) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(new File(infile)));
+		PrintStream ps = new PrintStream(new FileOutputStream(new File(outfile)));
+		String s = null;
+		while ((s = br.readLine()) != null) {
+			s = s.trim();
+			if (s.length() == 0) continue;
+			Map<String,String> infl = AnalyzerUtils.inflect(s, "profession");
+			for (String k : infl.keySet()) {
+				String val = infl.get(k);
+				ps.println(val);
+			}
+		}
+		br.close();
+		ps.close();
+	}
 
 	public static void main(String[] args) {
 		System.err.println(normalize("Andra Vilka", Category.person.toString()));
@@ -97,6 +120,12 @@ public class AnalyzerUtils {
 		System.err.println(inflect("Andris Vilks", Category.person.toString()));
 		System.err.println(inflect("Andra Vilks", Category.person.toString()));
 		System.err.println(inflect("Andris Ambainis", Category.person.toString()));
+		
+		try {
+			AnalyzerUtils.inflectFileContents("D:/work/LVTagger/scripts/lemmatize/in.txt", "D:/work/LVTagger/scripts/lemmatize/infl.txt");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
