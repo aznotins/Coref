@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -164,9 +165,9 @@ public class Annotation extends SimpleTypeSafeMap {
 						sb.append("\t").append(t.get(LabelPosTagSimple.class));
 						sb.append("\t").append(t.get(LabelPosTag.class));
 						sb.append("\t").append(t.get(LabelMorphoFeatures.class));
-						sb.append("\t").append(t.get(LabelParent.class));
-						sb.append("\t").append(t.get(LabelDependency.class));
-						sb.append("\t").append(t.get(LabelNer.class));
+						sb.append("\t").append(t.has(LabelParent.class) ? t.get(LabelParent.class) : "_");
+						sb.append("\t").append(t.has(LabelDependency.class) ? t.get(LabelDependency.class) : "_");
+						sb.append("\t").append(t.has(LabelNer.class) ? t.get(LabelNer.class) : "O");
 						sb.append("\n");
 					}
 					sb.append("\n");
@@ -267,6 +268,38 @@ public class Annotation extends SimpleTypeSafeMap {
 	public static Annotation makeAnnotationFromText(Annotation doc, Text text) {
 		if (!doc.has(LabelParagraphs.class)) {
 			// initialize annotation from text
+			doc.setText(text.getTextString());
+			List<Annotation> pLabels = new ArrayList<>(text.size());
+			for (Paragraph paragraph : text) {
+				if (paragraph.size() == 0) continue;
+				Annotation pLabel = new Annotation();
+				pLabel.setText(paragraph.getTextString());
+				pLabels.add(pLabel);
+				List<Annotation> sLabels = new ArrayList<>(paragraph.size());
+				for (Sentence sentence : paragraph) {
+					if (sentence.size() == 0) continue;
+					Annotation sLabel = new Annotation();
+					sLabel.setText(sentence.getTextString());
+					sLabels.add(sLabel);
+					List<Annotation> tLabels = new ArrayList<>(sentence.size());
+					for (Token t : sentence) {
+						Annotation tLabel = new Annotation();
+						tLabel.set(LabelIndex.class, t.getPosition() + 1);
+						tLabel.setText(t.getWord());
+						tLabel.setLemma(t.getLemma());
+						tLabel.set(LabelPosTag.class, t.getTag());
+						tLabel.set(LabelPosTagSimple.class, t.getPos());
+						tLabel.set(LabelMorphoFeatures.class, t.getMorphoFeatures());
+						tLabel.set(LabelParent.class, t.getParent());
+						tLabel.set(LabelDependency.class, t.getDependency());
+						tLabel.set(LabelNer.class, t.getNamedEntity() != null ? t.getNamedEntity().getLabel() : "O");
+						tLabels.add(tLabel);						
+					}
+					sLabel.set(LabelTokens.class, tLabels);
+				}
+				pLabel.set(LabelSentences.class, sLabels);
+			}
+			doc.set(LabelParagraphs.class, pLabels);
 		}
 		List<Annotation> entities = new ArrayList<>(text.getMentionChains().size());
 
@@ -469,6 +502,56 @@ public class Annotation extends SimpleTypeSafeMap {
 			spans.add(Triple.makeTriple(prevStart, wordPos - 1, prev));
 		}
 		return spans;
+	}
+	
+//	public Annotation getMention(Properties p, String mentionString) {
+//		Annotation m = null;
+//		int mPar = Integer.parseInt(p.getProperty("par","-1"));
+//		int mSent = Integer.parseInt(p.getProperty("sent","-1"));
+//		int mTok = Integer.parseInt(p.getProperty("tok","-1"));
+//		String mType = p.getProperty("type");
+//		return m;
+//	}
+	
+	public Annotation getMention(String mentionString, String type, int par, int sent, int tok) {
+		Annotation m = null;
+		String[] mTokens = mentionString.split("\\s+");
+		if (!this.has(LabelParagraphs.class)) return null;
+		int iPar = 0;
+		for (Annotation aPar : this.get(LabelParagraphs.class)) {
+			if (par >= 0 && par != iPar++) continue;
+			if (!aPar.has(LabelSentences.class)) continue;
+			
+			int iSent = 0;
+			for (Annotation aSent : aPar.get(LabelSentences.class)) {
+				if (sent >= 0 && sent != iSent++) continue;
+				if (!aSent.has(LabelTokens.class)) continue;
+				
+				int iTok = 0;
+				for (Annotation aTok : aSent.get(LabelTokens.class)) {
+					if (tok >= 0 && tok != iTok++) continue;					
+					if (!aTok.has(LabelMentions.class)) continue;
+					
+					for (Annotation aMent : aTok.get(LabelMentions.class)) {
+						//System.err.println(aMent);
+						int start = aMent.get(LabelIdxStart.class);
+						int end = aMent.get(LabelIdxEnd.class);
+						if (end - start + 1 != mTokens.length) continue;
+						boolean match = true;
+						for (int i = start; i <= end; i++) {
+							String tokStr = aSent.get(LabelTokens.class).get(i).getText();
+							if (!tokStr.equals(mTokens[i-start])) {
+								match = false;
+								break;								
+							}
+						}
+						if (type != null && !aMent.get(LabelType.class, "_NOT_A_TYPE_").equals(type)) continue;
+						if (match) return aMent;
+					}
+				}
+			}
+		}
+		return m;
 	}
 
 	public static void main(String[] args) {

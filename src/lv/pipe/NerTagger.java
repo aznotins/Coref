@@ -73,7 +73,9 @@ public class NerTagger implements PipeTool {
 		properties = props;
 		List<AbstractSequenceClassifier<CoreLabel>> classifiers = new ArrayList<>();
 		if (props.containsKey("whiteList"))
-			classifiers.add(new ListNERSequenceClassifier(props.getProperty("whiteList"), true, true));
+			classifiers.add(new ListNERSequenceClassifier(props.getProperty("whiteList"), true, true, true));
+		if (props.containsKey("whiteListPrecise"))
+			classifiers.add(new ListNERSequenceClassifier(props.getProperty("whiteListPrecise"), true, false, true));
 		if (props.containsKey("loadClassifier"))
 			try {
 				classifiers.add(CRFClassifier.getClassifier(props.getProperty("loadClassifier")));
@@ -135,6 +137,8 @@ public class NerTagger implements PipeTool {
 			String answer = wi.get(NamedEntityTagAnnotation.class);
 			if (answer == null) {
 				answer = wi.get(AnswerAnnotation.class);
+				if (answer == null)
+					answer = "O";
 			}
 			if (answer != "O")
 				a.setNer(answer);
