@@ -351,6 +351,7 @@ public class Annotation extends SimpleTypeSafeMap {
 				if (mc.getRepresentative().getType().equals(Type.NE))
 					mce.set(LabelEntityIsTitle.class, true);
 				mce.set(LabelInflections.class, AnalyzerUtils.inflect(title, mc.getCategory().toString()));
+				mce.set(LabelText.class, title);
 			}
 
 			List<String> aliases = new ArrayList<>();
