@@ -62,7 +62,7 @@ public class MateTools implements PipeTool {
 		PrintStream original = System.out;
 		System.setOut(System.err); // temporary redirect verbose output to
 									// System.err verbose output
-		String[] arguments = new String[] { "-model", "models/leta-20150315.model", "-test", "taube.conll", "-out",
+		String[] arguments = new String[] { "-model", "models/leta-20150324.model", "-test", "taube.conll", "-out",
 				"taube.parsed.conll" };
 		options = new Options(arguments);
 		mateToolsParser = new Parser(options);
