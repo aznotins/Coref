@@ -75,7 +75,7 @@ public class NEL {
 		fetchGlobalIds(text, entities);
 		if (SHOW_DISAMBUGATION) {
 			for (Entity e : entities) {
-				System.err.println(e);
+				System.err.printf("NEL entity: %s\n", e);
 			}
 		}
 		return entities;

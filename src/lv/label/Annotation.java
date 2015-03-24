@@ -320,7 +320,7 @@ public class Annotation extends SimpleTypeSafeMap {
 						List<Annotation> mentions = new ArrayList<>(headMentions.size());
 						for (Mention m : headMentions) {
 							Annotation ma = new Annotation();
-							ma.set(LabelId.class, Integer.parseInt(m.getID()));
+							ma.set(LabelId.class, Integer.parseInt(m.getMentionChain().getID()));
 							ma.set(LabelIdxStart.class, m.getFirstToken().getPosition());
 							ma.set(LabelIdxEnd.class, m.getLastToken().getPosition());
 							if (!m.getCategory().isUnkown())
@@ -421,16 +421,16 @@ public class Annotation extends SimpleTypeSafeMap {
 								}
 								jsonToken.put("mentions", jsonMentions);
 							}
-
 							JSONArray sdps = new JSONArray();
-							for (Annotation sdpLabel : t.get(LabelSDP.class)) {
-								JSONObject sdp = new JSONObject();
-								sdp.put("label", sdpLabel.get(LabelSDPLabel.class));
-								sdp.put("target", sdpLabel.get(LabelSDPTarget.class));
-								sdps.add(sdp);
+							if (t.has(LabelSDP.class)) {
+								for (Annotation sdpLabel : t.get(LabelSDP.class)) {
+									JSONObject sdp = new JSONObject();
+									sdp.put("label", sdpLabel.get(LabelSDPLabel.class));
+									sdp.put("target", sdpLabel.get(LabelSDPTarget.class));
+									sdps.add(sdp);
+								}
 							}
-							jsonToken.put("sdp", sdps);
-
+							jsonToken.put("sdp", sdps);							
 							jsonTokens.add(jsonToken);
 						}
 						jsonSentence.put("tokens", jsonTokens);
