@@ -85,7 +85,7 @@ public class NELUtils {
 		name = name.replaceAll("[‘’‚`‛]", "'");
 		name = name.replaceAll(" /$", "");
 		name = name.replaceAll("_", " ");
-		return name;		
+		return name;
 	}
 
 	public static String clearOrgName(String name) {
@@ -98,7 +98,7 @@ public class NELUtils {
 	}
 	
 	public static void main(String[] args) {
-		String name = "‘SIA «Divi radi»’";
+		String name = "‘‘SIA «Divi radi»’";
 		System.err.println(fixname(name));
 		System.err.println(name);
 	}

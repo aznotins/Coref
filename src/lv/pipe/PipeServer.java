@@ -17,6 +17,8 @@
  *******************************************************************************/
 package lv.pipe;
 
+import lv.coref.io.CorefPipe;
+
 import org.restlet.Component;
 import org.restlet.data.Protocol;
 
@@ -30,6 +32,7 @@ public class PipeServer {
 				PORT = Integer.parseInt(args[i + 1]);
 			}
 		}
+		CorefPipe.getInstance().init(args);
 
 		Component component = new Component();
 		component.getServers().add(Protocol.HTTP, PORT);

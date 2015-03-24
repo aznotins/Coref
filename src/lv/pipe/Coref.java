@@ -29,6 +29,8 @@ import lv.label.Annotation;
 
 public class Coref implements PipeTool {
 
+	public static String PROP_RUN_NEL = "coref.runNEL";
+
 	private static Coref instance;
 
 	public static Coref getInstance() {
@@ -37,15 +39,21 @@ public class Coref implements PipeTool {
 		return instance;
 	}
 
+	private boolean runNEL = true;
+
 	@Override
 	public void init(Properties prop) {
-
+		if (Boolean.parseBoolean(prop.getProperty(PROP_RUN_NEL, "false"))) {
+			this.runNEL = true;
+		} else {
+			this.runNEL = false;
+		}
 	}
 
 	@Override
 	public Annotation process(Annotation doc) {
 		Text text = Annotation.makeText(doc);
-		CorefPipe.getInstance().process(text);
+		CorefPipe.getInstance().process(text, runNEL);
 		Annotation.makeAnnotationFromText(doc, text);
 		return doc;
 	}

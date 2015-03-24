@@ -32,6 +32,7 @@ import lv.coref.lv.Constants.Person;
 import lv.coref.lv.Constants.PosTag;
 import lv.coref.lv.Constants.PronType;
 import lv.coref.lv.Constants.Type;
+import lv.coref.semantic.Entity;
 
 public class Mention implements Comparable<Mention> {
 	private MentionChain mentionChain;
@@ -754,5 +755,12 @@ public class Mention implements Comparable<Mention> {
 				return m;
 		}
 		return null;
+	}
+
+	public Integer getGlobalId() {
+		Entity e = getMentionChain().getEntity();
+		if (e == null)
+			return null;
+		return e.getId();
 	}
 }

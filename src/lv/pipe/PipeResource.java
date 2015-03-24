@@ -30,13 +30,7 @@ import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 
 public class PipeResource extends ServerResource {
-
-	private static Pipe pipe = Pipe.getInstance();
-
-//	static {
-//		pipe.init();
-//	}
-
+	
 	@Get
 	public String retrieve() {
 		String query = (String) getRequest().getAttributes().get("query");
@@ -71,7 +65,7 @@ public class PipeResource extends ServerResource {
 	}
 
 	public static String process(String text) {
-		Annotation doc = pipe.process(text);
+		Annotation doc = Pipe.getInstance().process(text);
 		return Annotation.getConllString(doc);
 	}
 

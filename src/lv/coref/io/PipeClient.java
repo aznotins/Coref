@@ -64,14 +64,6 @@ public class PipeClient {
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Unable to start client", e);
 		}
-		try {
-			// Fix: reread configuration
-			LogManager.getLogManager().readConfiguration();
-		} catch (SecurityException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
 		// FIXME restlet traucē logošanai, jāpārlādē konfigurācija
 		Config.logInit();
 		log.log(Level.INFO, "Init pipe");

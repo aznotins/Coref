@@ -44,7 +44,7 @@ public class Entity {
 	private Category category = Category.unknown;
 
 	// DB ID
-	private String id;
+	private Integer id;
 
 	// Unikāls ārējais ID
 	private String uid;
@@ -88,11 +88,11 @@ public class Entity {
 		this.category = category;
 	}
 
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 

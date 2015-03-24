@@ -315,12 +315,12 @@ public class Annotation extends SimpleTypeSafeMap {
 					Token t = s.get(iTok);
 					Annotation token = tokens.get(iTok);
 
-					Collection<Mention> headMentions = t.getMentions();
+					Collection<Mention> headMentions = t.getHeadMentions();
 					if (headMentions.size() > 0) {
 						List<Annotation> mentions = new ArrayList<>(headMentions.size());
-						for (Mention m : t.getHeadMentions()) {
+						for (Mention m : headMentions) {
 							Annotation ma = new Annotation();
-							ma.set(LabelId.class, m.getID());
+							ma.set(LabelId.class, Integer.parseInt(m.getID()));
 							ma.set(LabelIdxStart.class, m.getFirstToken().getPosition());
 							ma.set(LabelIdxEnd.class, m.getLastToken().getPosition());
 							if (!m.getCategory().isUnkown())
@@ -335,7 +335,7 @@ public class Annotation extends SimpleTypeSafeMap {
 
 		for (MentionChain mc : text.getMentionChains()) {
 			Annotation mce = new Annotation();
-			mce.set(LabelId.class, mc.getID());
+			mce.set(LabelId.class, Integer.parseInt(mc.getID()));
 			if (!mc.getCategory().isUnkown())
 				mce.set(LabelType.class, mc.getCategory().toString());
 			Entity e = mc.getEntity();
@@ -444,7 +444,7 @@ public class Annotation extends SimpleTypeSafeMap {
 			if (doc.has(LabelEntities.class)) {
 				for (Annotation e : doc.get(LabelEntities.class)) {
 					JSONObject jsonNE = new JSONObject();
-					String id = e.get(LabelId.class);
+					Integer id = e.get(LabelId.class);
 					jsonNE.put("id", id);
 					jsonNE.put("representative", e.get(LabelText.class));
 					JSONArray jsonAliases = new JSONArray();

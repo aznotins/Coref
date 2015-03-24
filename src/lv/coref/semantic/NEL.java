@@ -81,9 +81,9 @@ public class NEL {
 		return entities;
 	}
 
-	public Set<String> getGlobalIdCandidates(Entity e) {
+	public Set<Integer> getGlobalIdCandidates(Entity e) {
 		String title = NELUtils.fixname(e.getTitle());
-		Set<String> ids = new HashSet<>();
+		Set<Integer> ids = new HashSet<>();
 		ids.addAll(KNB.getInstance().getEntityIdsByName(title));
 		if (ids.size() == 0) {
 			for (String alias : e.getAliases()) {
@@ -97,12 +97,12 @@ public class NEL {
 	}
 
 	public void fetchGlobalIds(Text text, List<Entity> entities) {
-		List<Pair<Entity, Set<String>>> toDisambiguate = new ArrayList<>(entities.size());
+		List<Pair<Entity, Set<Integer>>> toDisambiguate = new ArrayList<>(entities.size());
 		for (Entity e : entities) {
-			Set<String> ids = getGlobalIdCandidates(e);
+			Set<Integer> ids = getGlobalIdCandidates(e);
 			if (ids.size() == 0) {
 				// ieliek DB jaunu entītiju
-				e.setId("_NEW_ENTITY_");
+				e.setId(-1);
 				continue;
 			}
 			// inWhitelist = False
@@ -117,7 +117,7 @@ public class NEL {
 			// Disabiguējam un augšupielādējam tikai personas un organizācijas
 			if (ids.size() > 1
 					&& (e.getCategory().equals(Category.person) || e.getCategory().equals(Category.organization))) {
-				toDisambiguate.add(new Pair<Entity, Set<String>>(e, ids));
+				toDisambiguate.add(new Pair<Entity, Set<Integer>>(e, ids));
 			} else {
 				// klasifikatoriem tāpat daudzmaz vienalga, vai pie kaut kā
 				// piesaista vai veido jaunu
@@ -134,10 +134,10 @@ public class NEL {
 		// disambiguējamās entītijas vārdus
 		Bag mentionBag = CDCBags.makeMentionBag(entities);
 
-		for (Pair<Entity, Set<String>> pair : toDisambiguate) {
+		for (Pair<Entity, Set<Integer>> pair : toDisambiguate) {
 			Entity entity = pair.first;
-			Set<String> candidates = pair.second;
-			String id = dissambiguate(entity, candidates, text, mentionBag);
+			Set<Integer> candidates = pair.second;
+			Integer id = dissambiguate(entity, candidates, text, mentionBag);
 			if (id == null) {
 				log.log(Level.WARNING, "Failed to resolve entity {0} {1} from candidates {2}",
 						new Object[] { entity.getTitle(), entity.getAliases(), candidates });
@@ -155,7 +155,7 @@ public class NEL {
 	 * @param text
 	 * @param mentionBag
 	 */
-	public String dissambiguate(Entity entity, Collection<String> candidates, Text text, Bag mentionBag) {
+	public Integer dissambiguate(Entity entity, Collection<Integer> candidates, Text text, Bag mentionBag) {
 
 		CDCBags eBags = new CDCBags();
 		eBags.mentionBag = mentionBag;
@@ -171,9 +171,9 @@ public class NEL {
 		}
 
 		double maxSim = -99999;
-		String maxId = null;
-		Map<String, Double> cosineSim = new HashMap<>();
-		for (String candidateId : candidates) {
+		Integer maxId = null;
+		Map<Integer, Double> cosineSim = new HashMap<>();
+		for (int candidateId : candidates) {
 			CDCBags bags = KNB.getInstance().getCDCBags(candidateId);
 
 			if (bags == null) {
@@ -228,7 +228,7 @@ public class NEL {
 	 * 
 	 * @param entityId
 	 */
-	public static CDCBags makeGlobalEntityBags(String entityId) {
+	public static CDCBags makeGlobalEntityBags(int entityId) {
 		KNB knb = KNB.getInstance();
 
 		/*
@@ -271,7 +271,7 @@ public class NEL {
 			String frameType = KNBUtils.getFrameName(fd.frameType);
 
 			if (frameType.equals("Being_employed")) {
-				String amatsId = fd.elements.get("Position");
+				Integer amatsId = fd.elements.get("Position");
 				if (amatsId != null) {
 					EntityData amats = knb.getEntityData(amatsId, false);
 					if (amats != null)
@@ -279,7 +279,7 @@ public class NEL {
 				}
 			}
 			if (frameType.equals("People_by_vocation")) {
-				String amatsId = fd.elements.get("Vocation");
+				Integer amatsId = fd.elements.get("Vocation");
 				if (amatsId != null) {
 					EntityData amats = knb.getEntityData(amatsId, false);
 					if (amats != null)
@@ -288,7 +288,7 @@ public class NEL {
 			}
 			// Unstructured - piemēram, abstraktā info no CV
 			if (frameType.equals("Unstructured")) {
-				String aprakstsId = fd.elements.get("Property");
+				Integer aprakstsId = fd.elements.get("Property");
 				if (aprakstsId != null) {
 					EntityData apraksts = knb.getEntityData(aprakstsId, false);
 					if (aprakstsId != null) {
@@ -300,7 +300,7 @@ public class NEL {
 				}
 			}
 
-			for (String relatedId : fd.elements.values()) {
+			for (Integer relatedId : fd.elements.values()) {
 
 				/*
 				 * TODO Šis aizkomentētais būtu production variants - mazāk

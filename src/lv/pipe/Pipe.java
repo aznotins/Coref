@@ -26,7 +26,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,6 +53,34 @@ public class Pipe {
 	private InputStream inStream = System.in;
 	private OutputStream outStream = System.out;
 
+	public static String PROP_TOKENIZER = "tokenizer";
+	public static String PROP_TAGGER = "tagger";
+	public static String PROP_NER = "ner";
+	public static String PROP_PARSER = "parser";
+	public static String PROP_SPD = "spd";
+	public static String PROP_COREF = "coref";
+	public static String PROP_NEL = "nel";
+
+	private boolean runAll = false;
+	private Set<String> tools = null;
+
+	public void setTools(String toolString) {
+		tools = new HashSet<>();
+		tools.addAll(Arrays.asList(toolString.trim().split("\\s+|,")));
+	}
+
+	public void setRunAll(boolean all) {
+		runAll = all;
+	}
+
+	public boolean toRun(String toolName) {
+		if (runAll)
+			return true;
+		if (tools.contains(toolName))
+			return true;
+		return false;
+	}
+
 	public static Pipe getInstance() {
 		if (pipe == null) {
 			System.err.println(Config.getInstance().toString());
@@ -60,34 +91,56 @@ public class Pipe {
 	}
 
 	public void init() {
-		Tokenizer tok = Tokenizer.getInstance();
-		tok.init(new Properties());
-
-		MorphoTagger morpho = MorphoTagger.getInstance();
-		Properties morphoProp = new Properties();
-		morphoProp.setProperty("morpho.classifierPath", "models/lv-morpho-model.ser.gz");
-		morpho.init(morphoProp);
-
-		NerTagger ner = NerTagger.getInstance();
-		Properties nerProp = new Properties();
-		try {
-			nerProp.load(new FileReader("lv-ner-tagger.prop"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		String toolString = Config.getInstance().get(Config.PROP_PIPE_TOOLS, "");
+		if (toolString.length() == 0)
+			setRunAll(true);
+		else {
+			setTools(toolString);
 		}
-		ner.init(nerProp);
 
-		MaltParser malt = MaltParser.getInstance();
-		Properties maltParserProp = new Properties();
-		maltParserProp.setProperty("malt.modelName", "langModel-pos-corpus");
-		maltParserProp.setProperty("malt.workingDir", "./models");
-		maltParserProp.setProperty("malt.extraParams", "-m parse -lfi parser.log");
-		malt.init(maltParserProp);
+		if (toRun(PROP_TOKENIZER)) {
+			Tokenizer tok = Tokenizer.getInstance();
+			tok.init(new Properties());
+		}
 
-		MateTools mate = MateTools.getInstance();
-		mate.init(new Properties());
+		if (toRun(PROP_TAGGER)) {
+			MorphoTagger morpho = MorphoTagger.getInstance();
+			Properties morphoProp = new Properties();
+			morphoProp.setProperty("morpho.classifierPath", "models/lv-morpho-model.ser.gz");
+			morpho.init(morphoProp);
+		}
+
+		if (toRun(PROP_NER)) {
+			NerTagger ner = NerTagger.getInstance();
+			Properties nerProp = new Properties();
+			try {
+				nerProp.load(new FileReader("lv-ner-tagger.prop"));
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			ner.init(nerProp);
+		}
+
+		if (toRun(PROP_PARSER)) {
+			MaltParser malt = MaltParser.getInstance();
+			Properties maltParserProp = new Properties();
+			maltParserProp.setProperty("malt.modelName", "langModel-pos-corpus");
+			maltParserProp.setProperty("malt.workingDir", "./models");
+			maltParserProp.setProperty("malt.extraParams", "-m parse -lfi parser.log");
+			malt.init(maltParserProp);
+		}
+		
+		if (toRun(PROP_SPD)) {
+			MateTools mate = MateTools.getInstance();
+			mate.init(new Properties());
+		}
+
+		if (toRun(PROP_COREF)) {
+			Properties corefProperties = new Properties();
+			corefProperties.setProperty(Coref.PROP_RUN_NEL, Boolean.toString(toRun(PROP_NEL)));
+		}
 	}
 
 	public void setInputStream(InputStream inStream) {
@@ -104,26 +157,40 @@ public class Pipe {
 	}
 
 	public Text processText(Annotation doc) {
-		Tokenizer.getInstance().process(doc);
-		MorphoTagger.getInstance().process(doc);
-		NerTagger.getInstance().process(doc);
-		MaltParser.getInstance().process(doc);
-		MateTools.getInstance().process(doc);
-		// TODO Add coreference annotation
-		Text text = Annotation.makeText(doc);
-		text.setId(doc.get(LabelDocumentId.class));
-		text.setDate(doc.get(LabelDocumentDate.class));
-		CorefPipe.getInstance().process(text);
-		return text;
+		if (toRun(PROP_TOKENIZER))
+			Tokenizer.getInstance().process(doc);
+		if (toRun(PROP_TAGGER))
+			MorphoTagger.getInstance().process(doc);
+		if (toRun(PROP_NER))
+			NerTagger.getInstance().process(doc);
+		if (toRun(PROP_PARSER))
+			MaltParser.getInstance().process(doc);
+		if (toRun(PROP_SPD))
+			MateTools.getInstance().process(doc);
+		if (toRun(PROP_COREF)) {
+			Text text = Annotation.makeText(doc);
+			text.setId(doc.get(LabelDocumentId.class));
+			text.setDate(doc.get(LabelDocumentDate.class));
+			CorefPipe.getInstance().process(text, toRun(PROP_NEL));
+			return text;
+		} else {
+			return Annotation.makeText(doc);
+		}
 	}
 
 	public Annotation process(Annotation doc) {
-		Tokenizer.getInstance().process(doc);
-		MorphoTagger.getInstance().process(doc);
-		NerTagger.getInstance().process(doc);
-		MaltParser.getInstance().process(doc);
-		MateTools.getInstance().process(doc);
-		Coref.getInstance().process(doc);
+		if (toRun(PROP_TOKENIZER))
+			Tokenizer.getInstance().process(doc);
+		if (toRun(PROP_TAGGER))
+			MorphoTagger.getInstance().process(doc);
+		if (toRun(PROP_NER))
+			NerTagger.getInstance().process(doc);
+		if (toRun(PROP_PARSER))
+			MaltParser.getInstance().process(doc);
+		if (toRun(PROP_SPD))
+			MateTools.getInstance().process(doc);
+		if (toRun(PROP_COREF))
+			Coref.getInstance().process(doc);
 		return doc;
 	}
 
@@ -212,7 +279,7 @@ public class Pipe {
 		CorefPipe.getInstance().init(args);
 		Config.logInit();
 		Pipe.getInstance().run();
-		
+
 		// Annotation a =
 		// Pipe.getInstance().process("Finanšu ministrs Andris Vilks devās bekot.");
 		// Annotation a = Pipe.getInstance().process(

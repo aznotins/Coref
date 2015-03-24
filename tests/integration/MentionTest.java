@@ -11,7 +11,7 @@ import lv.util.StringUtils;
 
 public class MentionTest {
 	
-	public static boolean USE_PIPE_CLIENT = false;
+	public static boolean USE_PIPE_CLIENT = true;
 
 	public static void main(String[] args) {
 		Config.logInit();

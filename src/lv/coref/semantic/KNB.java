@@ -19,6 +19,7 @@ package lv.coref.semantic;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -116,12 +117,12 @@ public class KNB {
 		}
 	}
 
-	public Map<String, EntityData> getEntityDataByName(String name, int limit) {
-		Map<String, EntityData> r = new HashMap<>();
+	public Map<Integer, EntityData> getEntityDataByName(String name, int limit) {
+		Map<Integer, EntityData> r = new HashMap<>();
 		int counter = 0;
-		List<String> ids = getEntityIdsByName(name);
+		List<Integer> ids = getEntityIdsByName(name);
 		log.info(String.format("Found %d matched entities", ids.size()));
-		for (String id : ids) {
+		for (int id : ids) {
 			if (counter >= limit && limit >= 0) {
 				break;
 			}
@@ -131,25 +132,24 @@ public class KNB {
 		return r;
 	}
 
-	public Map<String, EntityData> getEntityData(List<String> ids) {
-		Map<String, EntityData> r = new HashMap<>();
-		for (String id : ids) {
+	public Map<Integer, EntityData> getEntityData(List<Integer> ids) {
+		Map<Integer, EntityData> r = new HashMap<>();
+		for (Integer id : ids) {
 			EntityData ed = getEntityData(id, false);
 			r.put(id, ed);
 		}
 		return r;
 	}
 
-	public List<String> getEntityIdsByName(String name) {
+	public List<Integer> getEntityIdsByName(String name) {
+		String query = "select distinct e.entityid from entityothernames n join entities e on n.entityid = e.entityid where lower(n.name) = ? and e.deleted is false and n.deleted is false";
 		name = name.toLowerCase();
-		String query = String
-				.format("select distinct e.entityid from entityothernames n join entities e on n.entityid = e.entityid where lower(n.name) = '%s' and e.deleted is false and n.deleted is false",
-						name);
-		List<String> ids = new ArrayList<>();
-		try (Statement stmt = connection.createStatement()) {
-			try (ResultSet rs = stmt.executeQuery(query)) {
+		List<Integer> ids = new ArrayList<>();
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setString(1, name);
+			try (ResultSet rs = stmt.executeQuery()) {
 				while (rs.next()) {
-					ids.add(rs.getString(1));
+					ids.add(rs.getInt(1));
 				}
 			}
 		} catch (SQLException e) {
@@ -159,11 +159,12 @@ public class KNB {
 		return ids;
 	}
 
-	public CDCBags getCDCBags(String entityId) {
-		String query = String.format("select wordbags from cdc_wordbags where entityid = %s", entityId);
+	public CDCBags getCDCBags(int entityId) {
+		String query = "select wordbags from cdc_wordbags where entityid = ?";
 		CDCBags bags = null;
-		try (Statement stmt = connection.createStatement()) {
-			try (ResultSet rs = stmt.executeQuery(query)) {
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setInt(1, entityId);
+			try (ResultSet rs = stmt.executeQuery()) {
 				while (rs.next()) {
 					String jsonString = rs.getString(1);
 					bags = new CDCBags(jsonString);
@@ -190,20 +191,18 @@ public class KNB {
 		}
 	}
 
-	public EntityData getEntityData(String entityId, boolean allData) {
+	public EntityData getEntityData(int entityId, boolean allData) {
 		String query = null;
 		if (!allData)
-			query = String.format(
-					"select entityid, name, category from entities where deleted is false and entityid = %s", entityId);
+			query = "select entityid, name, category from entities where deleted is false and entityid = ?";
 		else
-			query = String
-					.format("select e.entityid, e.name, e.category, e.nameinflections, array_agg(n.name) aliases, min(i.outerid) "
+			query = "select e.entityid, e.name, e.category, e.nameinflections, array_agg(n.name) aliases, min(i.outerid) "
 							+ "ids from entities e left outer join (select * from entityothernames where deleted is false) n on "
 							+ "e.entityid = n.entityid left outer join entityouterids i on e.entityid = i.entityid where "
-							+ "e.entityid = %s and e.deleted is false group by e.entityid, e.name, e.category, e.nameinflections",
-							entityId);
-		try (Statement stmt = connection.createStatement()) {
-			try (ResultSet rs = stmt.executeQuery(query)) {
+							+ "e.entityid = ? and e.deleted is false group by e.entityid, e.name, e.category, e.nameinflections";
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setInt(1, entityId);
+			try (ResultSet rs = stmt.executeQuery()) {
 				EntityData en = new EntityData();
 				rs.next();
 				en.id = rs.getString("entityid");
@@ -224,7 +223,7 @@ public class KNB {
 
 	public static class FrameData {
 		public int frameId;
-		public Map<String, String> elements = new HashMap<>(); // { roleId =>
+		public Map<String, Integer> elements = new HashMap<>(); // { roleId =>
 																// entityId }
 		public int frameType;
 		public boolean blessed;
@@ -239,16 +238,15 @@ public class KNB {
 		}
 	}
 
-	public List<FrameData> getSummaryFrameDataById(String entityId) {
-		String query = String
-				.format("select f.frameid, blessed, sourceid, frametypeid, summaryinfo, framecnt, targetword, json_agg(r) as elements from SummaryFrames f "
+	public List<FrameData> getSummaryFrameDataById(Integer entityId) {
+		String query = "select f.frameid, blessed, sourceid, frametypeid, summaryinfo, framecnt, targetword, json_agg(r) as elements from SummaryFrames f "
 						+ "join (select frameid, roleid, entityid from SummaryFrameRoleData) r on r.frameid = f.frameid "
-						+ "where f.frameid in (select frameid from SummaryFrameRoleData where entityid = %s) "
-						+ "group by f.frameid, blessed, sourceid, frametypeid, summaryinfo, framecnt, targetword",
-						entityId);
+						+ "where f.frameid in (select frameid from SummaryFrameRoleData where entityid = ?) "
+						+ "group by f.frameid, blessed, sourceid, frametypeid, summaryinfo, framecnt, targetword";
 		List<FrameData> fds = new ArrayList<>();
-		try (Statement stmt = connection.createStatement()) {
-			try (ResultSet rs = stmt.executeQuery(query)) {
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setInt(1, entityId);
+			try (ResultSet rs = stmt.executeQuery()) {
 				while (rs.next()) {
 					FrameData fd = new FrameData();
 					fd.frameId = rs.getInt("frameid");
@@ -267,7 +265,7 @@ public class KNB {
 						// System.err.println((String) jsonFr.get("entityid"));
 						String role = KNBUtils.getElementName(fd.frameType,
 								Integer.valueOf(((Long) jsonFr.get("roleid")).intValue()));
-						fd.elements.put(role, (String) Long.toString((Long) jsonFr.get("entityid")));
+						fd.elements.put(role,((Long) jsonFr.get("entityid")).intValue());
 					}
 					fds.add(fd);
 				}
@@ -278,11 +276,12 @@ public class KNB {
 		return fds;
 	}
 
-	public List<String> getEntityTextFacts(String entityId) {
-		String query = String.format("select id, text from entitytextfacts where entityid = %s", entityId);
+	public List<String> getEntityTextFacts(Integer entityId) {
+		String query = "select id, text from entitytextfacts where entityid = ?";
 		List<String> res = new ArrayList<>();
-		try (Statement stmt = connection.createStatement()) {
-			try (ResultSet rs = stmt.executeQuery(query)) {
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setInt(1, entityId);
+			try (ResultSet rs = stmt.executeQuery()) {
 				while (rs.next()) {
 					while (rs.next()) {
 						res.add(rs.getString("text"));
@@ -294,13 +293,13 @@ public class KNB {
 		}
 		return res;
 	}
-	
+
 	public static void dbgEntity(KNB knb, String name) {
 		int limit = 10;
 		int counter = 0;
-		List<String> ids = knb.getEntityIdsByName(name);
+		List<Integer> ids = knb.getEntityIdsByName(name);
 		System.err.printf("Found %d matched entities for '%s'\n", ids.size(), name);
-		for (String id : ids) {
+		for (int id : ids) {
 			if (counter >= limit && limit >= 0) {
 				break;
 			}
@@ -314,22 +313,22 @@ public class KNB {
 	public static void main(String[] args) {
 		Config.logInit();
 		KNB knb = KNB.getInstance();
-		knb.debug("select A.entityid, B.name, A.category from Entities as A inner join entityothernames as b on A.entityid = B.entityid limit 10");
-		knb.debug("select * from entities limit 10");
+//		knb.debug("select A.entityid, B.name, A.category from Entities as A inner join entityothernames as b on A.entityid = B.entityid limit 10");
+//		knb.debug("select * from entities limit 10");
 		System.err.println(knb.getEntityIdsByName("Imants Ziedonis"));
-		System.err.println(knb.getCDCBags("2203874"));
-		System.err.println(knb.getCDCBags("2203873"));
-		System.err.println(knb.getEntityData("2203874", false));
-		System.err.println(knb.getEntityData("2203874", true));
+		System.err.println(knb.getCDCBags(2203874));
+		System.err.println(knb.getCDCBags(2203873));
+		System.err.println(knb.getEntityData(2203874, false));
+		System.err.println(knb.getEntityData(2203874, true));
 
 		System.err.println(knb.getEntityDataByName("SIA \"BLC\"", 10));
 
-		System.err.println(knb.getSummaryFrameDataById("2203874"));
-		System.err.println(knb.getEntityTextFacts("2203874"));
+		System.err.println(knb.getSummaryFrameDataById(2203874));
+		System.err.println(knb.getEntityTextFacts(2203874));
 
-		System.err.println(NEL.makeGlobalEntityBags("2203874"));
-		
-//		System.err.println(knb.getCDCBags("2203874").nameBag.values().iterator().next().getClass());
+		System.err.println(NEL.makeGlobalEntityBags(2203874));
+
+		// System.err.println(knb.getCDCBags("2203874").nameBag.values().iterator().next().getClass());
 
 		KNB.getInstance().close();
 	}

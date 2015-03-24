@@ -91,10 +91,10 @@ public class Labels {
 	public static class LabelMentions implements Label<List<Annotation>> {
 	}
 
-	public static class LabelId implements Label<String> {
+	public static class LabelId implements Label<Integer> {
 	}
 
-	public static class LabelIdGlobal implements Label<String> {
+	public static class LabelIdGlobal implements Label<Integer> {
 	}
 
 	public static class LabelIdxStart implements Label<Integer> {

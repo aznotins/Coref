@@ -169,6 +169,8 @@ public class Config {
 		CONLL, JSON, MMAX
 	};
 
+	public static final String PREFIX_PIPE = "pipe.";
+
 	@Property(descr = "Input type [conll, json, mmax]", def = "conll", type = "lv.coref.io.FORMAT")
 	public static final String PROP_INPUT = "input";
 
@@ -193,6 +195,9 @@ public class Config {
 		return value.equalsIgnoreCase("yes");
 	}
 	
+	@Property(descr = "Runned pipe tools [tokenizer, tagger, ner, parser, spd, coref, nel]", def = "tokenizer tagger ner parser spd coref nel")
+	public static final String PROP_PIPE_TOOLS = "pipe.tools";
+
 	@Property(descr = "Remove singletons during postprocessing", def = "false")
 	public static final String PROP_COREF_REMOVE_SINGLETONS = "coref.remSingletons";
 	

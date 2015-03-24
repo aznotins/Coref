@@ -19,7 +19,10 @@ package lv.pipe;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.SequenceInputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -32,8 +35,10 @@ import lv.coref.io.JsonReaderWriter;
 import lv.label.Annotation;
 import lv.util.FileUtils;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -63,6 +68,12 @@ public class PipeTest {
 		json2.put("date", "02/02/2015");
 		jsonStr2 = json2.toJSONString();
 	}
+	
+	@AfterClass
+    public static void tearDown() {
+    	Pipe.close();
+    	System.exit(0);
+    }
 
 	@Test
 	public void testSingleFile() throws Exception {
@@ -118,6 +129,20 @@ public class PipeTest {
 		Text t2 = new JsonReaderWriter().read(json2);
 		Assert.assertEquals(t2.getDate(), "02/02/2015");
 		Assert.assertEquals(t2.getId(), "id2");
+	}
+	
+	@Test 
+	public void makeReadJSON() throws IOException {
+		String txtString = "Jānis Bērziņš";
+		File temp = File.createTempFile("tmpfile", ".tmp");
+		Annotation doc = Pipe.getInstance().process(txtString);
+		doc.printJson(new PrintStream(temp));
+		String jsonStr = FileUtils.readFile(temp.getAbsolutePath());
+		JSONObject json = (JSONObject) JSONValue.parse(jsonStr);
+		JSONArray sents = (JSONArray) json.get("sentences");
+		JSONObject sent = (JSONObject) sents.get(0);
+		String jsonText = (String) sent.get("text");
+		Assert.assertEquals(txtString, jsonText);
 	}
 
 	@Test
