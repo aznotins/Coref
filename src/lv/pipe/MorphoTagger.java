@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lv.label.Annotation;
 import lv.label.Labels.LabelIndex;
@@ -45,6 +47,8 @@ import edu.stanford.nlp.sequences.LVMorphologyReaderAndWriter;
 
 @SuppressWarnings("unchecked")
 public class MorphoTagger implements PipeTool {
+	
+	private final static Logger log = Logger.getLogger(MorphoTagger.class.getName());
 
 	private static boolean MINI_TAG = false;
 	private static boolean FEATURES = false;
@@ -135,12 +139,25 @@ public class MorphoTagger implements PipeTool {
 				if (mainwf != null) {
 					String lemma = mainwf.getValue(AttributeNames.i_Lemma);
 					// lemma = lemma.replace(' ', '_');
-					String answer = w.getString(AnswerAnnotation.class);
-					if (answer.length() == 0)
-						answer = "_"; // no empty tag
+					if (lemma == null || lemma.trim().isEmpty()) {
+						lemma = "_";
+						log.log(Level.SEVERE, "Empty lemma for {0}", token);
+					}
 					tLabel.setLemma(lemma);
+					
+					String answer = w.getString(AnswerAnnotation.class);
+					if (answer == null || answer.trim().isEmpty()) {
+						answer = "_"; // no empty tag
+						log.log(Level.SEVERE, "Empty simple pos tag for {0}", token);
+					}
 					tLabel.set(LabelPosTagSimple.class, answer);
-					tLabel.set(LabelPosTag.class, mainwf.getTag());
+					
+					String posTag = mainwf.getTag();					
+					if (posTag == null || posTag.trim().isEmpty()) {
+						posTag = "_";
+						log.log(Level.SEVERE, "Empty pos tag for {0}", token);
+					}
+					tLabel.set(LabelPosTag.class, posTag);
 
 					// Feature atribūtu filtri
 					if (MINI_TAG)
@@ -172,6 +189,8 @@ public class MorphoTagger implements PipeTool {
 					String morphoFeatures = s.toString();
 					tLabel.set(LabelMorphoFeatures.class, morphoFeatures);
 
+				} else {
+					log.log(Level.SEVERE, "Empty main word form for {0}", token);
 				}
 				tLabels.add(tLabel);
 			}

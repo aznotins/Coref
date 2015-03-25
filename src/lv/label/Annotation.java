@@ -400,8 +400,8 @@ public class Annotation extends SimpleTypeSafeMap {
 							jsonToken.put("index", t.get(LabelIndex.class));
 							jsonToken.put("form", t.getText());
 							jsonToken.put("lemma", t.getLemma());
-							jsonToken.put("pos", t.get(LabelPosTag.class));
-							jsonToken.put("tag", t.get(LabelPosTagSimple.class));
+							jsonToken.put("pos", t.get(LabelPosTagSimple.class));
+							jsonToken.put("tag", t.get(LabelPosTag.class));
 							jsonToken.put("features", t.get(LabelMorphoFeatures.class));
 							jsonToken.put("parentIndex", t.get(LabelParent.class));
 							jsonToken.put("dependencyLabel", t.get(LabelDependency.class));

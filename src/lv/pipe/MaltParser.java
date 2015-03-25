@@ -101,11 +101,12 @@ public class MaltParser implements PipeTool {
 				s.append(tLabel.get(LabelIndex.class));
 				s.append("\t").append(tLabel.getText());
 				s.append("\t").append(tLabel.getLemma());
-				s.append("\t").append(tLabel.get(LabelPosTag.class));
 				s.append("\t").append(tLabel.get(LabelPosTagSimple.class));
+				s.append("\t").append(tLabel.get(LabelPosTag.class));
 				s.append("\t").append(tLabel.get(LabelMorphoFeatures.class));
 				s.append("\t");
 				conllRows[counter++] = s.toString();
+				//System.err.println(conllRows[counter-1]);
 			}
 			try {
 				DependencyStructure graph = maltServ.parse(conllRows);
@@ -142,7 +143,6 @@ public class MaltParser implements PipeTool {
 				System.err.println("Mismatched alignment with MaltParser");
 				continue;
 			}
-
 			Edge e = node.getHeadEdge();
 			// System.er.println(e.getSource().getIndex());
 			tLabels.get(i - 1).set(LabelParent.class, e.getSource().getIndex());
