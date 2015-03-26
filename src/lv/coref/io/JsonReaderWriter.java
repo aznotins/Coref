@@ -90,6 +90,7 @@ public class JsonReaderWriter extends ReaderWriter {
 				JSONArray tokens = (JSONArray) jsonSentence.get("tokens");
 				Sentence sentence = new Sentence(iSent);
 				p.add(sentence);
+				sentence.setTextPosition(iSent);
 				List<String> sentenceNer = new ArrayList<>(tokens.size());
 				List<Pair<Triple<Integer, Integer, String>, String>> sentenceMentions = new ArrayList<>();
 				for (int iTok = 0; iTok < tokens.size(); iTok++) {

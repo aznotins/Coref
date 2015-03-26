@@ -35,23 +35,15 @@ public class Entity {
 
 	public static boolean SHOW_DISAMBIGUATION = true;
 
-	public static String VAGUE_ENITY = "_VAGUE_ENTITY_";
-
-	private String title;
-
-	private Set<String> aliases = new HashSet<>();
-
-	private Category category = Category.unknown;
-
-	// DB ID
-	private Integer id;
-
-	// Unikāls ārējais ID
-	private String uid;
-
-	private Mention titleMention;
-
-	private Collection<Mention> mentions;
+	public String title;
+	public Set<String> aliases = new HashSet<>();
+	public Category category = Category.unknown;
+	public Integer id; // global ID
+	public String uid; // Unikāls ārējais ID
+	public Mention titleMention;
+	public Double cosineSimilarity = null;
+	public Collection<Mention> mentions;
+	public String locations = null;
 
 	public Entity() {
 	}
@@ -64,8 +56,16 @@ public class Entity {
 		return title;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Category getCategory() {
+		return category;
 	}
 
 	public Set<String> getAliases() {
@@ -80,46 +80,13 @@ public class Entity {
 		return aliases.size();
 	}
 
-	public Category getCategory() {
-		return category;
+	public String getLocations() {
+		if (locations != null)
+			return locations;
+		else
+			return "[]";
 	}
-
-	public void setCategory(Category category) {
-		this.category = category;
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getUid() {
-		return uid;
-	}
-
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
-
-	public Mention getTitleMention() {
-		return titleMention;
-	}
-
-	public void setTitleMention(Mention titleMention) {
-		this.titleMention = titleMention;
-	}
-
-	public Collection<Mention> getMentions() {
-		return mentions;
-	}
-
-	public void setMentions(Collection<Mention> mentions) {
-		this.mentions = mentions;
-	}
-
+	
 	/**
 	 * Returns NULL if mentionChain is not representative
 	 * 
@@ -141,7 +108,17 @@ public class Entity {
 			log.log(Level.WARNING, "Bad title mention {0}", titleMention);
 			needNewTitle = true;
 		}
+		StringBuilder locations = new StringBuilder();
+		locations.append("[");
+		boolean first = true;
 		for (Mention m : mc) {
+			// Liekam visus pieminējumus
+			if (!first)
+				locations.append(",");
+			else
+				first = false;
+			locations.append("[").append(m.getSentence().getTextPosition()).append(",")
+					.append(m.getLastHeadToken().getPosition()).append("]");
 			if (m.isPronoun())
 				continue;
 			String str = AnalyzerUtils.normalize(m.getString(), cat.toString());
@@ -150,16 +127,18 @@ public class Entity {
 			entity.addAlias(str);
 			if (needNewTitle) {
 				// ja nav labs nosaukums, paņemam pirmo atrasto derīgo aliasu
-				entity.setTitle(str);
+				entity.title = str;
 				titleMention = m;
 				needNewTitle = false;
 			}
 		}
+		locations.append("]");
 		if (entity.getAliasCount() == 0)
 			return null;
-		entity.setCategory(cat);
-		entity.setTitleMention(mc.getRepresentative());
-		entity.setMentions(mc);
+		entity.category = cat;
+		entity.titleMention = mc.getRepresentative();
+		entity.mentions = mc;
+		entity.locations = locations.toString();
 		return entity;
 	}
 

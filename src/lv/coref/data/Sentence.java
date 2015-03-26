@@ -40,6 +40,7 @@ public class Sentence extends ArrayList<Token> {
 	private Set<Mention> mentions = new HashSet<>();
 	private Node root;
 	private Set<NamedEntity> namedEntities = new TreeSet<>();
+	private Integer textPosition;
 
 	public Sentence() {
 	}
@@ -102,6 +103,14 @@ public class Sentence extends ArrayList<Token> {
 
 	public void setPosition(int position) {
 		this.position = position;
+	}
+
+	public Integer getTextPosition() {
+		return textPosition;
+	}
+
+	public void setTextPosition(Integer textPosition) {
+		this.textPosition = textPosition;
 	}
 
 	public List<Mention> getMentions() {

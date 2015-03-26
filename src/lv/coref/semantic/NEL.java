@@ -18,24 +18,33 @@
 package lv.coref.semantic;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TimeZone;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import lv.coref.data.Mention;
 import lv.coref.data.MentionChain;
 import lv.coref.data.Text;
 import lv.coref.io.Config;
 import lv.coref.io.CorefPipe;
 import lv.coref.io.PipeClient;
+import lv.coref.lv.AnalyzerUtils;
 import lv.coref.lv.Constants.Category;
 import lv.coref.semantic.KNB.EntityData;
+import lv.coref.semantic.KNB.EntityMentionData;
 import lv.coref.semantic.KNB.FrameData;
 import lv.util.Pair;
 
@@ -45,8 +54,11 @@ public class NEL {
 
 	private static NEL nel = null;
 
-	boolean REAL_UPLOAD = false;
-	boolean SHOW_DISAMBUGATION = false;
+	protected boolean REAL_UPLOAD = false;
+	protected boolean VERBOSE = false;
+	protected boolean SHOW_DISAMBIGUGATION = false;
+	protected boolean SHOW_INSERTS = false;
+	protected boolean SHOW_ENTITIES = false; // show created entities
 
 	public static NEL getInstance() {
 		if (nel == null) {
@@ -59,8 +71,22 @@ public class NEL {
 	public void init(Properties prop) {
 		if (prop.getProperty(Config.PROP_NEL_UPLOAD, "false").equalsIgnoreCase("true"))
 			REAL_UPLOAD = true;
+		if (prop.getProperty(Config.PROP_NEL_VERBOSE, "false").equalsIgnoreCase("true"))
+			VERBOSE = true;
 		if (prop.getProperty(Config.PROP_NEL_SHOW_DISAMBIGUATION, "false").equalsIgnoreCase("true"))
-			SHOW_DISAMBUGATION = true;
+			SHOW_DISAMBIGUGATION = true;
+		if (prop.getProperty(Config.PROP_NEL_SHOW_INSERTS, "false").equalsIgnoreCase("true"))
+			SHOW_INSERTS = true;
+		if (prop.getProperty(Config.PROP_NEL_SHOW_ENTITIES, "false").equalsIgnoreCase("true"))
+			SHOW_ENTITIES = true;
+	}	
+
+	public void setRealUpload(boolean realUpload) {
+		this.REAL_UPLOAD = realUpload;
+	}
+	
+	public void setShowDisambiguation(boolean showDisambiguation) {
+		this.SHOW_DISAMBIGUGATION = showDisambiguation;
 	}
 
 	public List<Entity> link(Text text) {
@@ -73,9 +99,14 @@ public class NEL {
 			}
 		}
 		fetchGlobalIds(text, entities);
-		if (SHOW_DISAMBUGATION) {
+		if (SHOW_ENTITIES || VERBOSE) {
 			for (Entity e : entities) {
-				System.err.printf("NEL entity: %s\n", e);
+				System.err.printf("\nNEL_ENTITY: #%d \"%s\" (%s) %s %s\n", e.getId(), e.getTitle(), e.getCategory(), e.getAliases(), e.getLocations());
+				if (VERBOSE)
+					for (Mention m : e.mentions) {
+//						System.err.printf("\t%s\n", m);
+						System.err.printf("\t%s\t\t\t%s\n", m, m.getSentence().getTextString());
+					}
 			}
 		}
 		return entities;
@@ -97,35 +128,88 @@ public class NEL {
 	}
 
 	public void fetchGlobalIds(Text text, List<Entity> entities) {
+		String documentId = text.getId();
 		List<Pair<Entity, Set<Integer>>> toDisambiguate = new ArrayList<>(entities.size());
-		for (Entity e : entities) {
-			Set<Integer> ids = getGlobalIdCandidates(e);
+		
+		Set<Integer> disambiguationWhitelist = KNB.getInstance().getBlessedEntityMentions(documentId);
+		
+		for (Entity entity : entities) {
+			Set<Integer> ids = getGlobalIdCandidates(entity);
 			if (ids.size() == 0) {
 				// ieliek DB jaunu entītiju
-				e.setId(-1);
+				EntityData ed = new EntityData();
+				
+				ed.name = entity.getTitle();
+				if (entity.category.equals(Category.person)) {
+					ed.aliases = NELUtils.personAliases(ed.name);
+				} else if (entity.category.equals(Category.organization)) {
+					ed.aliases = NELUtils.orgAliases(ed.name);
+					// Organizācijām te var izveidoties pilnāka pamatforma
+					ed.name = ed.aliases.get(0);
+				} else {
+					// Šeit ņemam tikai representative, nevis visus aliasus ko koreferences 
+					// atrod. Ja ņemtu visus, tad te būtu interesanti jāfiltrē lai nebūtu 
+					// nekorektas apvienošanas kā direktors -> skolas direktors un 
+					// gads -> 1983. gads
+					ed.aliases.add(ed.name);
+				}
+				ed.inflections = AnalyzerUtils.inflectJson(ed.name, entity.getCategory().toString()).toJSONString();
+				ed.category = KNBUtils.getEntityTypeCode(entity.getCategory().toString());
+				if (ed.category == 3) {
+					ed.outerIds.add("FP-" + UUID.randomUUID());
+				}
+				if (ed.category == 2) {
+					ed.outerIds.add("JP-" + UUID.randomUUID());
+				}
+				ed.source = String.format("Upload %s, %s at %s", documentId, entity.titleMention.getComment(), NELUtils.isoDateFormat.format(new Date()));
+				
+				if (SHOW_INSERTS || VERBOSE) {
+					System.err.printf("\nUPLOAD_ENTITY: \"%s\" (%s) %s\n", entity.getTitle(), entity.getCategory(), entity.getAliases());
+					if (VERBOSE)
+						for (Mention m : entity.mentions) {
+							System.err.printf("\t%s\t\t%s\n", m, m.getSentence().getTextString());
+						}
+				}
+				entity.setId(-1);
+				if (REAL_UPLOAD) {
+					entity.id = KNB.getInstance().putEntity(ed, false);
+					EntityMentionData em = new EntityMentionData(entity.id, documentId);
+					em.locations = entity.locations;
+					KNB.getInstance().putEntityMention(em);
+				}
 				continue;
 			}
-			// inWhitelist = False
-			// for candidateID in matchedEntities:
-			// if candidateID in disambiguationWhitelist: # Ja ir blessed
-			// norāde, ka tieši šī globālā entītija ir šajā dokumentā
-			// entity['GlobalID'] = candidateID
-			// inWhitelist = True
-			// if inWhitelist: # Šajā gadījumā neskatamies kā disambiguēt
-			// continue
-
-			// Disabiguējam un augšupielādējam tikai personas un organizācijas
-			if (ids.size() > 1
-					&& (e.getCategory().equals(Category.person) || e.getCategory().equals(Category.organization))) {
-				toDisambiguate.add(new Pair<Entity, Set<Integer>>(e, ids));
+			
+			// Pārbaudām blessed entītijas šajā dokumentā
+			boolean inWhiteList = false;
+			for (int candidateId : ids) {
+				if (disambiguationWhitelist.contains(candidateId)) {
+					// Ja ir blessed norāde, ka tieši šī globālā entītija ir šajā dokumentā
+					entity.setId(candidateId);
+					log.log(Level.INFO, "Found {0} candidate id in blessed mentions: {1}", 
+							new Object[] {entity.getTitle(), candidateId});
+					inWhiteList = true;
+				}
+			}
+			if (inWhiteList)
+				continue; // Šajā gadījumā neskatamies kā disambiguēt
+			
+			
+			// Disabiguējam un augšupielādējam; tikai personas un organizācijas
+			if (ids.size() > 1 && (entity.getCategory().equals(Category.person)
+					|| entity.getCategory().equals(Category.organization))) {
+				toDisambiguate.add(new Pair<Entity, Set<Integer>>(entity, ids));
 			} else {
 				// klasifikatoriem tāpat daudzmaz vienalga, vai pie kaut kā
 				// piesaista vai veido jaunu
-				e.setId(ids.iterator().next());
-				if (REAL_UPLOAD
-						&& (e.getCategory().equals(Category.person) || e.getCategory().equals(Category.organization))) {
-					// api.insertMention(matchedEntities[0], documentId,
-					// locations=entity.get('locations'))
+				entity.setId(ids.iterator().next());
+				
+				// REAL_UPLOAD
+				if (REAL_UPLOAD && (entity.getCategory().equals(Category.person)
+						|| entity.getCategory().equals(Category.organization))) {
+					EntityMentionData em = new EntityMentionData(entity.getId(), documentId);
+					em.locations = entity.locations; // TODO paļaujamies, ka dokumenti DB ir vai tiks pievienoti
+					KNB.getInstance().putEntityMention(em);
 				}
 			}
 		}
@@ -141,19 +225,22 @@ public class NEL {
 			if (id == null) {
 				log.log(Level.WARNING, "Failed to resolve entity {0} {1} from candidates {2}",
 						new Object[] { entity.getTitle(), entity.getAliases(), candidates });
-				continue;
+			} else {
+				if (REAL_UPLOAD) {
+					EntityMentionData em = new EntityMentionData(id, documentId);
+					em.locations = ""; // TODO paļaujamies, ka dokumenti DB ir vai tiks pievienoti
+					em.chosen = true;
+					em.cos_similarity = entity.cosineSimilarity;
+					// TODO vajadzētu ielikt arī informāciju par citiem atrastajiem kandidātiem
+					KNB.getInstance().putEntityMention(em);
+				}
 			}
-			entity.setId(id);
 		}
 	}
 
 	/**
 	 * Disambiguē dokumenta entītijas
-	 * 
-	 * @param entity
-	 * @param candidates
-	 * @param text
-	 * @param mentionBag
+	 * Rediģē Entity datus: uzstāda globālo id un cosineSimilarity
 	 */
 	public Integer dissambiguate(Entity entity, Collection<Integer> candidates, Text text, Bag mentionBag) {
 
@@ -162,12 +249,11 @@ public class NEL {
 		eBags.nameBag = CDCBags.makeNameBag(entity);
 		eBags.contextBag = CDCBags.makeContextBag(entity);
 
-		if (SHOW_DISAMBUGATION) {
-			System.err.printf("\n--- Disambiguate %s (%s)\n", entity.getTitle(), entity.getCategory());
-			System.err.printf("nameBag : %s\n", eBags.nameBag);
-			System.err.printf("mentionBag : %s\n", eBags.mentionBag);
-			System.err.printf("contextBag : %s\n", eBags.contextBag);
-			System.err.println("----");
+		if (SHOW_DISAMBIGUGATION || VERBOSE) {
+			System.err.printf("\nDISAMBIGUATE: %s (%s) %s\n", entity.getTitle(), entity.getCategory(), entity.getAliases());
+			System.err.printf("\tnameBag : %s\n", eBags.nameBag);
+			System.err.printf("\tmentionBag : %s\n", eBags.mentionBag);
+			System.err.printf("\tcontextBag : %s\n", eBags.contextBag);
 		}
 
 		double maxSim = -99999;
@@ -187,14 +273,14 @@ public class NEL {
 			}
 //			bags = NEL.makeGlobalEntityBags(candidateId);
 
-			if (SHOW_DISAMBUGATION) {
+			if (SHOW_DISAMBIGUGATION || VERBOSE) {
 				EntityData ed = KNB.getInstance().getEntityData(candidateId, false);
-				System.err.printf("Candidate: #%s %s\n", candidateId, ed.name);
-				System.err.printf("%.6f name match %s\n", CDCBags.cosineSimilarity(eBags.nameBag, bags.nameBag),
+				System.err.printf("\tCandidate: #%s \"%s\" %s\n", candidateId, ed.name, ed.aliases);
+				System.err.printf("\t\t%.6f name match %s\n", CDCBags.cosineSimilarity(eBags.nameBag, bags.nameBag),
 						bags.nameBag);
-				System.err.printf("%.6f mention match %s\n",
+				System.err.printf("\t\t%.6f mention match %s\n",
 						CDCBags.cosineSimilarity(eBags.mentionBag, bags.mentionBag), bags.mentionBag);
-				System.err.printf("%.6f context match %s\n",
+				System.err.printf("\t\t%.6f context match %s\n",
 						CDCBags.cosineSimilarity(eBags.contextBag, bags.contextBag), bags.contextBag);
 			}
 
@@ -208,20 +294,48 @@ public class NEL {
 
 		if (maxId == null) {
 			log.log(Level.INFO, "Did not resolve candidates for {0} {1}: maxId = {2}, maxSim = {3} ", new Object[] {
-					entity.getTitle(), candidates, maxId, maxSim }); // parameter
-																		// log
-																		// messages
-																		// cannot
-																		// contain
-																		// "'"
+					entity.getTitle(), candidates, maxId, maxSim });
 		}
 
-		if (SHOW_DISAMBUGATION) {
-			System.err.printf("\nChosed: %s (%.4f)\n\n", maxId, maxSim);
+		if (SHOW_DISAMBIGUGATION || VERBOSE) {
+			System.err.printf("\tChosed: %s (%.4f)\n", maxId, maxSim);
 		}
+		entity.id =maxId;
+		entity.cosineSimilarity = maxSim;
 
 		return maxId;
 	}
+	
+	
+//	/**
+//	 * Entītiju disambiguācijai - konkrētā ID 'a priori' ticamība
+//	 */
+//	public Double getOuterIdScore(String id) {
+//		// TODO - ideālā gadījumā mums būtu dati par to, cik dokumentos kura entīte parādās
+//	    // Piemēram, ImantsZiedonis1 ir 3300 dokumentos, ImantsZiedonis2 ir 0 dokumentos.
+//	
+//		if (id == "F6A8C3B7-AC39-11D4-9D85-00A0C9CFC2DB") return 100.0; // Imants Ziedonis, vienīgais pieminētais
+//		if (id == "3AFC2FB8-4879-11D5-AE84-0010B5A3DE2F") return -100.0; //šis neparādās reālos dokumentos
+//
+//		if (id == "F5C17E17-AC39-11D4-9D85-00A0C9CFC2DB") return 100.0; //Gunārs Upenieks, vienīgais pieminētais
+//	    if (id == "8E336987-D834-47F8-A590-D0D473FABADE") return -100.0; //šis neparādās reālos dokumentos
+//	
+//	    if (id == "F6A8BD85-AC39-11D4-9D85-00A0C9CFC2DB") return 50.0; //'primārais' Gunārs Freimanis (ir citi kam nav LETA-profilu)
+//	    if (id == "CD900493-1E9A-11D5-AE08-0010B594D402") return -50.0; //šis gandrīz neparādās reālos dokumentos
+//	
+//	    if (id == "F6A8B27C-AC39-11D4-9D85-00A0C9CFC2DB") return 50.0; //'primārais' Jānis Freimanis (ir citi kam nav LETA-profilu)
+//	    if (id == "F6A8B27F-AC39-11D4-9D85-00A0C9CFC2DB") return -100.0; //šis neparādās reālos dokumentos
+//	    if (id == "F6A8B279-AC39-11D4-9D85-00A0C9CFC2DB") return -1000.0; //tukšs profils - gļuks LETA sourcedatos http://www.leta.lv/archive/search/?patern=Freimanis%20J%C4%81nis&item=F6A8B279-AC39-11D4-9D85-00A0C9CFC2DB
+//	
+//	    if (id == "F6A8BDCF-AC39-11D4-9D85-00A0C9CFC2DB") return 50.0; //biežākais Jānis Gailis (ir arī citi kam nav LETA-profilu)
+//	    if (id == "F6A8BDD2-AC39-11D4-9D85-00A0C9CFC2DB") return 30.0; //retāk pieminēts 
+//	    if (id == "F6A8BDD5-AC39-11D4-9D85-00A0C9CFC2DB") return 10.0; //pavisam reti pieminēts 
+//	
+//	    if (id == null) return -100.0;// ja nu ir izvēle starp tādu entītiju kam ir profils un tādu, kam nav - liekam pie 'zināmās'
+//	    if (id.startsWith("FP-") || id.startsWith("JP-")) return -10.0; // Kamēr nav entītiju blesošana, šādi prioritizējam LETA iepriekšējos profilus (VIP) no automātiski veidotajiem
+//	    
+//	    return 0.0;
+//	}
 
 	/**
 	 * Savāc visu vajadzīgo lai uztaisītu globālajai entītijai CDC datus
@@ -342,16 +456,5 @@ public class NEL {
 		// System.err.println(fds);
 		return cdcBags;
 	}
-
-	public static void main(String[] args) throws IOException {
-		Config.logInit();
-		Text text = PipeClient.getInstance().read("resource/sample/test_taube.txt");
-		// Text text =
-		// Annotation.makeText(Pipe.getInstance().read("resource/sample/test_taube.txt"));
-		CorefPipe.getInstance().process(text);
-		System.err.println(text);
-		NEL.getInstance().link(text);
-		KNB.getInstance().close();
-		log.warning("hello");
-	}
+	
 }

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -31,6 +32,10 @@ import lv.coref.io.Config.FORMAT;
 import lv.coref.mf.MentionFinder;
 import lv.coref.rules.Ruler;
 import lv.coref.semantic.NEL;
+import lv.label.Annotation;
+import lv.label.Labels.LabelDocumentId;
+import lv.pipe.Pipe;
+import lv.util.FileUtils;
 
 public class CorefPipe {
 	private final static Logger log = Logger.getLogger(CorefPipe.class.getName());
@@ -151,6 +156,10 @@ public class CorefPipe {
 	}
 	
 	public void process(Text text, boolean runNEL) {
+		if (text == null) {
+			log.log(Level.WARNING, "Asked to process null text file");
+			return;
+		}
 		new MentionFinder().findMentions(text);
 		new Ruler().resolve(text);
 		if (Config.getInstance().isTrue(Config.PROP_COREF_REMOVE_COMMON_UKNOWN_SINGLETONS))	
@@ -161,6 +170,31 @@ public class CorefPipe {
 			text.removeDescriptorMentionTokens();
 		if (runNEL && Config.getInstance().isTrue(Config.PROP_KNB_ENABLE))
 			NEL.getInstance().link(text);
+	}
+	
+	public static Annotation solveFile(String filename, boolean usePipeClient, String documentId) {
+		String textString = null;
+		try {
+			textString = FileUtils.readFile(filename);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return solveText(textString, usePipeClient, documentId);
+	}
+
+	public static Annotation solveText(String textString, boolean usePipeClient, String documentId) {
+		Annotation doc = new Annotation();
+		doc.set(LabelDocumentId.class, documentId);
+		doc.setText(textString);
+		if (usePipeClient) {
+			Text text = PipeClient.getInstance().getText(textString);
+			text.setId(documentId);
+			CorefPipe.getInstance().process(text);
+			doc = Annotation.makeAnnotationFromText(doc, text);
+		} else {
+			doc = Pipe.getInstance().process(doc);
+		}
+		return doc;
 	}
 
 	public static void main(String args[]) {

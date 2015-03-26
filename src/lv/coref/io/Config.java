@@ -220,17 +220,29 @@ public class Config {
 	
 	@Property(descr = "Use database for NEL [true,false]", def = "true")
 	public static String PROP_KNB_ENABLE = "knb.enable";
+	
+	@Property(descr = "KNB dataset [int]", def = "0")
+	public static String PROP_KNB_DATASET = "knb.dataset";
 
 	@Property(descr = "Preprocessing pipeline webservice (produces conll with ner and syntax from text)", def = "http://localhost:8182/nertagger")
 	public static String PROP_PREPROCESS_WEBSERVICE = "web.pipe";
 	
 	public static final String PREFIX_NEL = "nel.";
 	
-	@Property(descr = "Prints disambiguation decisions to std.err [true,false]", def = "false")
+	@Property(descr = "Prints NEL disambiguation information to std.err [true,false]", def = "false")
 	public static String PROP_NEL_SHOW_DISAMBIGUATION = "nel.showDisambiguation";
 	
-	@Property(descr = "Synchronize entities with database during Named Entity Linking [true,false]", def = "false")
+	@Property(descr = "Print inserted entities [true,false]", def = "false")
+	public static String PROP_NEL_SHOW_INSERTS = "nel.showInserts";
+	
+	@Property(descr = "Print linked entities [true,false]", def = "false")
+	public static String PROP_NEL_SHOW_ENTITIES = "nel.showEntities";
+	
+	@Property(descr = "Allow NEL to upload entities to database [true,false]", def = "false")
 	public static String PROP_NEL_UPLOAD = "nel.upload";
+	
+	@Property(descr = "Print all verbose NEL decisions [true,false]", def = "false")
+	public static String PROP_NEL_VERBOSE = "nel.verbose";
 	
 	public static void main(String[] args) {
 		Config cc = new Config();

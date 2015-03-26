@@ -53,13 +53,34 @@ public class CDCBags {
 		if (json.containsKey("contextbag"))
 			contextBag.putAll((Map<String, Long>) json.get("contextbag"));
 	}
+	
+	@SuppressWarnings("unchecked")
+	public JSONObject getJson() {
+		JSONObject json = new JSONObject();
+		JSONObject mentions = new JSONObject();
+		JSONObject names = new JSONObject();
+		JSONObject contexts = new JSONObject();
+		for (Map.Entry<String, Long> e : mentionBag.entrySet()) {
+			mentions.put(e.getKey(), e.getValue());
+		}
+		for (Map.Entry<String, Long> e : nameBag.entrySet()) {
+			names.put(e.getKey(), e.getValue());
+		}
+		for (Map.Entry<String, Long> e : contextBag.entrySet()) {
+			contexts.put(e.getKey(), e.getValue());
+		}		
+		json.put("mentionbag", mentions);
+		json.put("namebag", names);
+		json.put("contextbag", contexts);
+		return json;
+	}
 
 	public static Bag makeNameBag(Entity entity) {
 		Bag bag = new Bag();
 		for (String alias : entity.getAliases()) {
 			bag.add(alias.split("\\s+"));
 		}
-		for (String titleWord : entity.getTitle().split("\\s+"))
+		for (String titleWord : entity.title.split("\\s+"))
 			bag.put(titleWord, 0l);
 		return bag;
 	}
@@ -67,10 +88,10 @@ public class CDCBags {
 	public static Bag makeMentionBag(Collection<Entity> entities) {
 		Bag bag = new Bag();
 		for (Entity entity : entities) {
-			Category cat = entity.getCategory();
+			Category cat = entity.category;
 			if (cat.equals(Category.person) || cat.equals(Category.organization) || cat.equals(Category.location)) {
 				// bag.add(entity.getUid());
-				bag.add(entity.getTitle()); // only for debug
+				bag.add(entity.title); // only for debug
 			}
 		}
 		return bag;
@@ -90,7 +111,7 @@ public class CDCBags {
 
 	public static Bag makeContextBag(Entity entity) {
 		Bag bag = new Bag();
-		Mention titleMention = entity.getTitleMention();
+		Mention titleMention = entity.titleMention;
 		if (titleMention == null) {
 			log.warning(String.format("NULL titleMention for %s", entity));
 			return bag;
@@ -137,6 +158,20 @@ public class CDCBags {
 		res += cosineSimilarity(a.contextBag, b.contextBag);
 		return res;
 	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof CDCBags) {
+			CDCBags bags = (CDCBags) o;
+			if (!mentionBag.equals(bags.mentionBag))
+				return false;
+			if (!nameBag.equals(bags.nameBag))
+				return false;
+			if (!contextBag.equals(bags.contextBag))
+				return false;
+			return true;
+		}
+		return false;
+	}
 
 	public String toString() {
 		return String.format("{mentionbag=%s namebag=%s contextbag=%s}", mentionBag, nameBag, contextBag);
@@ -165,5 +200,21 @@ class Bag extends HashMap<String, Long> {
 
 	public void set(String word, long value) {
 		put(word, value);
+	}
+	
+	public boolean equals(Object o) {
+		if (o instanceof Bag) {
+			Bag bag = (Bag) o;
+			for (Map.Entry<String, Long> e : this.entrySet()) {
+				if (!bag.containsKey(e.getKey()) || bag.get(e.getKey()) != e.getValue()) 
+					return false;
+			}
+			for (Map.Entry<String, Long> e : bag.entrySet()) {
+				if (!this.containsKey(e.getKey()) || this.get(e.getKey()) != e.getValue()) 
+					return false;
+			}
+			return true;
+		}
+		return false;
 	}
 }

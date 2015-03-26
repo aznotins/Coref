@@ -74,6 +74,7 @@ public class Ruler {
 							// a.getMentionChain().add(mc);
 							// t.dropMentionChain(mc);
 							getDescription(r, m, a);
+							// m.addComment(String.format("%s<%s>",r.getName(), a.getString()));
 						}
 					}
 				}

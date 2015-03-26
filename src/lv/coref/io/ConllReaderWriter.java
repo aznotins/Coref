@@ -90,6 +90,7 @@ public class ConllReaderWriter extends ReaderWriter {
 		this.conll = conll;
 		setFileID(id);
 		Text text = new Text(id);
+		int absSentPos = 0;
 		for (int iPar = 0; iPar < conll.size(); iPar++) {
 			List<List<List<String>>> par = conll.get(iPar);
 			Paragraph paragraph = new Paragraph(iPar);
@@ -97,6 +98,7 @@ public class ConllReaderWriter extends ReaderWriter {
 			for (int iSent = 0; iSent < par.size(); iSent++) {
 				List<List<String>> sent = par.get(iSent);
 				Sentence sentence = new Sentence(iSent);
+				sentence.setTextPosition(absSentPos++);
 				boolean corefColumn = false;
 				for (int iTok = 0; iTok < sent.size(); iTok++) {
 					List<String> tok = sent.get(iTok);

@@ -9,6 +9,9 @@ input = conll
 output = json
 solve = yes
 
+# default all
+# pipe.run = tokenizer tagger ner parser spd coref nel
+
 coref.remSingletons = false
 coref.remCommonUnknownSingletons = true
 coref.remDescriptors = true
@@ -18,8 +21,13 @@ knb.url = jdbc:postgresql://localhost:5432/knb
 knb.user = user
 knb.password = password
 
+knb.dataset = 10
+
 nel.upload = false
-nel.showDisambiguation = true
+nel.verbose = false
+nel.showEntities = false
+nel.showDisambiguation = false
+nel.showInserts = false
 
 ## Logging
 ## Levels are [ SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, OFF, ALL ]

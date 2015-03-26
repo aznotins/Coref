@@ -35,6 +35,8 @@ public class Appositive extends Rule {
 			return false;
 		if (!m.isProperMention())
 			return false;
+		if (!m.getCategory().compatible(a.getCategory()))
+			return false;
 //		if (a.isAcronym() || m.isAcronym())
 //			return false;
 		if (m.getCategory().equals(Category.location) || a.getCategory().equals(Category.location)) return false;

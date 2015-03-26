@@ -17,6 +17,8 @@
  *******************************************************************************/
 package lv.coref.semantic;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -84,19 +86,47 @@ public class KNBUtils {
 	public static String[] entityTypes = { null, "location", "organization", "person", "profession", "sum", "time",
 			"relationship", "qualification", "descriptor", "relatives", "prize", "media", "product", "event",
 			"industry" };
+	
+	public static Map<String, Integer>entityTypeCodes = new HashMap<>();
+	static {
+		entityTypeCodes.put("location", 1);
+		entityTypeCodes.put("organization", 2);
+		entityTypeCodes.put("person", 3);
+		entityTypeCodes.put("profession", 4);
+		entityTypeCodes.put("sum", 5);
+		entityTypeCodes.put("time", 6);
+		entityTypeCodes.put("relationship", 7);
+		entityTypeCodes.put("qualification", 8);
+		entityTypeCodes.put("descriptor", 9);
+		entityTypeCodes.put("relatives", 10);
+		entityTypeCodes.put("prize", 11);
+		entityTypeCodes.put("media", 12);
+		entityTypeCodes.put("product", 13);
+		entityTypeCodes.put("event", 14);
+		entityTypeCodes.put("industry", 15);		
+	}
+	
+	public static int getEntityTypeCode(String name) {
+		if (name == null)
+			return 0;
+		if (name == "organizations")
+			name = "organization"; // TODO - salabo reālu situāciju datos, taču nav skaidrs kurā brīdī tādi bugaini dati tika izveidoti.
+		Integer code = entityTypeCodes.get(name);
+		if (code == null) {
+			log.log(Level.WARNING, "No such EntityCategory: {0}", name);
+			return 0;
+		} else {
+			return code;
+		}
+	}
 
 	public static String getEntityTypeName(int code) {
-		String name = "";
-		try {
-			name = entityTypes[code];
-			if (name == null) {
-				name = "";
-				log.log(Level.WARNING, "Bad EntityTypeCode (null): {0}", code);
-			}
-		} catch (ArrayIndexOutOfBoundsException e) {
-			log.log(Level.WARNING, "No such EntityTypeCode: {0}", code);
+		for (String name : entityTypeCodes.keySet()) {
+			if (entityTypeCodes.get(name) == code)
+				return name;
 		}
-		return name;
+		log.log(Level.WARNING, "No such EntityTypeCode: {0}", code);
+		return "";
 	}
 
 }

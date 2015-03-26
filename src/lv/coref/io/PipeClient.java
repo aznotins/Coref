@@ -86,13 +86,14 @@ public class PipeClient {
 		try {
 
 			String result = client.handle(r).getEntityAsText();
+//			System.err.println(result);
 			if (result == null) {
 				throw new Exception("Null in response");
 			}
 			StringReader sr = new StringReader(result);
 			t = new ConllReaderWriter().read(new BufferedReader(sr));
 		} catch (Exception e) {
-			log.log(Level.SEVERE, "Unable to get POST response", e);
+			log.log(Level.SEVERE, "Unable to get response (please run PipeServer)", e);
 		}
 
 		return t;

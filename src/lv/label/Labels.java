@@ -36,6 +36,8 @@ public class Labels {
 
 	public static class LabelIndex implements Label<Integer> {
 	}
+	public static class LabelIndexAbsolute implements Label<Integer> {
+	}
 
 	public static class LabelLemma implements Label<String> {
 	}

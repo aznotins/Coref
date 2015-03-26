@@ -10,7 +10,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.json.simple.JSONObject;
+
 import lv.coref.lv.Constants.Category;
+import lv.label.Labels.LabelInflections;
 import lv.lumii.expressions.Expression;
 import lv.lumii.expressions.Expression.Gender;
 import lv.semti.morphology.analyzer.Analyzer;
@@ -94,6 +97,16 @@ public class AnalyzerUtils {
 			log.log(Level.WARNING, "Error inflecting: " + name, e);
 		}
 		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static JSONObject inflectJson(String name, String category) {
+		Map<String, String> inflections = inflect(name, category);
+		JSONObject jsonInflections = new JSONObject();
+		for (String i_case : inflections.keySet()) {
+			jsonInflections.put(i_case, inflections.get(i_case));
+		}
+		return jsonInflections;
 	}
 	
 	public static void inflectFileContents(String infile, String outfile) throws IOException {
