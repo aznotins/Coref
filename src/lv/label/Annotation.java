@@ -41,34 +41,7 @@ import lv.coref.io.JsonReaderWriter;
 import lv.coref.lv.AnalyzerUtils;
 import lv.coref.lv.Constants.Type;
 import lv.coref.semantic.Entity;
-import lv.label.Labels.LabelAliases;
-import lv.label.Labels.LabelDependency;
-import lv.label.Labels.LabelDocumentDate;
-import lv.label.Labels.LabelDocumentId;
-import lv.label.Labels.LabelEntities;
-import lv.label.Labels.LabelEntityIsTitle;
-import lv.label.Labels.LabelId;
-import lv.label.Labels.LabelIdGlobal;
-import lv.label.Labels.LabelIdxEnd;
-import lv.label.Labels.LabelIdxStart;
-import lv.label.Labels.LabelIndex;
-import lv.label.Labels.LabelInflections;
-import lv.label.Labels.LabelLemma;
-import lv.label.Labels.LabelList;
-import lv.label.Labels.LabelMentions;
-import lv.label.Labels.LabelMorphoFeatures;
-import lv.label.Labels.LabelNer;
-import lv.label.Labels.LabelParagraphs;
-import lv.label.Labels.LabelParent;
-import lv.label.Labels.LabelPosTag;
-import lv.label.Labels.LabelPosTagSimple;
-import lv.label.Labels.LabelSDP;
-import lv.label.Labels.LabelSDPLabel;
-import lv.label.Labels.LabelSDPTarget;
-import lv.label.Labels.LabelSentences;
-import lv.label.Labels.LabelText;
-import lv.label.Labels.LabelTokens;
-import lv.label.Labels.LabelType;
+import lv.label.Labels.*;
 import lv.util.SimpleTypeSafeMap;
 import lv.util.Triple;
 
@@ -246,6 +219,7 @@ public class Annotation extends SimpleTypeSafeMap {
 					if (!s.has(LabelTokens.class))
 						continue;
 					Sentence sent = new Sentence();
+					sent.setTextPosition(s.get(LabelIndexAbsolute.class, -1));
 					for (Annotation t : s.get(LabelTokens.class)) {
 						Token tok = new Token(t.get(LabelText.class), t.get(LabelLemma.class), t.get(LabelPosTag.class));
 						tok.setPos(t.get(LabelPosTagSimple.class));

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Properties;
 
 import lv.label.Annotation;
+import lv.label.Labels.LabelIndexAbsolute;
 import lv.label.Labels.LabelParagraphs;
 import lv.label.Labels.LabelSentences;
 import lv.label.Labels.LabelText;
@@ -76,6 +77,13 @@ public class Tokenizer implements PipeTool {
 				pLabel.setText(paragraph);
 				pLabels.add(pLabel);
 				processParagraph(pLabel);
+			}
+		}
+		int absSentIdx = 0;
+		for (Annotation paragraph : pLabels) {
+			if (!paragraph.has(LabelSentences.class)) continue;
+			for (Annotation sLabel : paragraph.get(LabelSentences.class)) {
+				sLabel.set(LabelIndexAbsolute.class, absSentIdx++);
 			}
 		}
 		doc.set(LabelParagraphs.class, pLabels);
