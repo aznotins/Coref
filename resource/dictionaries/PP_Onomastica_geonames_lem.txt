@@ -789,7 +789,6 @@ location	Gobs
 location	Golfs straume
 location	Gomeļa
 location	Gomeļa apgabals
-location	Gorīt
 location	Gorkija
 location	Gorkija apgabals
 location	Gorlovska
@@ -1218,7 +1217,6 @@ location	Katīčs
 location	Katlakalns
 location	Katmands
 location	Katovice
-location	Katra
 location	Katvari
 location	Kaugurciems
 location	Kaukāzs kalns
@@ -1586,7 +1584,6 @@ location	Liverpūle
 location	Livorna
 location	Lizums
 location	Lježa
-location	Lobīt
 location	Lodza
 location	Lodžs ezers
 location	Lofots sala
@@ -1878,7 +1875,6 @@ location	Murjāņi
 location	Murmanska
 location	Murmanska apgabals
 location	Murmastiene
-location	Mūsa
 location	Muse
 location	Musninks
 location	Nagasaks
@@ -1922,13 +1918,11 @@ location	Nemunaite
 location	Nemunēle
 location	Nemunēlet Radvilišķs
 location	Nepāla
-location	Nevadīt
 location	Nepāla Karaliste
 location	Nere
 location	Nereta
 location	Neringa
 location	Nesaule kalns
-location	Nevadīt
 location	Nevarēnāt
 location	Neveja
 location	Nevēža
@@ -2189,7 +2183,6 @@ location	Pieniņš
 location	Pievolga
 location	Pikstere ezers
 location	Piķeļs
-location	Pildīt
 location	Pilda ezers
 location	Pilsblīdene
 location	Pilsrundāle
@@ -2373,7 +2366,6 @@ location	Roterdama
 location	Ruanda
 location	Rumānija
 location	Rumānija Sociālistiska Republika
-location	Rūnīt
 location	Safolkt
 location	Sahalīnt
 location	Sahāra
@@ -2401,7 +2393,6 @@ location	Sapors
 location	Saragost
 location	Saravakt
 location	Sardīnija
-location	Sarīt
 location	Sarkana jūra
 location	Saseksa
 location	Saskačevant
@@ -2711,7 +2702,6 @@ location	Sahāra
 location	Saigont
 location	Saimties ezers
 location	Sajāns
-location	Sacīt
 location	Saksija
 location	Sakstagals
 location	Sals
@@ -2767,7 +2757,6 @@ location	Sārcene ezers
 location	Saravakt
 location	Sardīnija
 location	Sārems
-location	Sarīt
 location	Sarģenāt
 location	Sarkana jūra
 location	Saseksa

@@ -65,6 +65,19 @@ public class Token implements Comparable<Token> {
 		this.tokenCase = MorphoUtils.getCase(tag);
 		this.gender = MorphoUtils.getGender(tag);
 		this.person = MorphoUtils.getPerson(tag);
+		
+		// FIXME morphology incorrectly recognized lemmas
+		if (lemma.equals("Mūsa")) {
+			this.lemma = "mūsa";
+			this.posTag = PosTag.P;
+			this.pronounType = PronType.DEFINITE;
+		}
+		if (lemma.equals("Katra")) {
+			this.lemma = "katra";
+			this.posTag = PosTag.P;
+			this.pronounType = PronType.PERSONAL;
+		}
+		
 	}
 	
 	public boolean isProper() {

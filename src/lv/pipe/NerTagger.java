@@ -73,12 +73,12 @@ public class NerTagger implements PipeTool {
 		properties = props;
 		List<AbstractSequenceClassifier<CoreLabel>> classifiers = new ArrayList<>();
 		if (props.containsKey("whiteList"))
-			classifiers.add(new ListNERSequenceClassifier(props.getProperty("whiteList"), true, true, true));
+			classifiers.add(new ListNERSequenceClassifier(props.getProperty("whiteList"), false, true, true));
 		if (props.containsKey("whiteListPrecise"))
 			classifiers.add(new ListNERSequenceClassifier(props.getProperty("whiteListPrecise"), true, false, true));
 		if (props.containsKey("loadClassifier"))
 			try {
-				classifiers.add(CRFClassifier.getClassifier(props.getProperty("loadClassifier")));
+				classifiers.add(CRFClassifier.getClassifier(props.getProperty("loadClassifier"), props));
 			} catch (ClassCastException e) {
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
