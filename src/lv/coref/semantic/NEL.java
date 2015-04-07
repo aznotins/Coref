@@ -17,20 +17,15 @@
  *******************************************************************************/
 package lv.coref.semantic;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,8 +34,6 @@ import lv.coref.data.Mention;
 import lv.coref.data.MentionChain;
 import lv.coref.data.Text;
 import lv.coref.io.Config;
-import lv.coref.io.CorefPipe;
-import lv.coref.io.PipeClient;
 import lv.coref.lv.AnalyzerUtils;
 import lv.coref.lv.Constants.Category;
 import lv.coref.semantic.KNB.EntityData;
@@ -275,13 +268,15 @@ public class NEL {
 
 			if (SHOW_DISAMBIGUGATION || VERBOSE) {
 				EntityData ed = KNB.getInstance().getEntityData(candidateId, false);
-				System.err.printf("\tCandidate: #%s \"%s\" %s\n", candidateId, ed.name, ed.aliases);
-				System.err.printf("\t\t%.6f name match %s\n", CDCBags.cosineSimilarity(eBags.nameBag, bags.nameBag),
-						bags.nameBag);
-				System.err.printf("\t\t%.6f mention match %s\n",
-						CDCBags.cosineSimilarity(eBags.mentionBag, bags.mentionBag), bags.mentionBag);
-				System.err.printf("\t\t%.6f context match %s\n",
-						CDCBags.cosineSimilarity(eBags.contextBag, bags.contextBag), bags.contextBag);
+				if (ed != null) {
+					System.err.printf("\tCandidate: #%s \"%s\" %s\n", candidateId, ed.name, ed.aliases);
+					System.err.printf("\t\t%.6f name match %s\n", CDCBags.cosineSimilarity(eBags.nameBag, bags.nameBag),
+							bags.nameBag);
+					System.err.printf("\t\t%.6f mention match %s\n",
+							CDCBags.cosineSimilarity(eBags.mentionBag, bags.mentionBag), bags.mentionBag);
+					System.err.printf("\t\t%.6f context match %s\n",
+							CDCBags.cosineSimilarity(eBags.contextBag, bags.contextBag), bags.contextBag);
+				}
 			}
 
 			double sim = CDCBags.cosineSimilarity(bags, eBags);
@@ -375,9 +370,9 @@ public class NEL {
 			// ka saite attiecas tieši uz šo konkrēto 'vārdabrāli'
 			// TODO maz blessoto, sourceId nesaskaņas
 
-			// if (!fd.blessed) continue;
+			if (!fd.blessed) continue;
 			// if (!fd.sourceId.equals("LETA CV dati"))
-			if (!fd.sourceId.startsWith("LETA CV"))
+			if (fd.sourceId == null || !fd.sourceId.startsWith("LETA CV"))
 				continue;
 
 			// System.err.println(fd);
