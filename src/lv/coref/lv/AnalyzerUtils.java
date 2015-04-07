@@ -10,33 +10,33 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.json.simple.JSONObject;
-
 import lv.coref.lv.Constants.Category;
-import lv.label.Labels.LabelInflections;
 import lv.lumii.expressions.Expression;
 import lv.lumii.expressions.Expression.Gender;
 import lv.semti.morphology.analyzer.Analyzer;
 import lv.semti.morphology.attributes.AttributeNames;
 
+import org.json.simple.JSONObject;
+
 public class AnalyzerUtils {
 
 	private final static Logger log = Logger.getLogger(AnalyzerUtils.class.getName());
+	
+	public static String MORPHO_MODEL = "models/lv-morpho-model.ser.gz";
 
-	// public static void init() {
-	// try {
-	// analyzer = new Analyzer("dist/Lexicon.xml", false);
-	// analyzer.setCacheSize(1000);
-	// } catch (Exception e) {
-	// log.log(Level.SEVERE, "Unable to initilize normalizer", e);
-	// }
-	// }
+	 public static void init() {
+		 try {
+			 Expression.initClassifier(MORPHO_MODEL);
+		 } catch (Exception e) {
+			 log.log(Level.SEVERE, "Unable to initilize morpho classifier", e);
+		 }
+	 }
 
 	public static String normalize(String name, String category) {
 		try {
 			Analyzer analyzer = Expression.getAnalyzer();
 			if (analyzer == null) {
-				Expression.initClassifier();
+				init();
 				analyzer = Expression.getAnalyzer();
 			}
 			analyzer.enableGuessing = true;
@@ -63,7 +63,7 @@ public class AnalyzerUtils {
 		try {
 			Analyzer analyzer = Expression.getAnalyzer();
 			if (analyzer == null) {
-				Expression.initClassifier();
+				init();
 				analyzer = Expression.getAnalyzer();
 			}
 			analyzer.enableGuessing = true;
