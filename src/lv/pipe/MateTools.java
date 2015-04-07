@@ -156,6 +156,14 @@ public class MateTools implements PipeTool {
 		for (int i = 0; i < graph.length(); i++) {
 			String label = graph.plabels[i];
 			int head = graph.pheads[i];
+						
+			// DEBUGINFO
+//			List<Annotation> e = edges.get(i);
+//			Annotation a2 = new Annotation();
+//			a2.set(LabelSDPLabel.class, "RAW : " + label);
+//			a2.set(LabelSDPTarget.class, head);
+//			e.add(a2);
+						
 			if ("_null_".equalsIgnoreCase(label))
 				continue;
 			if (label.contains(";"))
@@ -181,7 +189,6 @@ public class MateTools implements PipeTool {
 		// filling indirect edges
 		for (int node = 0; node < graph.length(); node++) {
 			String label = graph.plabels[node];
-			int head = graph.pheads[node];
 
 			if (!label.contains(";"))
 				continue; // if only direct edges, then nothing to do here
@@ -195,8 +202,7 @@ public class MateTools implements PipeTool {
 
 				while (parentlevel > 0) {
 					try {
-						Annotation direct_edge = edges.get(ancestor).get(0);
-						int potential_ancestor = direct_edge.get(LabelSDPTarget.class) - 1;
+						int potential_ancestor = graph.pheads[ancestor];
 						if (potential_ancestor>=0) ancestor = potential_ancestor;
 					} catch (IndexOutOfBoundsException e) {
 						break; // nav tāda ancestora
@@ -204,7 +210,7 @@ public class MateTools implements PipeTool {
 					parentlevel -= 1;
 				}
 				try {
-					List<Annotation> e = edges.get(ancestor);
+					edges.get(ancestor);
 				} catch (IndexOutOfBoundsException e) {
 					ancestor = node; // ja ancestors slikts
 				}				
@@ -236,7 +242,7 @@ public class MateTools implements PipeTool {
 	public static void main(String[] args) throws Exception {
 		Tokenizer tok = Tokenizer.getInstance();
 		Annotation doc = tok
-				.process("Uzņēmuma SIA \"Cirvis\" prezidents Jānis Bērziņš. Viņš uzņēmumu vada no 2015. gada.");
+				.process("Forumā ar prezentāciju \" Augstāka izglītības kvalitāte - augstāka dzīves kvalitāte \" uzstāsies \" Swedbank \" galvenais ekonomists Mārtiņš Kazāks un \" Iespējamās misijas \" direktore Mārīte Seile .");
 
 		MorphoTagger morpho = MorphoTagger.getInstance();
 		Properties morphoProp = new Properties();
