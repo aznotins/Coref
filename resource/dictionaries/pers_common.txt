@@ -1603,7 +1603,6 @@ person	skulptors
 person	vidrižnieks
 person	gruzīns
 person	pastnieks
-person	ministrija
 person	reanimatoloģe
 person	metinātājs
 person	antropoloģe
