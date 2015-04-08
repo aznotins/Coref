@@ -150,3 +150,5 @@ organization	autoosta
 organization	sanatorija
 organization	medijs
 organization	žurnāls
+organization	kanceleja
+organization	slimnīca

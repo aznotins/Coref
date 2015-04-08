@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
+import lv.coref.lv.Constants.Category;
+
 import org.junit.Test;
 
 public class AnalyzerUtilsTest {
@@ -29,5 +31,14 @@ public class AnalyzerUtilsTest {
 		assertEquals("Andra Ambaiņa", inflections.get("Ģenitīvs"));
 		assertEquals("Andri Ambaini", inflections.get("Akuzatīvs"));
 	}
-
+	
+	@Test
+	public void testNormalize5() {
+		assertEquals("Nacionālais veselības dienests", AnalyzerUtils.normalize("Nacionālā veselības dienesta", "organization"));
+		assertEquals("Nacionālais veselības dienests", AnalyzerUtils.normalize("Nacionālo veselības dienestu", "org"));
+	}
+	@Test
+	public void testNormalize6() {
+		assertEquals("Labklājības ministrija", AnalyzerUtils.normalize("Labklājības ministrijas", "organization"));
+	}
 }

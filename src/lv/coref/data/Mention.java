@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lv.coref.lv.Constants.Case;
 import lv.coref.lv.Constants.Category;
@@ -35,6 +37,9 @@ import lv.coref.lv.Constants.Type;
 import lv.coref.semantic.Entity;
 
 public class Mention implements Comparable<Mention> {
+	
+	private final static Logger log = Logger.getLogger(Mention.class.getName());
+
 	private MentionChain mentionChain;
 	private List<Token> tokens = new ArrayList<>();
 	private List<Token> heads = new ArrayList<>();
@@ -273,6 +278,10 @@ public class Mention implements Comparable<Mention> {
 	public Category getCategory() {
 		return category;
 	}
+	
+	public boolean hasCategory(Category category) {
+		return this.category.equals(category);
+	}
 
 	public void setCategory(String category) {
 		this.category = Category.get(category);
@@ -413,6 +422,29 @@ public class Mention implements Comparable<Mention> {
 	public void setType(Type type) {
 		this.type = type;
 	}
+	
+	public int getSize() {
+		return tokens.size();
+	}
+	
+	public int getStart() {
+		if (tokens.size() == 0) {
+			log.log(Level.WARNING, "getStart: Zero token size mention{0}", this);
+			return 0;
+		} else {
+			return tokens.get(0).getPosition();
+		}
+	}
+
+	public int getEnd() {
+		if (tokens.size() == 0) {
+			log.log(Level.WARNING, "getEnd: Zero token size mention {0}", this);
+			return 0;
+		} else {
+			return tokens.get(tokens.size() - 1).getPosition();
+		}
+	}
+
 
 	public List<Mention> getDescriptorMentions() {
 		return descriptorMentions;

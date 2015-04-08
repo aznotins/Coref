@@ -1,5 +1,7 @@
 package integration;
 
+import lv.coref.data.Mention;
+import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.io.Config;
 import lv.coref.io.CorefPipe;
@@ -12,10 +14,14 @@ import lv.util.StringUtils;
 public class MentionTest {
 	
 	public static boolean USE_PIPE_CLIENT = true;
+	public static boolean PRINT_ALL_MENTIONS = false;
 
 	public static void main(String[] args) {
 		Config.logInit();
-		Config.getInstance().set(Config.PROP_NEL_SHOW_DISAMBIGUATION, "false");
+		Config.getInstance().set(Config.PROP_KNB_ENABLE, "false");
+		Config.getInstance().set(Config.PROP_COREF_REMOVE_COMMON_UKNOWN_SINGLETONS, "false");
+		Config.getInstance().set(Config.PROP_COREF_REMOVE_DESCRIPTOR_MENTIONS, "true");
+		Config.getInstance().set(Config.PROP_COREF_REMOVE_SINGLETONS, "false");
 
 		testMention("Šodien biroja vadītājs Pēteris Kalniņš.", "biroja vadītājs", "profession");
 		testMention("Šodien Ķīnas sekretāre Inga Liepiņa.", "sekretāre", "profession");
@@ -65,6 +71,60 @@ public class MentionTest {
 		testMentions("Šodien biroja vadītājs Edvards Kušners.",
 				new MP("biroja vadītājs", "profession"));
 		
+		
+		
+		testMentions("Rīgas domes Īpašuma departamenta direktora vietniece.",
+				new MP("Rīgas domes", "organization"),
+				new MP("Īpašuma departamenta direktora vietniece", "profession"));
+		
+		testMentions("Labklājības ministrijas Farmācijas departamenta direktora vietniece.",
+				new MP("Labklājības ministrijas", "organization"),
+				new MP("Farmācijas departamenta direktora vietniece", "profession"));
+		
+		testMentions("Ārlietu ministrijas Juridiskā departamenta direktors.",
+				new MP("Ārlietu ministrijas", "organization"),
+				new MP("Juridiskā departamenta direktors", "profession"));
+		
+		testMentions("Rīgas domes Izglītības, jaunatnes un sporta departamenta direktors Andris Kalniņš.",
+				new MP("Rīgas domes", "organization"),
+				new MP("Izglītības, jaunatnes un sporta departamenta direktors", "profession"));
+		
+		testMentions("Rīgas domes Satiksmes departamenta (RDSD) vadītājs.",
+				new MP("Rīgas domes Satiksmes departamenta", "organization"),
+				new MP("vadītājs", "profession"));
+		
+		testMentions("Rīgas domes (RD) Satiksmes departamenta vadītājs Edgars Strods.",
+				new MP("Rīgas domes", "organization"),
+				new MP("Satiksmes departamenta vadītājs", "profession"));
+		
+		testMentions("SIA „Rīgas ūdens” un Rīgas domes Pilsētas attīstības departamenta vadītājs.",
+				new MP("Rīgas domes", "organization"),
+				new MP("Pilsētas attīstības departamenta vadītājs", "profession"));
+		
+		testMentions("Daugavpils pilsētas domes Jaunatnes departamenta vadītājs.",
+				new MP("Daugavpils pilsētas domes", "organization"),
+				new MP("Jaunatnes departamenta vadītājs", "profession"));
+		
+		testMentions("Administratīvo lietu departamenta vadītājs.",
+				new MP("Administratīvo lietu departamenta vadītājs", "profession"));
+		
+		testMentions("Eiropas Savienības fondu uzraudzības departamenta vadītājs.",
+				new MP("Eiropas Savienības fondu", "organization"),
+				new MP("uzraudzības departamenta vadītājs", "profession"));
+		
+		testMentions("Pilsonības un migrācijas lietu pārvaldes Iedzīvotāju reģistra departamenta vadītājs.",
+				new MP("Pilsonības un migrācijas lietu pārvaldes", "organization"),
+				new MP("Iedzīvotāju reģistra departamenta vadītājs", "profession"));
+		
+		testMentions("Satiksmes ministrijas Jūrlietu departamenta vadītājs.",
+				new MP("Satiksmes ministrijas", "organization"),
+				new MP("Jūrlietu departamenta vadītājs", "profession"));
+		
+		testMentions("AT departamenta vadītājs.",
+				new MP("AT", "organization"),
+				new MP("departamenta vadītājs", "profession"));
+		
+		
 		Pipe.close();
 		System.exit(0);
 	}
@@ -80,6 +140,7 @@ public class MentionTest {
 			return true;
 		} else {
 			System.err.printf("@ \"%s\" (%s)\n", mp.mentionString, mp.type);
+			//System.err.println(doc.toStringPretty());
 			return false;
 		}
 	}
@@ -92,6 +153,16 @@ public class MentionTest {
 	public static boolean testMentions(Annotation doc, MP... mentionPlaces) {
 		System.err.printf("\n==== %s \n", doc.getText().trim());
 		System.err.printf("==== %s \n", getFormattedTextString(doc));
+		
+		if (PRINT_ALL_MENTIONS) {
+			Text text = Annotation.makeText(doc);
+			CorefPipe.getInstance().process(text);
+			for (Sentence s : text.getSentences()) {
+				for (Mention m : s.getOrderedMentions()) {
+					System.err.printf("\t%s\n", m);
+				}
+			}
+		}
 
 		boolean ok = true;
 		for (MP mp : mentionPlaces) {

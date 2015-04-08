@@ -50,7 +50,7 @@ public class Dictionary {
 		}
 	}
 
-	public void readFile(String filename) {
+	public Dictionary readFile(String filename) {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(filename));
 			String s;
@@ -66,6 +66,14 @@ public class Dictionary {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return this;
+	}
+	
+	public Dictionary addStrings(String[] strings, String category) {
+		for (String s : strings) {
+			add(s, category);
+		}
+		return this;
 	}
 
 	public void add(List<String> wordsList, String category) {

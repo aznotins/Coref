@@ -20,8 +20,12 @@ package lv.coref.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class NamedEntity implements Comparable<NamedEntity> {
+	
+	private final static Logger log = Logger.getLogger(NamedEntity.class.getName());
 
 	private String label;
 	private List<Token> tokens = new ArrayList<>();
@@ -47,6 +51,24 @@ public class NamedEntity implements Comparable<NamedEntity> {
 
 	public List<Token> getTokens() {
 		return tokens;
+	}
+	
+	public int getStart() {
+		if (tokens.size() == 0) {
+			log.log(Level.WARNING, "getStart: Zero token size named entity {0}", this);
+			return 0;
+		} else {
+			return tokens.get(0).getPosition();
+		}
+	}
+
+	public int getEnd() {
+		if (tokens.size() == 0) {
+			log.log(Level.WARNING, "getEnd: Zero token size named entity {0}", this);
+			return 0;
+		} else {
+			return tokens.get(tokens.size() - 1).getPosition();
+		}
 	}
 
 	@Override

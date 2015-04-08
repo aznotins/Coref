@@ -41,27 +41,28 @@ public class Dictionaries {
 	public static final Set<String> demonstrativePronouns = new HashSet<>(Arrays.asList("šis", "šī", "tas", "tā"));
 
 	public static final Set<String> unclearGender = new HashSet<>(Arrays.asList("savs", "sava"));
-
-	public static Dictionary abstractMentions = new Dictionary(false, false);
 	
-	public static Dictionary commonPersons = new Dictionary(false, true);
-	public static Dictionary commonOrganizations = new Dictionary(false, true);
-	public static Dictionary commonLocations = new Dictionary(false, true);
+	public static Set<String> orgSubdivisions = new HashSet<>(Arrays.asList("departaments", "birojs", "nodaļa", "daļa"));
 
-	public static Dictionary namedEntities = new Dictionary(true, true);
+	public static Dictionary abstractMentions = new Dictionary(false, false)
+			.readFile("resource/dictionaries/abstract.txt");
+	
+	public static Dictionary commonPersons = new Dictionary(false, true)
+			.readFile("resource/dictionaries/pers_common.txt");
+	public static Dictionary commonOrganizations = new Dictionary(false, true)
+			.readFile("resource/dictionaries/org_common.txt");
+	public static Dictionary commonLocations = new Dictionary(false, true)
+			.readFile("resource/dictionaries/loc_common.txt");
+	
+	public static Dictionary namedEntities = new Dictionary(true, true)
+			.readFile("resource/dictionaries/named_entities.txt")
+			.readFile("resource/dictionaries/PP_Onomastica_geonames_lem.txt")
+			.readFile("resource/dictionaries/DB_locations.txt");
 	
 	public static Dictionary exact = new Dictionary(true, true);
-
-	static {
-		abstractMentions.readFile("resource/dictionaries/abstract.txt");
-		commonPersons.readFile("resource/dictionaries/pers_common.txt");
-		commonOrganizations.readFile("resource/dictionaries/org_common.txt");
-		commonLocations.readFile("resource/dictionaries/loc_common.txt");
-		
-		namedEntities.readFile("resource/dictionaries/named_entities.txt");
-		namedEntities.readFile("resource/dictionaries/PP_Onomastica_geonames_lem.txt");
-		namedEntities.readFile("resource/dictionaries/DB_locations.txt");
-	}
+	
+	public static Dictionary orgIntroducers = new Dictionary(false, true)
+			.addStrings(new String[] { "valsts SIA", "SIA" } , "orgIntroducer");
 
 	public static boolean isDemonstrativePronoun(String s) {
 		if (demonstrativePronouns.contains(s))

@@ -66,6 +66,7 @@ public class MentionFinder {
 		addPronounMentions(sentence);
 		MentionCleaner.cleanSentenceMentions(sentence);
 		updateMentionHeads(sentence);
+		updateSubdivisions(sentence);
 		updateMentionBoundaries(sentence);
 		// addCoordinationsFlat(sentence);
 		removeAbstractMentions(sentence);
@@ -146,6 +147,111 @@ public class MentionFinder {
 					m.addDescriptorMention(max);
 					m.addComment("added descriptor mention");
 					log.log(Level.INFO, "Added genitive mention {0} to {1}", new Object[] { max, m });
+				}
+			}
+		}
+	}
+	
+	private void updateSubdivisions(Sentence s) {
+		for (Token t : s) {
+			if (Dictionaries.orgSubdivisions.contains(t.getLemma())) {
+				log.log(Level.INFO, "Subdivisions: found subdivision anchor {0} in [{1}]", new Object[] { t, s });
+				int spanStart = t.getNode().getStart();
+				log.log(Level.INFO, "Subdivisions: search subdivision in node span: {0}", t.getNode());
+				
+				Mention org = null;
+				Mention prof = null;
+				int orgMainKeyword = -1;
+				for (Mention m : t.getMentions()) {
+					if (m.hasCategory(Category.organization) && m.isProperMention()
+							&& ( org == null || org.getSize() < m.getSize())) {
+						org = m;
+					}
+				}
+				Token next = t.getNext();
+				if (next != null) {
+					for (Mention m : next.getMentions()) {
+						if (m.hasCategory(Category.profession)
+								&& ( prof == null || prof.getSize() < m.getSize())) {
+							prof = m;
+						}
+					}
+				}
+
+				Token prev = t.getPrev();
+				while (prev != null) {
+					if (Dictionaries.commonOrganizations.match(prev.getLemma().toLowerCase()) != null) {
+						orgMainKeyword = prev.getPosition();
+						if (org != null && org.getStart() > prev.getPosition())
+							org = null;
+						if (prev.getMentions().size() > 0) {
+							for (Mention m : prev.getMentions()) {
+								if (m.hasCategory(Category.organization) && m.isProperMention()
+										&& ( org == null || org.getSize() < m.getSize())) {
+									org = m;
+								}
+							}
+						}
+						break;
+					}
+					if (prev.getPosition() < spanStart) {
+						break;
+					}
+					for (Mention m : prev.getMentions()) {
+						if (m.hasCategory(Category.organization) && m.isProperMention()
+								&& ( org == null || org.getSize() < m.getSize())) {
+							org = m;
+						}
+					}
+					prev = prev.getPrev();
+				}
+				
+				int end = prev == null ? 0 : prev.getNext().getPosition();
+							
+				if (org != null) log.log(Level.INFO, "Subdivisions: found organization={0}", org);
+				if (prof != null) log.log(Level.INFO, "Subdivisions: found profession={0}", prof);
+				
+				int subStart = -1;
+				if (org != null) {
+					if (t.getPosition() <= org.getEnd()) {
+						if (orgMainKeyword > 0) {
+							subStart = orgMainKeyword + 1;
+						} else {
+							log.log(Level.WARNING, "Subdivision found in ORG [{0}], but did not found subdivision start", t.getNamedEntity());
+						}
+					} else {
+						if (orgMainKeyword > 0) {
+							subStart = orgMainKeyword + 1;
+						} else {
+							log.log(Level.WARNING, "Subdivision found outside ORG [{0}], but did not found subdivision start", t.getNamedEntity());
+						}
+					}
+				} else {
+					subStart = end;
+				}
+				if (subStart >= 0) {
+					List<Token> subOrgTokens = s.subList(subStart, t.getPosition() + 1);
+					log.log(Level.INFO, "Subdivisions: found subdivision={0}", subOrgTokens);
+					if (prof != null) {
+						if (org == null) {
+							
+						} else {
+							if (subStart <= org.getEnd()) {
+								List<Token> newOrgTokens = s.subList(org.getStart(), subStart);
+								org.setTokens(newOrgTokens);
+								org.addComment("remove subOrg");
+								log.log(Level.INFO, "Removed subdivision from organization {0}", org);
+							}
+						}
+						List<Token> newProfTokens = s.subList(subStart, prof.getEnd() + 1);
+						prof.setTokens(newProfTokens);
+						prof.addComment("add subOrg");
+						log.log(Level.INFO, "Added subdivision to profession {0}", prof);						
+					} else {
+						if (org == null) {
+							
+						}
+					}
 				}
 			}
 		}
