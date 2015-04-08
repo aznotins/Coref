@@ -56,6 +56,13 @@ public class Constants {
 			if (compatible(o)) return true;
 			return this.equals(o);
 		}
+		
+		public boolean equalsEither(Category... categories) {
+			for (Category category : categories) {
+				if (this.equals(category)) return true;
+			}
+			return false;
+		}
 
 		public String toString() {
 			if (this == unknown) return UNKNOWN;

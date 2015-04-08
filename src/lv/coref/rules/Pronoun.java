@@ -36,6 +36,10 @@ public class Pronoun extends Rule {
 
 		if (!m.isPronoun() || a.isPronoun())
 			return false;
+		
+		String word = m.getLastHeadToken().getWord().toLowerCase();
+		String lemma = m.getLastHeadToken().getLemma().toLowerCase();
+		
 		PronType pronType = m.getPronounType();
 		if (pronType == PronType.DEMONSTRATIVE) return false;
 		if (pronType == PronType.INDEFINITE) return false;
@@ -45,6 +49,11 @@ public class Pronoun extends Rule {
 		Person person = m.getLastHeadToken().getPerson();
 		if (person == Person.FIRST) return false;
 		if (person == Person.SECOND) return false;
+		
+		if (pronType == PronType.DEFINITE) return false;
+		if ((lemma.equals("tas") || lemma.equals("tā") || lemma.equals("tie") || lemma.equals("tās"))
+				&& (a.getMentionChain().getCategory().equalsEither(Category.person, Category.profession)))
+			return false;
 		
 		Set<String> exclude = new HashSet<>();
 		

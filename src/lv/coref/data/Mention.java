@@ -279,8 +279,8 @@ public class Mention implements Comparable<Mention> {
 		return category;
 	}
 	
-	public boolean hasCategory(Category category) {
-		return this.category.equals(category);
+	public boolean hasCategory(Category... categories) {
+		return this.category.equalsEither(categories);
 	}
 
 	public void setCategory(String category) {
