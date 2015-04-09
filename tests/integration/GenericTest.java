@@ -17,10 +17,14 @@
  *******************************************************************************/
 package integration;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import lv.coref.data.Mention;
+import lv.coref.data.MentionChain;
 import lv.coref.data.Sentence;
 import lv.coref.data.Text;
 import lv.coref.io.Config;
@@ -28,26 +32,35 @@ import lv.coref.io.CorefPipe;
 import lv.coref.io.PipeClient;
 import lv.label.Annotation;
 import lv.pipe.Pipe;
+import lv.util.FileUtils;
 import lv.util.StringUtils;
 
-public class RandomTest {
-	private final static Logger log = Logger.getLogger(RandomTest.class.getName());
+public class GenericTest {
+	private final static Logger log = Logger.getLogger(GenericTest.class.getName());
 
 	public static boolean USE_PIPE_CLIENT = true;
 
 	public static void main(String[] args) {
 		Config.logInit();
+		Config.getInstance().set(Config.PROP_NEL_UPLOAD, "false");
 		try {
-			problems_23032015();
-
+//			tests_23032015();
+//			test_annotations();
+			
+//			debug(new File("resource/testdata/mk_test/dombrovskis.txt"));
+			debug(new File("resource/testdata/mk_test/test_taube.txt"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		Pipe.close();
 		System.exit(0);
 	}
+	
+	public static void test_annotations() {
+		debuga("Atlūgumu iesniedzis Nacionālā veselības dienesta vadītājs Māris Taube");
+	}
 
-	public static void problems_23032015() {
+	public static void tests_23032015() {
 		debug("Turpinot investēt uzņēmuma attīstībā , \" Latvijas Maiznieks \" "
 				+ "ieguldījis teju 50 000 latus jaunu produktu izstrādē , kā arī "
 				+ "veicis investīcijas ražošanas iekārtās un ievērojami paplašinājis "
@@ -110,6 +123,22 @@ public class RandomTest {
 				+ "pirmajā pusgadā bija 3,4 miljoni eiro jeb 2,38 miljoni latu , "
 				+ "no kā lielākais pieaugums 41 % apjomā bijis uz Krieviju , "
 				+ "liecina uzņēmuma paziņojums \" NASDAQ OMX Riga \" biržā .");
+		
+		
+		debug("Cits Jānis Annuss atklāsies galerijas Daugava vadītājas Andas "
+				+ "Treijas producētā filmā Projekcijas .");
+		debug("Par iekārotāko darba devēju 2012. gadā atzīta AS \" Latvenergo \" "
+				+ ", secināts personāla atlases uzņēmuma SIA \" WorkingDay Latvia \""
+				+ " aptaujā .");
+
+		debug("LV .");
+		
+		debug("Jelgavas pilsētas pašvaldības izpilddirektore Irēna Škutāne "
+				+ "aģentūrai LETA apgalvoja , ka pašvaldība ir ņēmusi vērā VK "
+				+ "revīzijas ieteikumus attiecībā par pašvaldības izveidotajām "
+				+ "aģentūrām , kā arī veikusi aģentūru darbības lietderības , "
+				+ "efektivitātes un ekonomisko izvērtējumu .");
+		
 	}
 
 	public static Annotation getAnnotation(String... strings) {
@@ -122,6 +151,38 @@ public class RandomTest {
 		} else {
 			a = Pipe.getInstance().process(new Annotation(stringText));
 		}
+		return a;
+	}
+	
+	public static Annotation debuga(String... strings) {
+		System.err.println("\n =========");
+		Annotation a = getAnnotation(strings);
+		if (a == null) {
+			log.log(Level.SEVERE, "NULL Annotation during debug");
+			return null;
+		}
+		System.err.println(" === " + a.getText().trim());
+		System.err.println(a.toStringPretty());
+		a.printJson(new PrintStream(System.err));
+		return a;
+	}
+	
+	public static Annotation debuga(File file) {
+		String textString = "";
+		try {
+			textString = FileUtils.readFile(file.getPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Annotation a = getAnnotation(textString);
+		if (a == null) {
+			log.log(Level.SEVERE, "NULL Annotation during debug");
+			return null;
+		}
+		System.err.printf("\n ========= %s\n", file);
+		System.err.println(a.getText());
+		System.err.println(a.toStringPretty());
+		a.printJson(new PrintStream(System.err));
 		return a;
 	}
 
@@ -152,21 +213,38 @@ public class RandomTest {
 						+ m.getGlobalId(), m);
 			}
 		}
-		// Annotation a = Annotation.makeAnnotationFromText(new Annotation(),
-		// t);
-		// System.err.println(a.toStringPretty());
 		return t;
 	}
-
-	public static void debug(Text t) {
-		System.err.println(t);
+	
+	public static Text debug(File file) {
+		String textString = "";
+		try {
+			textString = FileUtils.readFile(file.getPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.err.printf("\n ========= %s\n", file);
+		Text t = getText(textString);
+		if (t == null) {
+			log.log(Level.SEVERE, "NULL TEXT during debug");
+			return null;
+		}
+		System.err.println(" === " + t.getTextString().trim());
+		System.err.println(" === " + t.toString().trim());
 		for (Sentence s : t.getSentences()) {
-			System.err.println(s.getTextString());
-			System.err.println(" " + s);
+			System.err.printf("--- %s\n", s.getTextString());
+			System.err.printf("--- %s\n", s);
 			for (Mention m : s.getOrderedMentions()) {
-				System.err.println(" @" + m.getMentionChain().getID() + " " + m);
+				System.err.printf("  @%s %s %s\n", m.getMentionChain().getID(), m.getGlobalId() == null ? "" : "#"
+						+ m.getGlobalId(), m);
 			}
 		}
+		for (MentionChain mc : t.getMentionChains()) {
+			System.err.println(mc);
+		}
+		Annotation a = Annotation.makeAnnotationFromText(new Annotation(), t);
+		a.printJson(System.err);
+		return t;
 	}
 
 }

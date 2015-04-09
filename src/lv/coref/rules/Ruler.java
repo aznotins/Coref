@@ -18,7 +18,10 @@
 package lv.coref.rules;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,14 +30,18 @@ import lv.coref.data.MentionChain;
 import lv.coref.data.Paragraph;
 import lv.coref.data.Sentence;
 import lv.coref.data.Text;
+import lv.coref.io.Config;
 import lv.coref.tests.CorefTest;
 import lv.util.Pair;
 
-public class Ruler {	
+public class Ruler {
 	private final static Logger log = Logger.getLogger(Ruler.class.getName());
 	
 	private boolean POST_PROCESS = false;
-	
+	private Set<String> DEBUG_STRINGS = !Config.getInstance().containsKey(Config.PROP_COREF_DEBUG_MENTION_STRINGS) ? null
+			: new HashSet<String>(Arrays.asList(Config.getInstance().get(Config.PROP_COREF_DEBUG_MENTION_STRINGS, "")
+					.split("\\s*\\|\\s*")));
+
 	private List<Rule> rules = new ArrayList<>();
 	
 	public Ruler() {
@@ -64,17 +71,23 @@ public class Ruler {
 	public Ruler resolve(Text t) {
 		for (Rule r : rules) {
 			List<Pair<Mention, Mention>> merge = new ArrayList<>();
+			if (DEBUG_STRINGS != null) {
+				System.err.printf("=== %s\n", r.getName());
+			}
 			for (Paragraph p : t) {
 				for (Sentence s : p) {
 					for (Mention m : s.getMentions()) {
 						Mention a = r.getFirst(m);
-						if (a != null) {
+						if (a != null && a.getMentionChain() !=  m.getMentionChain()) {
 							merge.add(Pair.create(a, m));
-							// MentionChain mc = m.getMentionChain();
-							// a.getMentionChain().add(mc);
-							// t.dropMentionChain(mc);
 							getDescription(r, m, a);
-							// m.addComment(String.format("%s<%s>",r.getName(), a.getString()));
+							//m.addComment(String.format("%s<%s>",r.getName(), a.getString()));
+							if (DEBUG_STRINGS != null && 
+									(DEBUG_STRINGS.contains(m.getString()) || DEBUG_STRINGS.contains(m.getLastHeadToken().getWord())
+									 || DEBUG_STRINGS.contains(a.getString()) || DEBUG_STRINGS.contains(a.getLastHeadToken().getWord()))) {
+								System.err.printf("    RESOLVE: %s\t\t\t%s\n", m, m.getSentence().getTextString());
+								System.err.printf("    -> %s\t\t\t%s\n", a, a.getSentence().getTextString());
+							}
 						}
 					}
 				}

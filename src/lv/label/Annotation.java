@@ -306,6 +306,8 @@ public class Annotation extends SimpleTypeSafeMap {
 							ma.set(LabelIdxEnd.class, m.getLastToken().getPosition());
 							if (!m.getCategory().isUnkown())
 								ma.set(LabelType.class, m.getCategory().toString());
+							if (!m.getType().equals(Type.UNKNOWN))
+								ma.set(LabelMentionType.class, m.getType().toString());
 							mentions.add(ma);
 						}
 						token.set(LabelMentions.class, mentions);
@@ -495,7 +497,7 @@ public class Annotation extends SimpleTypeSafeMap {
 	// return m;
 	// }
 
-	public Annotation getMention(String mentionString, String type, int par, int sent, int tok) {
+	public Annotation getMention(String mentionString, String category, int par, int sent, int tok) {
 		Annotation m = null;
 		String[] mTokens = mentionString.split("\\s+");
 		if (!this.has(LabelParagraphs.class))
@@ -535,7 +537,7 @@ public class Annotation extends SimpleTypeSafeMap {
 								break;
 							}
 						}
-						if (type != null && !aMent.get(LabelType.class, "_NOT_A_TYPE_").equals(type))
+						if (category != null && !aMent.get(LabelType.class, "_NOT_A_TYPE_").equals(category))
 							continue;
 						if (match)
 							return aMent;

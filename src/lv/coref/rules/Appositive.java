@@ -37,11 +37,16 @@ public class Appositive extends Rule {
 			return false;
 		if (!m.getCategory().compatible(a.getCategory()))
 			return false;
-//		if (a.isAcronym() || m.isAcronym())
-//			return false;
+		// labi zinām profesijas un personas: neļaujam iemaldīties citām kategorijām
+		if (m.hasCategory(Category.person, Category.profession) && !a.hasCategory(Category.person, Category.profession))
+			return false;
+		if (!m.hasCategory(Category.person, Category.profession) && a.hasCategory(Category.person, Category.profession))
+			return false;
+		if (a.isAcronym())
+			return false;
+		if (m.hasCategory(Category.organization, Category.media) && !a.hasCategory(Category.organization, Category.media))
+			return false;
 		if (m.getCategory().equals(Category.location) || a.getCategory().equals(Category.location)) return false;
-//		if (m.getSentence().getPosition() != a.getSentence().getPosition())
-//			return false;
 		int d = m.getFirstToken().getPosition()
 				- a.getLastToken().getPosition();
 		if (d <= 0 || d > 1)
@@ -56,7 +61,6 @@ public class Appositive extends Rule {
 		if (!m.getGender().weakEquals(a.getGender())) prob *= 0.5;
 		if (!m.getNumber().weakEquals(a.getNumber())) prob *= 0.5;
 		if (m.getNumber().equals(Number.PL) || a.getNumber().equals(Number.PL)) prob *= 0.05;
-		if (!m.getCategory().compatible(a.getCategory())) prob *= 0.05;
 		
 		
 		return prob;

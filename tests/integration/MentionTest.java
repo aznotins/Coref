@@ -6,7 +6,9 @@ import lv.coref.data.Text;
 import lv.coref.io.Config;
 import lv.coref.io.CorefPipe;
 import lv.coref.io.PipeClient;
+import lv.coref.lv.Constants.Type;
 import lv.label.Annotation;
+import lv.label.Labels.LabelMentionType;
 import lv.pipe.Coref;
 import lv.pipe.Pipe;
 import lv.util.StringUtils;
@@ -14,7 +16,7 @@ import lv.util.StringUtils;
 public class MentionTest {
 	
 	public static boolean USE_PIPE_CLIENT = true;
-	public static boolean PRINT_ALL_MENTIONS = false;
+	public static boolean PRINT_ALL_MENTIONS = true;
 
 	public static void main(String[] args) {
 		Config.logInit();
@@ -124,6 +126,22 @@ public class MentionTest {
 				new MP("AT", "organization"),
 				new MP("departamenta vadītājs", "profession"));
 		
+		testMentions("Veselības ekonomikas centra Sabiedrības veselības departamenta direktoru Jāni Bērziņu.",
+				new MP("Veselības ekonomikas centra", "organization"),
+				new MP("Sabiedrības veselības departamenta direktoru", "profession"));
+		
+		
+		// NEGATIVES
+		testMentions("Iekļaus nākotnes komandā.",
+				new MP("nākotnes", "location", false));
+		
+		testMentions("LVF dalībniekiem sacīja.",
+				new MP("LVF dalībniekiem", null, false).setType(Type.NE));
+		
+		testMentions("Jo Īvāne aģentūrai LETA atbildēja.",
+				new MP("Īvāne aģentūrai", "organization", false),
+				new MP("Īvāne aģentūrai", false).setType(Type.NE));
+		
 		
 		Pipe.close();
 		System.exit(0);
@@ -134,15 +152,39 @@ public class MentionTest {
 	}
 
 	public static boolean testMention(Annotation doc, MP mp) {
-		Annotation a = doc.getMention(mp.mentionString, mp.type, mp.par, mp.sent, mp.tok);
-		if (a != null) {
-			System.err.printf("+ \"%s\" (%s)\n", mp.mentionString, mp.type);
-			return true;
+		Annotation a = doc.getMention(mp.mentionString, mp.category, mp.par, mp.sent, mp.tok);
+		boolean correct = true;
+		StringBuilder comment = new StringBuilder();
+		if (mp.positive) {
+			if (a != null) {
+				if (mp.type != null && !mp.type.equals(Type.get(a.get(LabelMentionType.class)))) {
+					correct = false;
+					comment.append(String.format(" > Incorrect type %s: (expected %s)", a.get(LabelMentionType.class),
+							mp.type));
+				}
+			} else {
+				comment.append(String.format(" > Did not found mention"));
+				correct = false;
+			}
 		} else {
-			System.err.printf("@ \"%s\" (%s)\n", mp.mentionString, mp.type);
-			//System.err.println(doc.toStringPretty());
-			return false;
+			if (a != null) {
+				correct = false;
+				if (mp.type != null) {
+					if (!mp.type.equals(Type.get(a.get(LabelMentionType.class)))) {
+						// negative type
+						correct = true;
+					} else {
+						comment.append(String.format(" > Incorrect type: %s (expected NOT %s)",
+								a.get(LabelMentionType.class), mp.type));
+					}
+				}
+			} else {
+				correct = true;
+			}
 		}
+		System.err.printf("%s %s \"%s\" (%s-%s) \t%s\n", correct ? "+" : "@", mp.positive ? "" : "NOT", mp.mentionString,
+				mp.type, mp.category, comment.toString());
+		return correct;
 	}
 
 	public static boolean testMentions(String text, MP... mentionPlaces) {
@@ -195,22 +237,41 @@ public class MentionTest {
 }
 
 class MP {
-	public String type;
+	public String category;
 	public String mentionString;
 	public int par = -1;
 	public int sent = -1;
 	public int tok = -1;
+	public boolean positive = true;
+	public Type type = null;
 
-	MP(String mentionString, String type, int par, int sent, int tok) {
+	MP(String mentionString, String category, int par, int sent, int tok) {
 		this.mentionString = mentionString;
-		this.type = type;
+		this.category = category;
 		this.par = par;
 		this.sent = sent;
 		this.tok = tok;
 	}
 
-	MP(String mentionString, String type) {
+	MP(String mentionString, String category) {
 		this.mentionString = mentionString;
+		this.category = category;
+	}
+	
+	MP(String mentionString, String category, boolean positive) {
+		this.mentionString = mentionString;
+		this.category = category;
+		this.positive = positive;
+	}
+	
+	MP(String mentionString, boolean positive) {
+		this.mentionString = mentionString;
+		this.category = null;
+		this.positive = positive;
+	}
+	
+	public MP setType(Type type) {
 		this.type = type;
+		return this;
 	}
 }

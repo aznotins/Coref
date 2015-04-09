@@ -54,6 +54,10 @@ public class Pronoun extends Rule {
 		if ((lemma.equals("tas") || lemma.equals("tā") || lemma.equals("tie") || lemma.equals("tās"))
 				&& (a.getMentionChain().getCategory().equalsEither(Category.person, Category.profession)))
 			return false;
+		// TODO Check this, but seems to generate more errors
+		if ((lemma.equals("savs") || lemma.equals("sava"))
+				&& (!a.getMentionChain().getCategory().equalsEither(Category.person, Category.profession)))
+			return false;
 		
 		Set<String> exclude = new HashSet<>();
 		

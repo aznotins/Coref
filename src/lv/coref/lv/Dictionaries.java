@@ -98,14 +98,14 @@ public class Dictionaries {
 		cat = namedEntities.matchLongest(s);
 		if (cat != null)
 			return Category.get(cat);
-
-		cat = commonPersons.matchLongest(s);
-		if (cat != null)
-			return Category.get(cat);
-
+		
 		cat = commonOrganizations.matchLongest(s);
 		if (cat != null)
 			return Category.get(cat);
+
+		cat = commonPersons.matchLongest(s);
+		if (cat != null)
+			return Category.get(cat);		
 
 		cat = commonLocations.matchLongest(s);
 		if (cat != null)

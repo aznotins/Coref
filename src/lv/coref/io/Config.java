@@ -131,6 +131,10 @@ public class Config {
 		return props.getProperty(key);
 	}
 	
+	public boolean containsKey(String key) {
+		return props.containsKey(key);
+	}
+	
 	public boolean isTrue(String key) {
 		String value = props.getProperty(key);
 		if (value != null && value.equalsIgnoreCase("true"))
@@ -206,6 +210,9 @@ public class Config {
 	
 	@Property(descr = "Remove descriptor mentions for professions", def = "false")
 	public static final String PROP_COREF_REMOVE_DESCRIPTOR_MENTIONS = "coref.remDescriptors";
+	
+	@Property(descr = "Print decisions for head or exact match mentionsm separate with: |", def = "")
+	public static final String PROP_COREF_DEBUG_MENTION_STRINGS = "coref.debugMentionStrings";
 	
 	public static final String PREFIX_KNB = "knb.";
 

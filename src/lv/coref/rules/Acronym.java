@@ -20,6 +20,7 @@ package lv.coref.rules;
 import java.util.List;
 
 import lv.coref.data.Mention;
+import lv.coref.lv.Constants.Category;
 
 public class Acronym extends Rule {
 
@@ -29,6 +30,9 @@ public class Acronym extends Rule {
 	
 	public boolean filter(Mention m, Mention a) {
 		if(!m.isAcronym()) return false;
+		if (!a.isProperMention()) return false;
+		if (!a.hasCategory(Category.unknown, Category.organization, Category.media))
+			return false;
 		if (m.getFirstToken().getWord().equals("SIA")) return false;
 		if (m.getFirstToken().getWord().equals("AS")) return false;
 		return true;

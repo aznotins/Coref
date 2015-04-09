@@ -63,8 +63,8 @@ public class Predicate extends Rule {
 			prob *= 0.5;
 		if (!m.getNumber().equals(a.getNumber()))
 			prob *= 0.5;
-		if (!m.getCategory().weakEquals(a.getCategory()))
-			prob *= 0.5;
+		if (!m.getCategory().compatible(a.getCategory()))
+			prob = 0;
 
 		return prob;
 	}

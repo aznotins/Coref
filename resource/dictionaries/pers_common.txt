@@ -528,7 +528,6 @@ person	dzīvesbiedre
 person	audzēknis
 person	organizatore
 person	brokeris
-person	
 person	īpašniece
 person	locekle
 person	pulkvedis
@@ -869,7 +868,6 @@ person	pildītājs
 person	bortinženieris
 person	seržants
 person	dietoloģe
-person	firma
 person	rektore
 person	komponiste
 person	ģenerālmajors
@@ -884,7 +882,6 @@ person	šāvējs
 person	anglis
 person	itāliete
 person	veidotājs
-person	mesšana
 person	republikānis
 person	limbažniece
 person	dispečere
@@ -940,7 +937,6 @@ person	scenogrāfe
 person	pastniece
 person	atbalstītājs
 person	maršals
-person	kuģis
 person	pārdevējs
 person	fiziķis
 person	klarnetists
@@ -1096,7 +1092,6 @@ person	operdziedātājs
 person	fotomākslinieks
 person	fotomākslinieka
 person	maģistre
-person	koncerts
 person	mecosoprāns
 person	cīkstonis
 person	eksministrs

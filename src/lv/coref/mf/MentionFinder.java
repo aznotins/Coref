@@ -217,13 +217,13 @@ public class MentionFinder {
 						if (orgMainKeyword > 0) {
 							subStart = orgMainKeyword + 1;
 						} else {
-							log.log(Level.WARNING, "Subdivision found in ORG [{0}], but did not found subdivision start", t.getNamedEntity());
+							log.log(Level.WARNING, "Subdivision found in ORG [{0}], but did not found subdivision start", org);
 						}
 					} else {
 						if (orgMainKeyword > 0) {
 							subStart = orgMainKeyword + 1;
 						} else {
-							log.log(Level.WARNING, "Subdivision found outside ORG [{0}], but did not found subdivision start", t.getNamedEntity());
+							log.log(Level.WARNING, "Subdivision found outside ORG [{0}], but did not found subdivision start", org);
 						}
 					}
 				} else {
@@ -239,6 +239,11 @@ public class MentionFinder {
 							if (subStart <= org.getEnd()) {
 								List<Token> newOrgTokens = s.subList(org.getStart(), subStart);
 								org.setTokens(newOrgTokens);
+								if (orgMainKeyword < 0) {
+									log.log(Level.WARNING, "Subdivision trying to use unset orgMainKeyword: ORG [{0}], ", org);
+								} else {
+									org.setHeads(Arrays.asList(s.get(orgMainKeyword)));
+								}
 								org.addComment("remove subOrg");
 								log.log(Level.INFO, "Removed subdivision from organization {0}", org);
 							}
@@ -522,10 +527,10 @@ public class MentionFinder {
 				sent.addMention(m);
 				sent.getText().addMentionChain(new MentionChain(m));
 
-				m.setType(Type.NP);
-				if (m.getFirstToken().isProper())
-					m.setType(Type.NE);
 				m.setCategory(Dictionaries.getCategory(m.getLemmaString()));
+				m.setType(Type.NP);
+//				if (!m.hasCategory(Category.person) && m.getFirstToken().isProper())
+//					m.setType(Type.NE);
 				m.addComment("coref:np");
 				log.log(Level.INFO, "Added NP mention {0}", m);
 			}

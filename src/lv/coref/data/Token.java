@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import lv.coref.lv.Constants.Case;
 import lv.coref.lv.Constants.Gender;
@@ -32,6 +34,9 @@ import lv.coref.lv.Constants.PronType;
 import lv.coref.lv.MorphoUtils;
 
 public class Token implements Comparable<Token> {
+	
+	private final static Logger log = Logger.getLogger(Token.class.getName());
+
 	private String word;
 	private String tag;
 	private String pos;
@@ -76,6 +81,12 @@ public class Token implements Comparable<Token> {
 			this.lemma = "katra";
 			this.posTag = PosTag.P;
 			this.pronounType = PronType.PERSONAL;
+		}
+		// FIXME morphology nākotne, ... -> lemmas Nākotne
+		if (this.lemma.length() > 0 && Character.isUpperCase(this.lemma.charAt(0)) && this.word.length() > 0
+				&& Character.isLowerCase(this.word.charAt(0))) {
+			log.log(Level.WARNING, "Uppercase lemma and lowercase token: \"{0}\"  \"{1}\"", new Object[] { this.lemma, this.word });
+			this.lemma = this.word.substring(0, 1) + this.lemma.substring(1);
 		}
 		
 	}

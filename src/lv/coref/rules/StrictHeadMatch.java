@@ -37,7 +37,6 @@ public class StrictHeadMatch extends Rule {
 		if (a.getCategory().equals(Category.sum)) return false;
 		if (a.getCategory().equals(Category.time)) return false;
 		
-		
 		Set<String> exclude = new HashSet<>();
 		exclude.addAll(Arrays.asList("gads", "lats"));
 		if (exclude.contains(m.getLastHeadToken().getLemma()))
@@ -54,7 +53,7 @@ public class StrictHeadMatch extends Rule {
 	}
 	
 	public List<Mention> getPotentialAntecedents(Mention m) {
-		return m.getPotentialAntecedents(-1, 10, 100);
+		return m.getPotentialAntecedents(-1, 20, 200);
 	}
 	
 	public static void main(String[] args) {

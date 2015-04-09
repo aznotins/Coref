@@ -678,7 +678,8 @@ public class Mention implements Comparable<Mention> {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("[");
-		sb.append(heads);
+		//sb.append(heads);
+		sb.append("[").append(getHeadLemmaString()).append("]");
 		sb.append(" ");
 		for (Token t : tokens) {
 			sb.append(t.toString() + " ");

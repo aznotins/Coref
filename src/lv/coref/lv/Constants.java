@@ -164,6 +164,16 @@ public class Constants {
 	public static enum Type {
 		NP, NE, PRON, CONJ, UNKNOWN;
 		
+		public static Type get(String value) {
+			try {
+				return valueOf(value);
+			} catch (Exception e) {
+//				System.err.println("Category not found: " + value);
+				// e.printStackTrace();
+			}
+			return UNKNOWN;
+		}
+		
 		public String toString() {
 			if (this == UNKNOWN) return "UNK";
 			return name();
@@ -183,6 +193,9 @@ public class Constants {
 		System.err.println(Category.get("test"));
 		System.err.println(Category.get("unknown"));
 		System.err.println(Category.get("person"));
+		
+		System.err.println(Type.UNKNOWN.equals(Type.get("NEs")));
+		System.err.println(Type.NE.equals("NE"));
 
 	}
 

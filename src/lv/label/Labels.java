@@ -107,6 +107,12 @@ public class Labels {
 
 	public static class LabelType implements Label<String> {
 	}
+	
+	/**
+	 * Mention Type: NE, NP, PRON, CONJ
+	 */
+	public static class LabelMentionType implements Label<String> {
+	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T uncheckedCast(Object o) {
