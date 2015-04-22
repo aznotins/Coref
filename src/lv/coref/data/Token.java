@@ -85,7 +85,7 @@ public class Token implements Comparable<Token> {
 		// FIXME morphology nākotne, ... -> lemmas Nākotne
 		if (this.lemma.length() > 0 && Character.isUpperCase(this.lemma.charAt(0)) && this.word.length() > 0
 				&& Character.isLowerCase(this.word.charAt(0))) {
-			log.log(Level.WARNING, "Uppercase lemma and lowercase token: \"{0}\"  \"{1}\"", new Object[] { this.lemma, this.word });
+			log.log(Level.FINE, "Uppercase lemma and lowercase token: \"{0}\"  \"{1}\"", new Object[] { this.lemma, this.word });
 			this.lemma = this.word.substring(0, 1) + this.lemma.substring(1);
 		}
 		

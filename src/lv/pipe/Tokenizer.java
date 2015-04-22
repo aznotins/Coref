@@ -121,12 +121,26 @@ public class Tokenizer implements PipeTool {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public List<String> tokenize(String text) {
+		List<String> res = new ArrayList<>();
+		Annotation a = process(text);
+		for (Annotation par : a.get(LabelParagraphs.class)) {
+			for (Annotation sent : par.get(LabelSentences.class)) {
+				for (Annotation tok : sent.get(LabelTokens.class)) {
+					res.add(tok.getText());
+				}
+			}
+		}
+		return res;
+	}
 
 	public static void main(String[] args) {
 		Tokenizer tok = Tokenizer.getInstance();
 		Annotation doc = tok
 				.process("Uzņēmuma SIA \"Cirvis\" prezidents Jānis Bērziņš. Viņš uzņēmumu vada no 2015. gada.");
 		System.out.println(doc.toStringPretty());
+		System.out.println(tok.tokenize("Uzņēmuma SIA \"Cirvis\" prezidents Jānis Bērziņš. Viņš uzņēmumu vada no 2015. gada."));
 	}
 
 }

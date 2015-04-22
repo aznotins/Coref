@@ -201,6 +201,12 @@ public class Config {
 	
 	@Property(descr = "Runned pipe tools [tokenizer, tagger, ner, parser, spd, coref, nel]", def = "tokenizer tagger ner parser spd coref nel")
 	public static final String PROP_PIPE_TOOLS = "pipe.tools";
+	
+	@Property(descr = "Pipe input format [text, json_meta]", def = "")
+	public static final String PROP_PIPE_INPUT = "pipe.input";
+	
+	@Property(descr = "Pipe output format [json, json_array]", def = "tokenizer tagger ner parser spd coref nel")
+	public static final String PROP_PIPE_OUTPUT = "pipe.output";
 
 	@Property(descr = "Remove singletons during postprocessing", def = "false")
 	public static final String PROP_COREF_REMOVE_SINGLETONS = "coref.remSingletons";

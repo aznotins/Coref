@@ -39,8 +39,14 @@ import lv.coref.io.CorefPipe;
 import lv.label.Annotation;
 import lv.label.Labels.LabelDocumentDate;
 import lv.label.Labels.LabelDocumentId;
+import lv.label.Labels.LabelParagraphs;
+import lv.label.Labels.LabelPosTag;
+import lv.label.Labels.LabelPosTagSimple;
+import lv.label.Labels.LabelSentences;
+import lv.label.Labels.LabelTokens;
 import lv.util.FileUtils;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -63,7 +69,21 @@ public class Pipe {
 
 	private boolean runAll = false;
 	private Set<String> tools = null;
-
+	
+	public static enum INPUT_FORMAT { TEXT, JSON_META };
+	public static enum OUTPUT_FORMAT { JSON, JSON_ARRAY };
+	
+	private INPUT_FORMAT inputFormat = INPUT_FORMAT.JSON_META;
+	private OUTPUT_FORMAT outputFormat = OUTPUT_FORMAT.JSON;
+	
+	public void setInputFormat(String format) {
+		inputFormat = INPUT_FORMAT.valueOf(format.toUpperCase());
+	}
+	
+	public void setOutputFormat(String format) {
+		outputFormat = OUTPUT_FORMAT.valueOf(format.toUpperCase());
+	}
+	
 	public void setTools(String toolString) {
 		tools = new HashSet<>();
 		tools.addAll(Arrays.asList(toolString.trim().split("\\s+|,")));
@@ -91,6 +111,10 @@ public class Pipe {
 	}
 
 	public void init() {
+		
+		inputFormat = INPUT_FORMAT.valueOf(Config.getInstance().get(Config.PROP_PIPE_INPUT, inputFormat.toString()).toUpperCase());
+		outputFormat = OUTPUT_FORMAT.valueOf(Config.getInstance().get(Config.PROP_PIPE_OUTPUT, outputFormat.toString()).toUpperCase());
+		
 		String toolString = Config.getInstance().get(Config.PROP_PIPE_TOOLS, "");
 		if (toolString.length() == 0)
 			setRunAll(true);
@@ -199,6 +223,19 @@ public class Pipe {
 		Annotation doc = process(textString);
 		return doc;
 	}
+	
+	public Annotation read(BufferedReader in) {
+		Annotation doc = null;
+		if (inputFormat.equals(INPUT_FORMAT.JSON_META)) {
+			doc = readJson(in);
+		} else if (inputFormat.equals(INPUT_FORMAT.TEXT)) {
+			doc = readText(in);
+		} else {
+			log.log(Level.SEVERE, "Unsupported input format: {0}", inputFormat);
+		}
+		
+		return doc;
+	}
 
 	public Annotation readJson(BufferedReader in) {
 		StringBuilder builder = new StringBuilder();
@@ -225,25 +262,73 @@ public class Pipe {
 			doc.set(LabelDocumentDate.class, date);
 		return doc;
 	}
-
-	// public void write(Text text, OutputStream out) {
-	// ReaderWriter rw = null;
-	// if (Config.getInstance().getOUTPUT().equals(Config.FORMAT.JSON))
-	// rw = new JsonReaderWriter();
-	// else if (Config.getInstance().getOUTPUT().equals(Config.FORMAT.CONLL))
-	// rw = new ConllReaderWriter(TYPE.LETA);
-	// try {
-	// rw.write(out, text, false);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
+	
+	public Annotation readText(BufferedReader in) {
+		StringBuilder builder = new StringBuilder();
+		int blankLineCounter = 0;
+		try {
+			for (String line = null; (line = in.readLine()) != null;) {
+				if (line.trim().length() == 0) {
+					if (++blankLineCounter > 2) {
+						break;
+					}
+				} else {
+					builder.append(line).append("\n");
+					blankLineCounter = 0;
+				}				
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (builder.length() == 0)
+			return null;
+		Annotation doc = new Annotation(builder.toString());
+		return doc;
+	}
 
 	public void write(Annotation doc, OutputStream out) {
+		if (outputFormat.equals(OUTPUT_FORMAT.JSON)) {
+			try {
+				doc.printJson(new PrintStream(out, true, "UTF-8"));
+			} catch (UnsupportedEncodingException e) {
+				log.log(Level.SEVERE, "Unable to write json: " + doc.get(LabelDocumentId.class), e);
+			}
+		} else if (outputFormat.equals(OUTPUT_FORMAT.JSON_ARRAY)) {
+			writeJsonArray(doc, out);
+		} else {
+			log.log(Level.SEVERE, "Unsupported output format: {0}", outputFormat);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void writeJsonArray(Annotation doc, OutputStream outputStream) {
 		try {
-			doc.printJson(new PrintStream(out, true, "UTF-8"));
+			JSONArray jsonDocument = new JSONArray();			
+			if (doc.has(LabelParagraphs.class)) {
+				for (Annotation p : doc.get(LabelParagraphs.class)) {
+					if (!p.has(LabelSentences.class))
+						continue;
+					for (Annotation s : p.get(LabelSentences.class)) {
+						if (!s.has(LabelTokens.class))
+							continue;
+						JSONArray jsonSentence = new JSONArray();
+						for (Annotation t : s.get(LabelTokens.class)) {
+							JSONArray jsonToken = new JSONArray();
+							jsonToken.add(t.getText());
+							jsonToken.add(t.getLemma());
+							jsonToken.add(t.get(LabelPosTagSimple.class));
+							jsonToken.add(t.get(LabelPosTag.class));
+							jsonToken.add(t.getNer());
+							jsonSentence.add(jsonToken);
+						}
+						jsonDocument.add(jsonSentence);
+					}
+				}
+			}
+			PrintStream out = new PrintStream(outputStream, true, "UTF-8");
+			out.println(jsonDocument.toJSONString());
 		} catch (UnsupportedEncodingException e) {
-			log.log(Level.SEVERE, "Unable to write json: " + doc.get(LabelDocumentId.class), e);
+			log.log(Level.SEVERE, "Unable to write json_ner format", e);
 		}
 	}
 
@@ -256,7 +341,7 @@ public class Pipe {
 			e.printStackTrace();
 		}
 		while (true) {
-			Annotation doc = readJson(in);
+			Annotation doc = read(in);
 			if (doc == null) {
 				break;
 			}
