@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
@@ -72,13 +73,25 @@ public class NerTagger implements PipeTool {
 	public void init(Properties props) {
 		properties = props;
 		List<AbstractSequenceClassifier<CoreLabel>> classifiers = new ArrayList<>();
-		if (props.containsKey("whiteList"))
-			classifiers.add(new ListNERSequenceClassifier(props.getProperty("whiteList"), false, true, true));
-		if (props.containsKey("whiteListPrecise"))
-			classifiers.add(new ListNERSequenceClassifier(props.getProperty("whiteListPrecise"), true, false, true));
-		if (props.containsKey("loadClassifier"))
+		if (props.containsKey("whiteListCasedLemmas")) classifiers.add(new ListNERSequenceClassifier(props.getProperty("whiteListCasedLemmas"), false, true, true));
+		if (props.containsKey("whiteListUncasedWords"))
+			classifiers.add(new ListNERSequenceClassifier(props.getProperty("whiteListUncasedWords"), true, false, true));
+		if (props.containsKey("whiteListCasedWords"))
+			classifiers.add(new ListNERSequenceClassifier(props.getProperty("whiteListCasedWords"), false, false, true));
+		if (props.containsKey("loadClassifier")) {
+			Properties crfProps = new Properties();
+			for (@SuppressWarnings("rawtypes")
+			Enumeration propertyNames = props.propertyNames(); propertyNames.hasMoreElements(); ) {
+				Object key = propertyNames.nextElement();
+				if (key.equals("whiteListCasedLemmas")) continue;
+				if (key.equals("whiteListUncasedWords")) continue;
+				if (key.equals("whiteListCasedWords")) continue;
+				if (key.equals("regexList")) continue;
+				crfProps.put(key, props.get(key));
+			}
+			System.err.println(crfProps);
 			try {
-				classifiers.add(CRFClassifier.getClassifier(props.getProperty("loadClassifier"), props));
+				classifiers.add(CRFClassifier.getClassifier(crfProps.getProperty("loadClassifier"), crfProps));
 			} catch (ClassCastException e) {
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
@@ -86,9 +99,9 @@ public class NerTagger implements PipeTool {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
 		if (props.containsKey("regexList"))
 			classifiers.add(new RegexNERSequenceClassifier(props.getProperty("regexList"), true, true));
-
 		try {
 			nerClassifier = new NERClassifierCombiner(classifiers);
 		} catch (FileNotFoundException e) {
