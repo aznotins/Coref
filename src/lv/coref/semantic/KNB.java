@@ -552,6 +552,24 @@ public class KNB {
 		}
 		return res;
 	}
+	
+	public void clearDataSet(int dataset) {
+		String query = "select entityid from entities where dataset = ?";
+		Set<Integer> ids = new HashSet<>();
+		try (PreparedStatement stmt = connection.prepareStatement(query)) {
+			stmt.setInt(1, dataset);
+			try (ResultSet rs = stmt.executeQuery()) {
+				while (rs.next()) {
+					ids.add(rs.getInt(1));
+				}
+			}
+			for (int id : ids) {
+				deleteEntity(id, true);
+			}
+		} catch (SQLException e) {
+			log.log(Level.SEVERE, "Failed to delete dataset " + dataset, e);
+		}
+	}
 
 	public static void dbgEntity(KNB knb, String name) {
 		int limit = 10;

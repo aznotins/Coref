@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +19,8 @@ import lv.semti.morphology.attributes.AttributeNames;
 
 import org.json.simple.JSONObject;
 
+import edu.stanford.nlp.sequences.LVMorphologyReaderAndWriter;
+
 public class AnalyzerUtils {
 
 	private final static Logger log = Logger.getLogger(AnalyzerUtils.class.getName());
@@ -25,14 +28,15 @@ public class AnalyzerUtils {
 	public static String MORPHO_MODEL = "models/lv-morpho-model.ser.gz";
 
 	 public static void init() {
-		 try {
-			 Expression.initClassifier(MORPHO_MODEL);
-		 } catch (Exception e) {
-			 log.log(Level.SEVERE, "Unable to initilize morpho classifier", e);
-		 }
-	 }
+		try {
+			Expression.initClassifier(MORPHO_MODEL);
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Unable to initilize morpho classifier", e);
+		}
+	}
 
 	public static String normalize(String name, String category) {
+//		System.err.printf("NORMALIZE %s %s\n", name, category);
 		try {
 			Analyzer analyzer = Expression.getAnalyzer();
 			if (analyzer == null) {
@@ -127,6 +131,9 @@ public class AnalyzerUtils {
 	}
 
 	public static void main(String[] args) {
+		System.err.println(normalize("Anda Čakša", Category.person.toString()));
+		System.err.println(normalize("Andas Čakšas", Category.person.toString()));
+		
 		System.err.println(normalize("Andra Vilka", Category.person.toString()));
 		System.err.println(normalize("Andra Ambaiņa", Category.person.toString()));
 

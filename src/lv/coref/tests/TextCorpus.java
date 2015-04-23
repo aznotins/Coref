@@ -20,6 +20,7 @@ package lv.coref.tests;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import lv.coref.data.NamedEntity;
 import lv.coref.data.Sentence;
@@ -30,7 +31,6 @@ import lv.coref.io.ConllReaderWriter.TYPE;
 import lv.coref.io.PipeClient;
 import lv.coref.tests.TextCorpus.Query.QueryResult;
 import lv.util.FileUtils;
-import lv.util.Pair;
 import lv.util.StringUtils;
 
 public class TextCorpus {
@@ -50,7 +50,11 @@ public class TextCorpus {
 			}
 
 			public String toString() {
-				return text + " [" + context + "]          (" + file + ")";
+				return text + StringUtils.repeat(" ", Math.max(0, 20 - text.length() % 20)) + " ["  + context + "]          (" + file + ")";
+			}
+			
+			public String toStringPretty() {
+				return text + " [" + context.replaceAll(Pattern.quote(text), " @[" + text.toUpperCase() + "]@ ") + "]          (" + file + ")";
 			}
 		}
 
@@ -58,29 +62,70 @@ public class TextCorpus {
 			WORD, LEMMA, TAG, NER, BEFORE, AFTER, DEP
 		};
 
-		private List<List<Pair<BitType, String>>> pattern = new ArrayList<>();
+		private List<List<BitPattern>> pattern = new ArrayList<>();
+		
+		public static class BitPattern {
+			private BitType type;
+			private String string;
+			private boolean negative = false;
+
+			public BitPattern(BitType type, String string) {
+				this.setType(type);
+				this.setString(string);
+			}
+			public boolean isNegative() {
+				return negative;
+			}
+			public void setNegative(boolean negative) {
+				this.negative = negative;
+			}
+			public BitType getType() {
+				return type;
+			}
+			public void setType(BitType type) {
+				this.type = type;
+			}
+			public String getString() {
+				return string;
+			}
+			public void setString(String string) {
+				this.string = string;
+			}
+			public String toString() {
+				return String.format("(%s%s %s)", negative ? "!" : "", type, string);
+			}
+		}
 
 		public Query(String queryStrign) {
 			String[] wordBits = queryStrign.split("\\s");
 			for (String partString : wordBits) {
-				List<Pair<BitType, String>> wordPattern = new ArrayList<>();
+				List<BitPattern> wordPattern = new ArrayList<>();
 				String[] partBits = partString.split("@");
 				for (String bit : partBits) {
-					if (bit.startsWith("W-")) {
-						wordPattern.add(new Pair<BitType, String>(BitType.WORD, bit.substring(2)));
-					} else if (bit.startsWith("L-")) {
-						wordPattern.add(new Pair<BitType, String>(BitType.LEMMA, bit.substring(2)));
-					} else if (bit.startsWith("T-")) {
-						wordPattern.add(new Pair<BitType, String>(BitType.TAG, bit.substring(2)));
+					boolean negative = false;
+					if (bit.startsWith("!")) {
+						negative = true;
+						bit = bit.substring(1);
 					}
-					if (bit.startsWith("N-")) {
-						wordPattern.add(new Pair<BitType, String>(BitType.NER, bit.substring(2)));
+					BitPattern bp = null;
+					if (bit.startsWith("W-")) {
+						bp = new BitPattern(BitType.WORD, bit.substring(2));
+					} else if (bit.startsWith("L-")) {
+						bp = new BitPattern(BitType.LEMMA, bit.substring(2));
+					} else if (bit.startsWith("T-")) {
+						bp = new BitPattern(BitType.TAG, bit.substring(2));
+					} else if (bit.startsWith("N-")) {
+						bp = new BitPattern(BitType.NER, bit.substring(2));
 					} else if (bit.startsWith("D-")) {
-						wordPattern.add(new Pair<BitType, String>(BitType.DEP, bit.substring(2)));
+						bp = new BitPattern(BitType.DEP, bit.substring(2));
 					} else if (bit.startsWith(">")) {
-						wordPattern.add(new Pair<BitType, String>(BitType.BEFORE, ""));
+						bp = new BitPattern(BitType.BEFORE, "");
 					} else if (bit.startsWith("<")) {
-						wordPattern.add(new Pair<BitType, String>(BitType.AFTER, ""));
+						bp = new BitPattern(BitType.AFTER, "");
+					}
+					if (bp != null) {
+						if (negative) bp.setNegative(true);
+						wordPattern.add(bp);
 					}
 				}
 				pattern.add(wordPattern);
@@ -96,36 +141,36 @@ public class TextCorpus {
 				StringBuilder lemmaText = new StringBuilder();
 				int j = i;
 				boolean inside = true;
-				for (List<Pair<BitType, String>> wordPattern : pattern) {
+				for (List<BitPattern> wordPattern : pattern) {
 					if (j >= s.size()) {
 						ok = false;
 						break;
 					}
 					Token t = s.get(j);
-					if (wordPattern.get(0).first.equals(BitType.AFTER)) {
+					if (wordPattern.get(0).getType().equals(BitType.AFTER)) {
 						text = new StringBuilder();
 						lemmaText = new StringBuilder();
 						continue;
-					} else if (wordPattern.get(0).first.equals(BitType.BEFORE)) {
+					} else if (wordPattern.get(0).getType().equals(BitType.BEFORE)) {
 						inside = false;
 						continue;
 					} else {
-						for (Pair<BitType, String> p : wordPattern) {
-							if (p.first.equals(BitType.WORD) && !t.getWord().matches(p.second)) {
+						for (BitPattern p : wordPattern) {
+							if (p.getType().equals(BitType.WORD) && !t.getWord().matches(p.getString()) ^ p.isNegative()) {
 								ok = false;
 								break;
-							} else if (p.first.equals(BitType.LEMMA) && !t.getLemma().matches(p.second)) {
+							} else if (p.getType().equals(BitType.LEMMA) && !t.getLemma().matches(p.getString()) ^ p.isNegative()) {
 								ok = false;
 								break;
-							} else if (p.first.equals(BitType.TAG) && !t.getTag().matches(p.second)) {
+							} else if (p.getType().equals(BitType.TAG) && !t.getTag().matches(p.getString()) ^ p.isNegative()) {
 								ok = false;
 								break;
-							} else if (p.first.equals(BitType.NER)
+							} else if (p.getType().equals(BitType.NER)
 									&& !(t.getNamedEntity() != null ? t.getNamedEntity().getLabel() : "O")
-											.matches(p.second)) {
+											.matches(p.getString()) ^ p.isNegative()) {
 								ok = false;
 								break;
-							} else if (p.first.equals(BitType.DEP) && !t.getDependency().matches(p.second)) {
+							} else if (p.getType().equals(BitType.DEP) && !t.getDependency().matches(p.getString()) ^ p.isNegative()) {
 								ok = false;
 								break;
 							}
@@ -140,7 +185,15 @@ public class TextCorpus {
 					j++;
 				}
 				if (ok) {
-					res.add(new QueryResult(text.toString(), lemmaText.toString(), s.getTextString(), s.getText()
+					StringBuilder sText = new StringBuilder();
+					for (Token t : s) {
+						sText.append(t.getWord());
+						if (t.getNamedEntity() != null)
+							sText.append("/").append(t.getNamedEntity().getLabel());
+						sText.append(" ");
+					}
+					
+					res.add(new QueryResult(text.toString(), lemmaText.toString(), sText.toString(), s.getText()
 							.getId()));
 				}
 			}
@@ -261,15 +314,42 @@ public class TextCorpus {
 		// c.search(new Query("N-organization W-un"));
 		// c.search(new Query("D-.*App.*"));
 
-//		 c.search(new Query("L-prese L-sekretāre"));
-//		 c.search(new Query("L-tiesa L-priekšsēdētājs"));
-//		 c.search(new Query("W-pienākumu L-izpildītājs"));
-//		 c.search(new Query("W-biroja L-vadītājs"));
-		 
-		 c.search(new Query("W-nodaļas L-vadītājs"));
-		 c.search(new Query("W-departamenta L-vadītājs"));
-		 c.search(new Query("W-biroja L-vadītājs"));
-		 
+		// c.search(new Query("L-prese L-sekretāre"));
+		// c.search(new Query("L-tiesa L-priekšsēdētājs"));
+		// c.search(new Query("W-pienākumu L-izpildītājs"));
+		// c.search(new Query("W-biroja L-vadītājs"));
+
+		// c.search(new Query("W-nodaļas L-vadītājs"));
+		// c.search(new Query("W-departamenta L-vadītājs"));
+		// c.search(new Query("W-biroja L-vadītājs"));
+
+		// c.search(new Query("W-.* L-departaments N-profession"));
+		// c.search(new Query("W-.* L-nodaļa N-profession"));
+		// c.search(new Query("W-.* L-birojs N-profession"));
+		//
+		// c.search(new
+		// Query("W-.* L-departaments@N-organization N-profession"));
+		// c.search(new Query("W-.* L-nodaļa@N-organization N-profession"));
+		// c.search(new Query("W-.* L-birojs@N-organization N-profession"));
+
+		// c.search(new Query("N-organization L-departaments"));
+		// c.search(new Query("!N-organization L-departaments"));
+
+		// c.search(new Query("N-organization L-birojs N-profession"));
+		// c.search(new Query("!N-organization L-birojs N-profession"));
+
+		// c.search(new Query("N-organization L-nodaļa N-profession"));
+		// c.search(new Query("!N-organization L-nodaļa N-profession"));
+
+		// c.search(new Query("L-departaments N-profession"));
+		// c.search(new Query("L-departaments@N-organization N-profession"));
+		//
+		// c.search(new Query("N-organization L-departaments@N-organization N-profession"));
+		// c.search(new Query("N-organization N-organization L-departaments@N-organization N-profession"));
+		// c.search(new Query("N-organization N-organization N-organization L-departaments@N-organization N-profession"));
+
+		// c.search(new Query("W-Mūsu"));
+		// c.search(new Query("W-Katr.*"));
 
 		// c.search(new Query("W-.*@T-(x|y).* > W-\\\" N-organization"));
 		// c.search(new Query("W-ES > W-\)"));
@@ -280,5 +360,8 @@ public class TextCorpus {
 		// c.search(new Query("N-media"));
 
 		// c.search(new Query("L-\\( W-.* W-.* L-\\)"));
+		
+		c.search(new Query("W-SIA"));
+		// c.search(new Query("L-ierobožotu L-atbildību"));
 	}
 }

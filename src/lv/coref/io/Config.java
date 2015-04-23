@@ -144,6 +144,7 @@ public class Config {
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
+		sb.append(String.format("-%-20s\t%10s\t%s\n", "ARGUMENT", "VALUE", "DESCRIPTION"));
 		for (Field field : this.getClass().getDeclaredFields()) {
 			Property descr = null;
 			for (Annotation a : field.getAnnotations()) {
@@ -155,8 +156,8 @@ public class Config {
 			if (!field.getName().startsWith("PROP"))
 				continue;
 			try {
-				sb.append(String.format("-%-20s\t%-20s\t%-20s\t%s\n", field.get(this), props.getProperty(field.get(this).toString()), descr != null ? descr.def() : "null",
-						descr != null ? descr.descr() : "null"));
+				String curValue = props.getProperty(field.get(this).toString());
+				sb.append(String.format("-%-20s\t%10s\t%s\n", field.get(this), curValue, descr != null ? descr.descr() : ""));
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
@@ -175,7 +176,7 @@ public class Config {
 
 	public static final String PREFIX_PIPE = "pipe.";
 
-	@Property(descr = "Input type [conll, json, mmax]", def = "conll", type = "lv.coref.io.FORMAT")
+	@Property(descr = "Coreference tool input type [conll, json, mmax], default conll", def = "conll", type = "lv.coref.io.FORMAT")
 	public static final String PROP_INPUT = "input";
 
 	public FORMAT getINPUT() {
@@ -183,7 +184,7 @@ public class Config {
 		return FORMAT.valueOf(value.toUpperCase());
 	}
 
-	@Property(descr = "Output type [conll, json, mmax]", def = "conll", type = "lv.coref.io.FORMAT")
+	@Property(descr = "Coreference tool output type [conll, json, mmax], default conll", def = "conll", type = "lv.coref.io.FORMAT")
 	public static final String PROP_OUTPUT = "output";
 
 	public FORMAT getOUTPUT() {
@@ -199,16 +200,16 @@ public class Config {
 		return value.equalsIgnoreCase("yes");
 	}
 	
-	@Property(descr = "Runned pipe tools [tokenizer, tagger, ner, parser, spd, coref, nel]", def = "tokenizer tagger ner parser spd coref nel")
+	@Property(descr = "Runned pipe tools [tokenizer, tagger, ner, parser, spd, coref, nel] separated by commas. Default: run all")
 	public static final String PROP_PIPE_TOOLS = "pipe.tools";
 	
-	@Property(descr = "Pipe input format [text, json_meta]", def = "")
+	@Property(descr = "Pipe input format [text, json_meta]. Default: json_meta")
 	public static final String PROP_PIPE_INPUT = "pipe.input";
 	
-	@Property(descr = "Pipe output format [json, json_array]", def = "tokenizer tagger ner parser spd coref nel")
+	@Property(descr = "Pipe output format [json, json_array]. Default: json", def = "tokenizer tagger ner parser spd coref nel")
 	public static final String PROP_PIPE_OUTPUT = "pipe.output";
 
-	@Property(descr = "Remove singletons during postprocessing", def = "false")
+	@Property(descr = "Remove singleton mention clusters during postprocessing", def = "false")
 	public static final String PROP_COREF_REMOVE_SINGLETONS = "coref.remSingletons";
 	
 	@Property(descr = "Remove common unknown category singletons during postprocessing", def = "false")
@@ -217,44 +218,44 @@ public class Config {
 	@Property(descr = "Remove descriptor mentions for professions", def = "false")
 	public static final String PROP_COREF_REMOVE_DESCRIPTOR_MENTIONS = "coref.remDescriptors";
 	
-	@Property(descr = "Print decisions for head or exact match mentionsm separate with: |", def = "")
+	@Property(descr = "Print decisions for head or exact match mentions separate with: |", def = "")
 	public static final String PROP_COREF_DEBUG_MENTION_STRINGS = "coref.debugMentionStrings";
 	
 	public static final String PREFIX_KNB = "knb.";
 
-	@Property(descr = "Knowledge base url", def = "jdbc:postgresql://localhost:5432/knb", type = "String")
+	@Property(descr = "Knowledge base url. E.g., jdbc:postgresql://localhost:5432/knb")
 	public static String PROP_KNB_URL = "knb.url";
 
-	@Property(descr = "Knowledge base user", def = "user", type = "String")
+	@Property(descr = "Knowledge base username")
 	public static String PROP_KNB_USER = "knb.user";
 
-	@Property(descr = "Knowledge base user password", def = "password", type = "String")
+	@Property(descr = "Knowledge base user password")
 	public static String PROP_KNB_PASSWORD = "knb.password";
 	
-	@Property(descr = "Use database for NEL [true,false]", def = "true")
+	@Property(descr = "Use knowledge base for NEL [true,false]. Default: true")
 	public static String PROP_KNB_ENABLE = "knb.enable";
 	
-	@Property(descr = "KNB dataset [int]", def = "0")
+	@Property(descr = "KNB dataset [int]. Uesd for writing info to DB. Default: 0", def = "0")
 	public static String PROP_KNB_DATASET = "knb.dataset";
 
-	@Property(descr = "Preprocessing pipeline webservice (produces conll with ner and syntax from text)", def = "http://localhost:8182/nertagger")
+	@Property(descr = "Preprocessing pipeline webservice (produces conll with ner and syntax from text) used for faster debugging", def = "http://localhost:8182/nertagger")
 	public static String PROP_PREPROCESS_WEBSERVICE = "web.pipe";
 	
 	public static final String PREFIX_NEL = "nel.";
 	
-	@Property(descr = "Prints NEL disambiguation information to std.err [true,false]", def = "false")
+	@Property(descr = "Prints NEL disambiguation information to std.err [true,false]. Default: false")
 	public static String PROP_NEL_SHOW_DISAMBIGUATION = "nel.showDisambiguation";
 	
-	@Property(descr = "Print inserted entities [true,false]", def = "false")
+	@Property(descr = "Print NEL inserted entities [true,false]. Default: false")
 	public static String PROP_NEL_SHOW_INSERTS = "nel.showInserts";
 	
-	@Property(descr = "Print linked entities [true,false]", def = "false")
+	@Property(descr = "Print NEL linked entities [true,false]. Default: false")
 	public static String PROP_NEL_SHOW_ENTITIES = "nel.showEntities";
 	
-	@Property(descr = "Allow NEL to upload entities to database [true,false]", def = "false")
+	@Property(descr = "Allow NEL to upload entities to database [true,false]. Experimental. Default: false")
 	public static String PROP_NEL_UPLOAD = "nel.upload";
 	
-	@Property(descr = "Print all verbose NEL decisions [true,false]", def = "false")
+	@Property(descr = "Print all verbose NEL decisions [true,false]. Default: false")
 	public static String PROP_NEL_VERBOSE = "nel.verbose";
 	
 	public static void main(String[] args) {

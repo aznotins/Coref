@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
-import lv.coref.lv.Constants.Category;
-
 import org.junit.Test;
 
 public class AnalyzerUtilsTest {
@@ -40,5 +38,11 @@ public class AnalyzerUtilsTest {
 	@Test
 	public void testNormalize6() {
 		assertEquals("Labklājības ministrija", AnalyzerUtils.normalize("Labklājības ministrijas", "organization"));
+	}
+	
+	@Test
+	public void testNormalizeAndaCaksa() {
+		assertEquals("Anda Čakša", AnalyzerUtils.normalize("Anda Čakša", "person"));
+		assertEquals("Anda Čakša", AnalyzerUtils.normalize("Andas Čakšas", "person"));
 	}
 }
