@@ -1,7 +1,7 @@
 #!/bin/sh
 
 BASEDIR=$(dirname $0)
-cd $BASEDIR
+# cd $BASEDIR
 
 help_msg() {
 	echo "-----"
@@ -15,6 +15,7 @@ help_msg() {
 
 install() {
 	local outdir="$1/"	
+	cd $BASEDIR
 	echo "-----"
 	echo "Install to directory $outdir"
 	print_revisions
@@ -23,41 +24,56 @@ install() {
 	mkdir -p $outdir
 	mkdir -p $outdir/resource
 
-	cp -ar ./lib $outdir
-	cp -ar ./dist $outdir
-	cp -ar ./resource/dictionaries $outdir/resource
-	cp -ar ./LETAdicts $outdir
-	cp -ar ./Gazetteer $outdir
-	cp -ar ./models $outdir
+	# save revisions in output directory
+	print_revisions > $outdir/revisions.txt
 
-	cp -a ./pipe.sh $outdir
-	cp -a ./pipe.bat $outdir
-	cp -a ./coref.prop_template $outdir/coref.prop
-	cp -a ./coref.prop $outdir 2>/dev/null #copy if exists
-	cp -a ./lv-ner-tagger.prop $outdir
+	# NOTE: cp -ar isn't cross-platform compatible, replaced with -pPR
+	cp -pPR ./lib $outdir
+	cp -pPR ./dist $outdir
+	cp -pPR ./resource/dictionaries $outdir/resource
+	cp -pPR ./LETAdicts $outdir
+	cp -pPR ./Gazetteer $outdir
+	cp -pPR ./models $outdir
+
+	# PATCH (TODO, FIXME - remove when fixed): copy updated morpho model from LVTagger
+	cp -pP ../LVTagger/models/lv-morpho-model.ser.gz $outdir/models
+
+	cp -pP ./pipe.sh $outdir
+	chmod a+x $outdir/pipe.sh	# just in case
+	cp -pP ./pipe.bat $outdir
+	cp -pP ./coref.prop_template $outdir
+	cp -pP ./coref.prop_template $outdir/coref.prop		# everything not configured should be off here (knb etc.)
+	# better not to reveal our secrets... ;) we can copy manually our coref.prop if we need to (for private use)
+	# cp -pP ./coref.prop $outdir 2>/dev/null #copy if exists
+	cp -pP ./lv-ner-tagger.prop $outdir
 	echo "Finished install"
 }
 
 print_revisions() {
 	local coref_rev=`git rev-parse HEAD`
-	echo "Coref revision: ${coref_rev} in ${PWD}";
+	echo "Coref revision: ${coref_rev}" # in ${PWD}";
 	(
 		cd "./../LVTagger" &&
 		local lvtagger_rev=`git rev-parse HEAD` &&
-		echo "LVTagger revision: ${lvtagger_rev} in ${PWD}"
+		echo "LVTagger revision: ${lvtagger_rev}" # in ${PWD}"
 	)
 	(
 		cd "./../morphology";
 		local morphology_rev=`git rev-parse HEAD`;
-		echo "Morphology revision: ${morphology_rev} in ${PWD}";
+		echo "Morphology revision: ${morphology_rev}" # in ${PWD}";
 	)
 }
 
 source_release() {
 	local outdir="$1/"
+	cd $BASEDIR
 	echo "-----"
 	echo "Make Coref source release to $outdir"
 	print_revisions
+
+	# save revisions in output directory
+	mkdir -p $outdir
+	print_revisions > $outdir/revisions.txt
 
 	copy_repository $outdir/Coref	
 	( cd ./../LVTagger; echo ${PWD}; copy_repository $outdir/LVTagger )

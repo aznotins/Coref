@@ -16,8 +16,8 @@ coref.remSingletons = false
 coref.remCommonUnknownSingletons = true
 coref.remDescriptors = true
 
-knb.enable = true
-knb.url = jdbc:postgresql://localhost:5432/knb
+knb.enable = false
+knb.url = jdbc:postgresql://localhost:5432/database
 knb.user = user
 knb.password = password
 
@@ -31,7 +31,7 @@ nel.showInserts = false
 
 ## Logging
 ## Levels are [ SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST, OFF, ALL ]
-.level = ALL
+.level = SEVERE
 
 handlers = java.util.logging.ConsoleHandler
 
