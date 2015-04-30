@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 BASEDIR=$(dirname $0)
 # cd $BASEDIR
@@ -18,14 +18,18 @@ install() {
 	cd $BASEDIR
 	echo "-----"
 	echo "Install to directory $outdir"
-	print_revisions
+	if [[ -d .git ]]; then
+		print_revisions
+	fi
 
 	echo "Copying install files ..."
 	mkdir -p $outdir
 	mkdir -p $outdir/resource
 
 	# save revisions in output directory
-	print_revisions > $outdir/revisions.txt
+	if [[ -d .git ]]; then
+		print_revisions > $outdir/revisions.txt
+	fi
 
 	# NOTE: cp -ar isn't cross-platform compatible, replaced with -pPR
 	cp -pPR ./lib $outdir
@@ -78,6 +82,10 @@ source_release() {
 	copy_repository $outdir/Coref	
 	( cd ./../LVTagger; echo ${PWD}; copy_repository $outdir/LVTagger )
 	( cd ./../morphology; copy_repository $outdir/morphology)
+
+	# PATCH (TODO, FIXME - remove when fixed): copy updated morpho model from LVTagger
+	cp -pP ../LVTagger/models/lv-morpho-model.ser.gz $outdir/Coref/models
+
 	echo "Finished source release"
 }
 
